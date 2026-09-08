@@ -23,60 +23,90 @@
     <div class="w-full max-w-md bg-white rounded-2xl shadow-sm border p-6 sm:p-8">
         @php
             $role = request('role', 'parent');
-            $roleNames = [
-                'parent' => ['title' => 'የወላጅ መግቢያ', 'color' => 'blue', 'icon' => 'fa-user-friends', 'target' => '/dashboard/parent'],
-                'teacher' => ['title' => 'የመምህራን መግቢያ', 'color' => 'emerald', 'icon' => 'fa-chalkboard-teacher', 'target' => '/dashboard/teacher'],
-                'admin' => ['title' => 'የት/ቤት አስተዳደር', 'color' => 'purple', 'icon' => 'fa-shield-alt', 'target' => '/dashboard/admin']
-            ];
-            $currentRole = $roleNames[$role] ?? $roleNames['parent'];
         @endphp
 
-        <!-- Role Badge -->
-        <div class="flex items-center justify-center mb-6">
-            <div class="flex items-center space-x-2 bg-{{ $currentRole['color'] }}-50 text-{{ $currentRole['color'] }}-700 border border-{{ $currentRole['color'] }}-200 px-4 py-1.5 rounded-full text-xs font-bold">
-                <i class="fas {{ $currentRole['icon'] }}"></i>
-                <span>{{ $currentRole['title'] }}</span>
+        <!-- Error Alert -->
+        @if (session('error'))
+            <div class="mb-4 p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-start space-x-2">
+                <i class="fas fa-exclamation-circle text-sm mt-0.5"></i>
+                <span>{{ session('error') }}</span>
             </div>
-        </div>
+        @endif
 
-        <form action="{{ $currentRole['target'] }}" method="GET" class="space-y-4">
-            <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">ስልክ ቁጥር</label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                        <i class="fas fa-phone text-xs"></i>
-                    </span>
-                    <input type="text" placeholder="09xxxxxxxx" required value="0911000000"
-                           class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        @if($role == 'parent')
+            <!-- PARENT LOGIN -->
+            <div class="flex items-center justify-center mb-6">
+                <div class="flex items-center space-x-2 bg-blue-50 text-blue-700 border border-blue-200 px-4 py-1.5 rounded-full text-xs font-bold">
+                    <i class="fas fa-user-shield"></i>
+                    <span>የተማሪ ወላጅ መግቢያ</span>
                 </div>
             </div>
 
-            <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">የይለፍ ቃል (Password)</label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                        <i class="fas fa-lock text-xs"></i>
-                    </span>
-                    <input type="password" placeholder="••••••••" required value="123456"
-                           class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <p class="text-xs text-slate-500 text-center mb-4 leading-relaxed">
+                ልጅዎን በት/ቤቱ ሲያስመዘግቡ የሰጡትን ስልክ ቁጥር ያስገቡ። የገዛ ልጅዎ መረጃ ብቻ ይከፈትልዎታል።
+            </p>
+
+            <form action="/parent/verify" method="POST" class="space-y-4">
+                @csrf
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">ያስመዘገቡት ስልክ ቁጥር</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                            <i class="fas fa-phone text-xs"></i>
+                        </span>
+                        <input type="text" name="phone" placeholder="09xxxxxxxx" required value="0911000000"
+                               class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-1">ለመሞከር፡ <b class="text-indigo-600">0911000000</b> (ለዮናስ) ወይም <b class="text-indigo-600">0922000000</b> (ለሳራ)</p>
+                </div>
+
+                <button type="submit" class="w-full py-3 px-4 rounded-xl text-white font-bold text-sm bg-blue-600 hover:bg-blue-700 shadow-md transition">
+                    የልጄን ደብተር ክፈት <i class="fas fa-arrow-right ml-1"></i>
+                </button>
+            </form>
+
+        @elseif($role == 'teacher')
+            <!-- TEACHER INFO -->
+            <div class="flex items-center justify-center mb-4">
+                <div class="flex items-center space-x-2 bg-emerald-50 text-emerald-700 border border-emerald-200 px-4 py-1.5 rounded-full text-xs font-bold">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>የመምህራን ክፍል</span>
                 </div>
             </div>
-
-            <div class="flex items-center justify-between text-xs pt-1">
-                <label class="flex items-center text-slate-600">
-                    <input type="checkbox" checked class="rounded border-slate-300 text-indigo-600 mr-1.5"> አስታውሰኝ
-                </label>
-                <a href="#" class="text-indigo-600 hover:underline">ይለፍ ቃል ረሱ?</a>
+            <div class="p-4 bg-emerald-50/60 rounded-xl border border-emerald-200 text-center text-xs text-emerald-900 mb-4">
+                <i class="fas fa-info-circle text-emerald-600 text-base mb-1 block"></i>
+                መምህራን ወደ ተመደቡበት ክፍል የሚገቡት በትምህርት ቤቱ አስተዳዳሪ በሚሰጣቸው **ልዩ ሊንክ (Access Link)** ብቻ ነው።
             </div>
+            <a href="/teacher/entry?class=7-B&name=መምህር አለሙ ተሾመ" class="block text-center w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition">
+                በተሰጠኝ ክፍል (7-B) ሊንክ ግባ
+            </a>
 
-            <button type="submit" class="w-full py-3 px-4 rounded-xl text-white font-bold text-sm bg-indigo-600 hover:bg-indigo-700 shadow-md hover:shadow-lg transition">
-                ይግቡ (Login)
-            </button>
-        </form>
+        @else
+            <!-- ADMIN LOGIN -->
+            <div class="flex items-center justify-center mb-4">
+                <div class="flex items-center space-x-2 bg-purple-50 text-purple-700 border border-purple-200 px-4 py-1.5 rounded-full text-xs font-bold">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>የት/ቤት አስተዳደር</span>
+                </div>
+            </div>
+            <form action="/dashboard/admin" method="GET" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">የአድሚን ስልክ</label>
+                    <input type="text" value="0900000000" class="w-full p-2.5 bg-slate-50 border rounded-xl text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">የይለፍ ቃል</label>
+                    <input type="password" value="••••••••" class="w-full p-2.5 bg-slate-50 border rounded-xl text-sm">
+                </div>
+                <button type="submit" class="w-full py-2.5 rounded-xl text-white font-bold text-xs bg-purple-600 hover:bg-purple-700 shadow transition">
+                    እንደ አድሚን ግባ
+                </button>
+            </form>
+        @endif
 
         <!-- Role Switcher -->
         <div class="mt-6 pt-4 border-t text-center text-xs text-slate-500">
-            ሚና መቀየር ይፈልጋሉ?
+            ሚና ለመቀየር፡
             <div class="flex justify-center gap-2 mt-2 font-medium">
                 <a href="/login?role=parent" class="text-blue-600 hover:underline">ወላጅ</a> •
                 <a href="/login?role=teacher" class="text-emerald-600 hover:underline">መምህር</a> •
@@ -85,7 +115,7 @@
         </div>
     </div>
 
-    <!-- 2. LOGIN PAGE SPONSORED BANNER (በመግቢያ ገጽ ላይ የሚለጠፍ ማስታወቂያ) -->
+    <!-- SPONSORED BANNER -->
     <div class="w-full max-w-md my-4">
         <div class="bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl p-3 text-white flex items-center justify-between shadow-sm">
             <div class="flex items-center space-x-2">
@@ -98,10 +128,6 @@
             <a href="#" class="text-[10px] font-bold bg-white text-blue-600 px-2.5 py-1 rounded shadow">ይጎብኙ</a>
         </div>
     </div>
-
-    <footer class="text-center text-xs text-slate-400 py-3">
-        © 2025 SmartDebter Ethiopia | Mela Solution
-    </footer>
 
 </body>
 </html>
