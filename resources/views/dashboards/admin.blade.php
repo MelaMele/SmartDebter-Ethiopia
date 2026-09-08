@@ -102,7 +102,7 @@
             </div>
         </div>
 
-        <!-- 2. STUDENT & CLASS MANAGEMENT ACTION BAR (አዲስ ተማሪ እና ኤክሴል መጫኛ ቁልፎች) -->
+        <!-- 2. STUDENT & CLASS MANAGEMENT ACTION BAR -->
         <div class="bg-white rounded-2xl border shadow-sm p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
                 <h3 class="text-sm font-bold text-slate-900 flex items-center">
@@ -184,7 +184,7 @@
                     </div>
                 </div>
 
-                <!-- Add New Teacher -->
+                <!-- Add New Teacher Assignment -->
                 <div class="p-4 border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center text-center">
                     <div class="w-8 h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-sm mb-2">
                         <i class="fas fa-plus"></i>
@@ -195,66 +195,79 @@
             </div>
         </div>
 
-        <!-- 4. ADVERTISEMENT MANAGEMENT SECTION -->
-        <div class="bg-white rounded-2xl border shadow-sm p-6">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b">
-                <div>
-                    <h3 class="text-base font-bold text-slate-900 flex items-center">
-                        <i class="fas fa-ad text-amber-500 mr-2"></i>
-                        የድርጅቶች ማስታወቂያ አስተዳደር (Sponsor & Ad Spaces)
-                    </h3>
-                    <p class="text-xs text-slate-500 mt-0.5">በወላጆች እና በመምህራን ዳሽቦርድ ላይ የሚለጠፉ ማስታወቂያዎች እና የገቢ ትንታኔ</p>
-                </div>
-                <button onclick="alert('አዲስ ማስታወቂያ የመስቀያ ቅጽ በቅርቡ ይከፈታል!')" class="text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl transition shadow flex items-center space-x-1.5">
-                    <i class="fas fa-plus"></i>
-                    <span>አዲስ ማስታወቂያ ጫን</span>
-                </button>
+        <!-- 4. SCHOOL INTERNAL ANNOUNCEMENTS (የት/ቤቱ የውስጥ ማስታወቂያዎች ብቻ) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <!-- Send School Announcement -->
+            <div class="bg-white rounded-2xl border shadow-sm p-5 md:col-span-1">
+                <h3 class="text-sm font-bold text-slate-900 mb-2 flex items-center">
+                    <i class="fas fa-bullhorn text-indigo-600 mr-2"></i>
+                    የት/ቤት አጠቃላይ ማስታወቂያ
+                </h3>
+                <p class="text-xs text-slate-500 mb-3 leading-relaxed">ይህ መልእክት በሙሉ ትምህርት ቤቱ ላሉ ወላጆች በሙሉ ደብተር ላይ በቀጥታ ይለጠፋል።</p>
+                
+                <form action="#" onsubmit="event.preventDefault(); alert('አጠቃላይ ማስታወቂያው ለ 840 ወላጆች ተሰራጭቷል!');" class="space-y-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">የማስታወቂያው ርዕስ</label>
+                        <input type="text" placeholder="ምሳሌ፡ የወላጆች አጠቃላይ ስብሰባ" required
+                               class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">ዝርዝር መልእክት</label>
+                        <textarea rows="3" placeholder="ቀን፣ ሰዓት እና ዝርዝር መረጃ እዚህ ይጻፉ..." required
+                                  class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs focus:ring-2 focus:ring-purple-500 focus:outline-none"></textarea>
+                    </div>
+                    <button type="submit" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow transition">
+                        ለሁሉም ወላጆች አሰራጭ
+                    </button>
+                </form>
             </div>
 
-            <!-- Ad Table -->
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs">
-                    <thead>
-                        <tr class="bg-slate-50 text-slate-600 border-b">
-                            <th class="p-3">አስተዋዋቂ ድርጅት</th>
-                            <th class="p-3">ቦታ (Placement)</th>
-                            <th class="p-3">ዒላማ (Target)</th>
-                            <th class="p-3">ዕይታ (Views)</th>
-                            <th class="p-3">ክሊክ (Clicks)</th>
-                            <th class="p-3">ሁኔታ</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y text-slate-700">
-                        <tr class="hover:bg-slate-50 transition">
-                            <td class="p-3 font-bold text-slate-900 flex items-center space-x-2">
-                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                <span>አቢሲንያ ባንክ (የቁጠባ ሒሳብ)</span>
-                            </td>
-                            <td class="p-3">Parent Feed (በደብተር መሃል)</td>
-                            <td class="p-3"><span class="bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-semibold">ወላጆች</span></td>
-                            <td class="p-3 font-semibold">1,420</td>
-                            <td class="p-3 font-semibold text-emerald-600">245 (17.2%)</td>
-                            <td class="p-3"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">ንቁ</span></td>
-                        </tr>
-                        <tr class="hover:bg-slate-50 transition">
-                            <td class="p-3 font-bold text-slate-900 flex items-center space-x-2">
-                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                <span>ኢትዮ ቴሌኮም (የመምህራን ላፕቶፕ)</span>
-                            </td>
-                            <td class="p-3">Teacher Banner (ከላይ)</td>
-                            <td class="p-3"><span class="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded font-semibold">መምህራን</span></td>
-                            <td class="p-3 font-semibold">380</td>
-                            <td class="p-3 font-semibold text-emerald-600">62 (16.3%)</td>
-                            <td class="p-3"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">ንቁ</span></td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- Recent Internal Circulars & Classroom Activity -->
+            <div class="bg-white rounded-2xl border shadow-sm p-5 md:col-span-2 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900 mb-3 flex items-center justify-between">
+                        <span>በቅርቡ የተላኩ የት/ቤት ሰርኩላሮች እና የክፍሎች እንቅስቃሴ</span>
+                        <span class="text-[11px] text-purple-600 font-semibold">የት/ቤት የውስጥ</span>
+                    </h3>
+
+                    <div class="space-y-3">
+                        <div class="p-3 bg-slate-50 rounded-xl border flex items-center justify-between text-xs">
+                            <div>
+                                <span class="font-bold text-slate-800">የ 1ኛ መንፈቀ ዓመት የወላጆች ስብሰባ</span>
+                                <p class="text-[11px] text-slate-500 mt-0.5">ቅዳሜ ጠዋት 2:30 | የተላከው፡ ትናንት</p>
+                            </div>
+                            <span class="text-emerald-700 font-bold bg-emerald-100 px-2 py-1 rounded">790 ወላጆች አንብበውታል</span>
+                        </div>
+
+                        <div class="p-3 bg-slate-50 rounded-xl border flex items-center justify-between text-xs">
+                            <div>
+                                <span class="font-bold text-slate-800">ክፍል 7-B (ሂሳብ)</span>
+                                <p class="text-[11px] text-slate-500 mt-0.5">መምህር አለሙ • ዛሬ 4:30 ላይ የቤት ስራ ልከዋል</p>
+                            </div>
+                            <span class="text-emerald-700 font-bold bg-emerald-100 px-2 py-1 rounded">32/36 ፈርመዋል</span>
+                        </div>
+
+                        <div class="p-3 bg-slate-50 rounded-xl border flex items-center justify-between text-xs">
+                            <div>
+                                <span class="font-bold text-slate-800">KG 3 - Red (የቀለም ቅብ)</span>
+                                <p class="text-[11px] text-slate-500 mt-0.5">መምህርት ትዕግስት • ዛሬ 5:10 ላይ ማስታወሻ ልከዋል</p>
+                            </div>
+                            <span class="text-emerald-700 font-bold bg-emerald-100 px-2 py-1 rounded">24/25 ፈርመዋል</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t text-[11px] text-slate-400 flex items-center justify-between">
+                    <span>የትምህርት ቤት የውስጥ ደህንነቱ የተጠበቀ ኔትወርክ</span>
+                    <span class="text-slate-600 font-semibold">SmartDebter Enterprise</span>
+                </div>
             </div>
+
         </div>
 
     </main>
-<!-- Mela Solution Shared Footer -->
-    @include('partials.footer')
+
     <!-- ==================== MODALS SECTION ==================== -->
 
     <!-- 1. EXCEL UPLOAD MODAL -->
@@ -275,7 +288,6 @@
                     <b>[የተማሪ ሙሉ ስም] , [የክፍል ደረጃ] , [ሴክሽን] , [ጾታ] , [የወላጅ ስልክ ቁጥር]</b></p>
                 </div>
 
-                <!-- Download Sample Template -->
                 <div class="flex items-center justify-between text-xs p-3 bg-slate-50 rounded-xl border">
                     <span class="text-slate-600 font-medium">የተዘጋጀ የናሙና Excel ቅጽ ያውርዱ፡</span>
                     <a href="data:text/csv;charset=utf-8,StudentName,Grade,Section,Gender,ParentPhone%0Aዮናስ ዳዊት,Grade 7,B,Male,0911000000%0Aሳራ ዳዊት,Grade 3,A,Female,0922000000" 
@@ -286,12 +298,11 @@
                     </a>
                 </div>
 
-                <!-- Drag & Drop Zone -->
                 <div class="border-2 border-dashed border-emerald-300 bg-emerald-50/40 rounded-2xl p-6 text-center hover:bg-emerald-50/70 transition cursor-pointer"
                      onclick="document.getElementById('excel-file-input').click()">
                     <i class="fas fa-cloud-upload-alt text-3xl text-emerald-600 mb-2"></i>
                     <p class="text-xs font-bold text-slate-800">የ Excel ወይም CSV ፋይሉን እዚህ ይጎትቱ ወይም ይምረጡ</p>
-                    <p class="text-[10px] text-slate-500 mt-1">የሚፈቀዱ ፋይሎች፡ .xlsx, .xls, .csv (ከ 10MB በታች)</p>
+                    <p class="text-[10px] text-slate-500 mt-1">የሚፈቀዱ ፋይሎች፡ .xlsx, .xls, .csv</p>
                     <input type="file" id="excel-file-input" class="hidden" accept=".xlsx, .xls, .csv" onchange="fileSelected(this)">
                 </div>
                 <p id="file-name-display" class="text-xs text-emerald-700 font-bold text-center hidden"></p>
@@ -304,7 +315,7 @@
         </div>
     </div>
 
-    <!-- 2. SINGLE STUDENT REGISTRATION MODAL (ከ KG እስከ 12ኛ ክፍል) -->
+    <!-- 2. SINGLE STUDENT REGISTRATION MODAL -->
     <div id="student-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3 border-b">
@@ -328,35 +339,23 @@
                 </div>
 
                 <div class="grid grid-cols-3 gap-3">
-                    <!-- Grade: KG to 12 -->
                     <div class="col-span-2">
                         <label class="block text-xs font-bold text-slate-700 mb-1">የክፍል ደረጃ</label>
                         <select required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs">
                             <optgroup label="የህፃናት ማቆያ እና ኬጂ">
-                                <option>KG 1</option>
-                                <option>KG 2</option>
-                                <option>KG 3</option>
+                                <option>KG 1</option><option>KG 2</option><option>KG 3</option>
                             </optgroup>
                             <optgroup label="የመጀመሪያ ደረጃ (1ኛ - 8ኛ)">
-                                <option>1ኛ ክፍል</option>
-                                <option>2ኛ ክፍል</option>
-                                <option>3ኛ ክፍል</option>
-                                <option>4ኛ ክፍል</option>
-                                <option>5ኛ ክፍል</option>
-                                <option>6ኛ ክፍል</option>
-                                <option selected>7ኛ ክፍል</option>
-                                <option>8ኛ ክፍል</option>
+                                <option>1ኛ ክፍል</option><option>2ኛ ክፍል</option><option>3ኛ ክፍል</option>
+                                <option>4ኛ ክፍል</option><option>5ኛ ክፍል</option><option>6ኛ ክፍል</option>
+                                <option selected>7ኛ ክፍል</option><option>8ኛ ክፍል</option>
                             </optgroup>
                             <optgroup label="ሁለተኛ ደረጃ እና መሰናዶ (9ኛ - 12ኛ)">
-                                <option>9ኛ ክፍል</option>
-                                <option>10ኛ ክፍል</option>
-                                <option>11ኛ ክፍል (Social/Natural)</option>
-                                <option>12ኛ ክፍል (Social/Natural)</option>
+                                <option>9ኛ ክፍል</option><option>10ኛ ክፍል</option><option>11ኛ ክፍል</option><option>12ኛ ክፍል</option>
                             </optgroup>
                         </select>
                     </div>
 
-                    <!-- Unlimited Section -->
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">ሴክሽን (Section)</label>
                         <input type="text" placeholder="A, B, C, Red..." value="B" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-purple-700">
@@ -367,17 +366,15 @@
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">ጾታ</label>
                         <select class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs">
-                            <option>ወንድ</option>
-                            <option>ሴት</option>
+                            <option>ወንድ</option><option>ሴት</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">የት/ቤት መለያ (ID - አማራጭ)</label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">የት/ቤት መለያ (ID)</label>
                         <input type="text" placeholder="ETH-1002" class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs">
                     </div>
                 </div>
 
-                <!-- Parent Info (Crucial for Login) -->
                 <div class="p-3 bg-purple-50/50 rounded-xl border border-purple-100 space-y-3">
                     <p class="text-[11px] font-bold text-purple-900 uppercase tracking-wide">የወላጅ መረጃ (ለመግቢያ የሚያገለግል)</p>
                     <div class="grid grid-cols-2 gap-3">
@@ -400,7 +397,7 @@
         </div>
     </div>
 
-    <!-- 3. NEW SECTION CREATOR MODAL -->
+    <!-- 3. SECTION CREATOR MODAL -->
     <div id="section-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border">
             <div class="flex items-center justify-between pb-3 border-b">
@@ -427,14 +424,13 @@
         </div>
     </div>
 
-    <!-- Scripts for Modals and Excel simulation -->
+    <!-- Mela Solution Shared Footer -->
+    @include('partials.footer')
+
+    <!-- Scripts -->
     <script>
-        function openModal(id) {
-            document.getElementById(id).classList.remove('hidden');
-        }
-        function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
-        }
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
         function fileSelected(input) {
             if (input.files && input.files[0]) {
@@ -450,7 +446,7 @@
                 alert('እባክዎ መጀመሪያ የ Excel ወይም CSV ፋይል ይምረጡ!');
                 return;
             }
-            alert('ፋይሉ ተመርምሯል! 48 ተማሪዎች እና የወላጆቻቸው ስልክ ቁጥር በተሳካ ሁኔታ ተጭነዋል!');
+            alert('ፋይሉ ተመርምሯል! ተማሪዎች እና የወላጆቻቸው ስልክ ቁጥር በተሳካ ሁኔታ ተጭነዋል!');
             closeModal('excel-modal');
         }
 
