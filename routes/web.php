@@ -74,3 +74,7 @@ Route::get('/dashboard/teacher', function () {
 Route::get('/dashboard/admin', function () {
     return view('dashboards.admin');
 });
+// 8. Super Admin Dashboard (Mela Solution Master Control)
+Route::get('/dashboard/super-admin', function () {
+    return view('dashboards.super-admin');
+});
