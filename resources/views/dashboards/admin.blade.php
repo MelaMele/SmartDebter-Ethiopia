@@ -253,7 +253,8 @@
         </div>
 
     </main>
-
+<!-- Mela Solution Shared Footer -->
+    @include('partials.footer')
     <!-- ==================== MODALS SECTION ==================== -->
 
     <!-- 1. EXCEL UPLOAD MODAL -->
