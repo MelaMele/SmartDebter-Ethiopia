@@ -4,10 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>አድሚን ዳሽቦርድ | SmartDebter</title>
+
+    <!-- PWA Settings (ለአድሚን ሞባይል/ዴስክቶፕ አፕ) -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#7e22ce">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SmartDebter Admin">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2997/2997295.png">
+
+    <!-- Tailwind CSS & FontAwesome -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body class="bg-slate-100 font-sans min-h-screen pb-12">
+
+    <!-- PWA INSTALL BANNER FOR ADMIN -->
+    <div id="pwa-install-banner" class="hidden bg-purple-950 text-white px-4 py-2.5 shadow-md">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <img src="https://cdn-icons-png.flaticon.com/512/2997/2997295.png" alt="Logo" class="w-8 h-8 rounded-lg">
+                <div>
+                    <p class="text-xs font-bold leading-tight">SmartDebter የአስተዳደር አፕሊኬሽን</p>
+                    <p class="text-[10px] text-purple-200">የትምህርት ቤቱን እንቅስቃሴ እና ማስታወቂያዎች በስልክዎ ለመከታተል ይጫኑ!</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button id="install-btn" class="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold text-xs px-3 py-1.5 rounded-lg shadow transition">
+                    <i class="fas fa-download mr-1"></i>ጫን (Install)
+                </button>
+                <button onclick="document.getElementById('pwa-install-banner').classList.add('hidden')" class="text-purple-300 hover:text-white text-sm px-1">
+                    ✕
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Top Header -->
     <header class="bg-white border-b shadow-sm sticky top-0 z-50">
@@ -73,7 +104,7 @@
             </div>
         </div>
 
-        <!-- 2. ADVERTISEMENT MANAGEMENT SECTION (የድርጅቶች ማስታወቂያ አስተዳደር ክፍል) -->
+        <!-- 2. ADVERTISEMENT MANAGEMENT SECTION -->
         <div class="bg-white rounded-2xl border shadow-sm p-6">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b">
                 <div>
@@ -104,7 +135,6 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y text-slate-700">
-                        <!-- Ad 1 -->
                         <tr class="hover:bg-slate-50 transition">
                             <td class="p-3 font-bold text-slate-900 flex items-center space-x-2">
                                 <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
@@ -121,7 +151,6 @@
                             </td>
                         </tr>
 
-                        <!-- Ad 2 -->
                         <tr class="hover:bg-slate-50 transition">
                             <td class="p-3 font-bold text-slate-900 flex items-center space-x-2">
                                 <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
@@ -137,32 +166,13 @@
                                 <button class="text-rose-600 hover:underline">አቁም</button>
                             </td>
                         </tr>
-
-                        <!-- Ad 3 -->
-                        <tr class="hover:bg-slate-50 transition">
-                            <td class="p-3 font-bold text-slate-900 flex items-center space-x-2">
-                                <span class="w-2 h-2 rounded-full bg-slate-400"></span>
-                                <span>መጻሕፍት እና ደብተሮች አቅራቢ</span>
-                            </td>
-                            <td class="p-3">Top Banner (መነሻ ገጽ)</td>
-                            <td class="p-3"><span class="bg-purple-50 text-purple-700 px-2 py-0.5 rounded font-semibold">ሁሉም</span></td>
-                            <td class="p-3 font-semibold">3,200</td>
-                            <td class="p-3 font-semibold text-emerald-600">410 (12.8%)</td>
-                            <td class="p-3"><span class="bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full font-bold">ያበቃ (Expired)</span></td>
-                            <td class="p-3 text-right">
-                                <button class="text-indigo-600 hover:underline mr-2">አድስ</button>
-                                <button class="text-rose-600 hover:underline">ሰርዝ</button>
-                            </td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- 3. Broadcast Announcement & Recent Activity -->
+        <!-- 3. Broadcast Announcement -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            <!-- Send School-Wide Notice -->
             <div class="bg-white rounded-2xl border shadow-sm p-5 md:col-span-1">
                 <h3 class="text-sm font-bold text-slate-900 mb-3 flex items-center">
                     <i class="fas fa-bullhorn text-indigo-600 mr-2"></i>
@@ -181,7 +191,6 @@
                 </form>
             </div>
 
-            <!-- Recent Classrooms Debter Activity -->
             <div class="bg-white rounded-2xl border shadow-sm p-5 md:col-span-2">
                 <h3 class="text-sm font-bold text-slate-900 mb-3 flex items-center justify-between">
                     <span>የክፍሎች የዕለት እንቅስቃሴ እና ክትትል</span>
@@ -204,20 +213,40 @@
                         </div>
                         <span class="text-emerald-700 font-bold bg-emerald-100 px-2 py-1 rounded">28/30 ፈርመዋል</span>
                     </div>
-
-                    <div class="p-3 bg-slate-50 rounded-xl border flex items-center justify-between text-xs">
-                        <div>
-                            <span class="font-bold text-slate-800">ክፍል 5-C (ሳይንስ)</span>
-                            <p class="text-[11px] text-slate-500 mt-0.5">መምህር ከበደ • ምንም የቤት ስራ አልተላከም</p>
-                        </div>
-                        <span class="text-slate-500 bg-slate-200 px-2 py-1 rounded">መልእክት የለም</span>
-                    </div>
                 </div>
             </div>
-
         </div>
 
     </main>
+
+    <!-- PWA Script -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js');
+            });
+        }
+
+        let deferredPrompt;
+        const pwaBanner = document.getElementById('pwa-install-banner');
+        const installBtn = document.getElementById('install-btn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (pwaBanner) pwaBanner.classList.remove('hidden');
+        });
+
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    deferredPrompt = null;
+                    pwaBanner.classList.add('hidden');
+                }
+            });
+        }
+    </script>
 
 </body>
 </html>
