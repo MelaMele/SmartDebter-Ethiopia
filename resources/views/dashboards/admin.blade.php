@@ -284,4 +284,161 @@
                 <h3 class="font-bold text-sm text-slate-900">አዲስ መምህር በክፍል መድብ</h3>
                 <button onclick="closeModal('teacher-assign-modal')" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
             </div>
-            <form act
+            <form action="#" onsubmit="event.preventDefault(); addTeacher();" class="my-4 space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">የመምህሩ ሙሉ ስም</label>
+                    <input type="text" id="assign-teacher-name" placeholder="ምሳሌ፡ መምህር ከበደ" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">የተመደበበት ክፍል</label>
+                    <input type="text" id="assign-teacher-class" placeholder="ምሳሌ፡ ክፍል 7-B" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-purple-700">
+                </div>
+                <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 shadow">ሊንክ አመንጭ</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. STUDENT & SECTION MODALS -->
+    <div id="student-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-3 border-b">
+                <h3 class="font-bold text-sm text-slate-900">አዲስ ተማሪ መመዝገቢያ</h3>
+                <button onclick="closeModal('student-modal')" class="text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+            <form action="#" onsubmit="event.preventDefault(); addSingleStudent();" class="my-4 space-y-3">
+                <div class="grid grid-cols-2 gap-3">
+                    <input type="text" placeholder="የተማሪ ስም" required class="p-2.5 bg-slate-50 border rounded-xl text-xs">
+                    <input type="text" placeholder="የአባት ስም" required class="p-2.5 bg-slate-50 border rounded-xl text-xs">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <input type="text" placeholder="ክፍል (ምሳሌ፡ 7)" required class="p-2.5 bg-slate-50 border rounded-xl text-xs">
+                    <input type="text" placeholder="ሴክሽን (ምሳሌ፡ B)" required class="p-2.5 bg-slate-50 border rounded-xl text-xs">
+                </div>
+                <input type="text" placeholder="የወላጅ ስልክ ቁጥር (09xxxxxxxx)" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs">
+                <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 shadow">ተማሪ መዝግብ</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mela Solution Shared Footer -->
+    @include('partials.footer')
+
+    <!-- Interactive Scripts -->
+    <script>
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function fileSelected(input) {
+            if (input.files && input.files[0]) {
+                const display = document.getElementById('file-name-display');
+                display.classList.remove('hidden');
+                display.innerText = 'የተመረጠው ፋይል: ' + input.files[0].name;
+            }
+        }
+
+        // SIMULATE EXCEL UPLOAD (ቀጥታ ቁጥሮችን ከ 0 ወደ ትክክለኛ ቁጥር ያሳድጋል)
+        function simulateUpload() {
+            const input = document.getElementById('excel-file-input');
+            if (!input.files || !input.files[0]) {
+                alert('እባክዎ መጀመሪያ የ Excel ወይም CSV ፋይል ይምረጡ!');
+                return;
+            }
+
+            // Update Counts Dynamically
+            document.getElementById('student-count').innerText = '65';
+            document.getElementById('class-count').innerText = '4';
+            document.getElementById('sign-rate').innerText = '0%';
+            document.getElementById('sign-rate').classList.remove('text-slate-400');
+            document.getElementById('sign-rate').classList.add('text-emerald-600');
+
+            // Hide the Getting Started Callout once uploaded
+            document.getElementById('onboarding-guide').classList.add('hidden');
+
+            alert('🎉 እንኳን ደስ አለዎት! 65 ተማሪዎች እና የወላጆቻቸው ስልክ ቁጥር በተሳካ ሁኔታ ተጭነዋል!');
+            closeModal('excel-modal');
+        }
+
+        function addSingleStudent() {
+            const cur = parseInt(document.getElementById('student-count').innerText) || 0;
+            document.getElementById('student-count').innerText = cur + 1;
+            alert('ተማሪው በተሳካ ሁኔታ ተመዝግቧል!');
+            closeModal('student-modal');
+        }
+
+        function addTeacher() {
+            const name = document.getElementById('assign-teacher-name').value;
+            const cls = document.getElementById('assign-teacher-class').value;
+            const cur = parseInt(document.getElementById('teacher-count').innerText) || 0;
+            document.getElementById('teacher-count').innerText = cur + 1;
+
+            const card = document.createElement('div');
+            card.className = 'p-4 bg-slate-50 rounded-xl border flex flex-col justify-between';
+            card.innerHTML = `
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-slate-900">${name}</span>
+                        <span class="text-[10px] font-bold bg-purple-100 text-purple-700 px-2 py-0.5 rounded">${cls}</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mb-3">የ ${cls} ደብተር ማስተዳደሪያ ሊንክ፡</p>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <input type="text" readonly value="https://smart-debter-ethiopia.vercel.app/teacher/entry?class=${encodeURIComponent(cls)}&name=${encodeURIComponent(name)}" 
+                           class="text-[10px] bg-white border p-1.5 rounded flex-1 text-slate-600 select-all">
+                    <button onclick="navigator.clipboard.writeText('https://smart-debter-ethiopia.vercel.app/teacher/entry?class=${encodeURIComponent(cls)}&name=${encodeURIComponent(name)}'); alert('ሊንኩ ተገልብጧል!');" 
+                            class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1.5 rounded transition">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('teachers-container').prepend(card);
+            closeModal('teacher-assign-modal');
+            alert('መምህሩ ተመድቧል! ሊንኩን ገልብጠው በቴሌግራም ወይም SMS ይላኩላቸው።');
+        }
+
+        function postNotice(form) {
+            const title = document.getElementById('notice-title').value;
+            const msg = document.getElementById('notice-msg').value;
+
+            document.getElementById('empty-notice')?.remove();
+
+            const item = document.createElement('div');
+            item.className = 'p-3 bg-slate-50 rounded-xl border flex items-center justify-between text-xs';
+            item.innerHTML = `
+                <div>
+                    <span class="font-bold text-slate-800">${title}</span>
+                    <p class="text-[11px] text-slate-500 mt-0.5">${msg} (አሁን የተላከ)</p>
+                </div>
+                <span class="text-emerald-700 font-bold bg-emerald-100 px-2 py-1 rounded">በቀጥታ ተሰራጭቷል</span>
+            `;
+
+            document.getElementById('circulars-list').prepend(item);
+            form.reset();
+            alert('ማስታወቂያው ለወላጆች በሙሉ ደብተር ላይ ተሰራጭቷል!');
+        }
+
+        // PWA Script
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js'); });
+        }
+        let deferredPrompt;
+        const pwaBanner = document.getElementById('pwa-install-banner');
+        const installBtn = document.getElementById('install-btn');
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (pwaBanner) pwaBanner.classList.remove('hidden');
+        });
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    deferredPrompt = null;
+                    pwaBanner.classList.add('hidden');
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
