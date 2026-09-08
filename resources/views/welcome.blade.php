@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SmartDebter Ethiopia | የዲጂታል ግንኙነት ደብተር</title>
-    <!-- Tailwind CSS CDN -->
+    
+    <!-- PWA Settings -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+
+    <!-- Tailwind CSS & Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -23,14 +28,14 @@
                 </div>
             </div>
             <div>
-                <a href="#login-section" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition shadow-sm">
+                <a href="/login" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-xl transition shadow-sm">
                     ይግቡ (Login)
                 </a>
             </div>
         </div>
     </header>
 
-    <!-- 1. SPONSORED ADVERTISEMENT BANNER (የድርጅቶች ማስታወቂያ ማስቀመጫ - TOP) -->
+    <!-- SPONSORED ADVERTISEMENT BANNER (TOP) -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full">
         <div class="relative overflow-hidden rounded-xl border border-dashed border-amber-300 bg-amber-50 p-4 text-center">
             <span class="absolute top-1 right-2 text-[10px] uppercase font-bold tracking-wider text-amber-700 bg-amber-200/60 px-1.5 py-0.5 rounded">ስፖንሰር የተደረገ</span>
@@ -100,7 +105,7 @@
                 </div>
                 <h3 class="text-lg font-bold text-slate-900">አስተዳዳሪ (School Admin)</h3>
                 <p class="text-xs text-slate-500 mt-1 mb-6 leading-relaxed">
-                    ክፍሎችን፣ መምህራንን እና ተማሪዎችን ያቀናጁ፤ የት/ቤት አጠቃላይ ማስታወቂያዎችን እና ድርጅታዊ ማስታወቂያዎችን ያስተዳድሩ።
+                    ክፍሎችን፣ መምህራንን እና ተማሪዎችን በ Excel ያቀናጁ፤ የድርጅቶችን ማስታወቂያዎች ያስተዳድሩ።
                 </p>
                 <a href="/login?role=admin" class="block text-center w-full py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold text-sm transition">
                     እንደ አድሚን ይግቡ
@@ -110,10 +115,7 @@
         </div>
     </main>
 
-    <!-- Footer -->
+    <!-- FOOTER BY MELA SOLUTION (የተጨመረው አዲሱ ግርጌ) -->
     <footer class="bg-white border-t py-6 mt-12 text-center text-xs text-slate-500">
-        <p>© 2025 SmartDebter Ethiopia. Powered by Mela Solution.</p>
-    </footer>
-
-</body>
-</html>
+        <div class="max-w-4xl mx-auto px-4 space-y-2">
+            <p class="
