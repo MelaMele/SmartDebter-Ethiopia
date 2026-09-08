@@ -4,10 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>የወላጅ ዳሽቦርድ | SmartDebter</title>
+    
+    <!-- PWA Settings (ለሞባይል አፕሊኬሽን) -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SmartDebter">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2997/2997295.png">
+
+    <!-- Tailwind CSS & Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body class="bg-slate-100 font-sans min-h-screen pb-12">
+
+    <!-- PWA INSTALL PROMPT BANNER (አፑን ስልክ ላይ ለመጫን የሚመጣ ጥያቄ) -->
+    <div id="pwa-install-banner" class="hidden bg-indigo-900 text-white px-4 py-2.5 shadow-md">
+        <div class="max-w-3xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <img src="https://cdn-icons-png.flaticon.com/512/2997/2997295.png" alt="Logo" class="w-8 h-8 rounded-lg">
+                <div>
+                    <p class="text-xs font-bold leading-tight">SmartDebter አፕሊኬሽን</p>
+                    <p class="text-[10px] text-indigo-200">በቀላሉ ስልክዎ ላይ ጭነው ይጠቀሙ!</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button id="install-btn" class="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold text-xs px-3 py-1.5 rounded-lg shadow transition">
+                    <i class="fas fa-download mr-1"></i>ጫን (Install)
+                </button>
+                <button onclick="document.getElementById('pwa-install-banner').classList.add('hidden')" class="text-indigo-300 hover:text-white text-sm px-1">
+                    ✕
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Top Header -->
     <header class="bg-white border-b shadow-sm sticky top-0 z-50">
@@ -29,7 +60,7 @@
         </div>
     </header>
 
-    <!-- Child Selector (ለአንድ ወላጅ ከአንድ በላይ ልጅ ካለው) -->
+    <!-- Child Selector -->
     <div class="max-w-3xl mx-auto px-4 pt-4">
         <div class="bg-white rounded-2xl p-3 border shadow-sm flex items-center justify-between overflow-x-auto">
             <div class="flex items-center space-x-3 min-w-max">
@@ -52,7 +83,7 @@
     <!-- Main Feed / Timeline -->
     <main class="max-w-3xl mx-auto px-4 mt-4 space-y-4">
 
-        <!-- 1. Urgent Announcement / Notification -->
+        <!-- 1. Urgent Announcement -->
         <div class="bg-amber-50 border-l-4 border-amber-500 rounded-xl p-4 shadow-sm">
             <div class="flex items-start justify-between">
                 <div class="flex items-start space-x-3">
@@ -67,7 +98,7 @@
             </div>
         </div>
 
-        <!-- 2. Daily Debter Entry: Homework (የቤት ስራ) -->
+        <!-- 2. Daily Debter Entry: Homework -->
         <div class="bg-white rounded-2xl border shadow-sm overflow-hidden">
             <div class="p-4 border-b bg-slate-50/50 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
@@ -100,7 +131,7 @@
                 </div>
             </div>
 
-            <!-- Parent Sign / Acknowledgement Section -->
+            <!-- Parent Sign Section -->
             <div class="px-4 py-3 bg-slate-50 border-t flex flex-col sm:flex-row items-center justify-between gap-3">
                 <span class="text-xs text-slate-500">የወላጅ ፊርማ ማረጋገጫ:</span>
                 <button onclick="toggleSign(this)" class="w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition flex items-center justify-center space-x-1.5">
@@ -110,7 +141,7 @@
             </div>
         </div>
 
-        <!-- 3. IN-FEED SPONSORED ADVERTISEMENT (በደብተሩ መሃል የሚገባ የማስታወቂያ ካርድ) -->
+        <!-- 3. IN-FEED SPONSORED ADVERTISEMENT -->
         <div class="bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-amber-500/10 border-2 border-dashed border-amber-300 rounded-2xl p-4 shadow-sm relative overflow-hidden">
             <span class="absolute top-2 right-2 text-[9px] font-extrabold uppercase bg-amber-200 text-amber-800 px-2 py-0.5 rounded">የስፖንሰር ማስታወቂያ</span>
             <div class="flex flex-col sm:flex-row items-center gap-4 mt-1">
@@ -128,7 +159,7 @@
             </div>
         </div>
 
-        <!-- 4. Daily Debter Entry: Behavior Note (የስነ-ምግባር ማስታወሻ) -->
+        <!-- 4. Behavior Note -->
         <div class="bg-white rounded-2xl border shadow-sm overflow-hidden">
             <div class="p-4 border-b bg-slate-50/50 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
@@ -160,8 +191,43 @@
 
     </main>
 
-    <!-- Simple JS for Interactive Sign button -->
+    <!-- PWA & Signature Scripts -->
     <script>
+        // 1. Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('PWA ServiceWorker ready!'))
+                    .catch(err => console.log('SW registration error:', err));
+            });
+        }
+
+        // 2. Install Prompt Handler
+        let deferredPrompt;
+        const pwaBanner = document.getElementById('pwa-install-banner');
+        const installBtn = document.getElementById('install-btn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (pwaBanner) {
+                pwaBanner.classList.remove('hidden');
+            }
+        });
+
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`User response: ${outcome}`);
+                    deferredPrompt = null;
+                    pwaBanner.classList.add('hidden');
+                }
+            });
+        }
+
+        // 3. Interactive Signature
         function toggleSign(btn) {
             btn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
             btn.classList.add('bg-emerald-600', 'cursor-default');
