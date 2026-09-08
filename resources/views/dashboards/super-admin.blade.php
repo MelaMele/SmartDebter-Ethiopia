@@ -74,90 +74,39 @@
                     <span class="text-xs font-bold uppercase tracking-wider text-slate-400">ንቁ ማስታወቂያዎች</span>
                     <i class="fas fa-bullhorn text-emerald-400"></i>
                 </div>
-                <h3 class="text-3xl font-black text-emerald-400">4</h3>
-                <span class="text-[10px] text-slate-400">በሁሉም ኔትወርክ ላይ ያሉ</span>
+                <h3 class="text-3xl font-black text-emerald-400" id="active-ads-counter">3</h3>
+                <span class="text-[10px] text-slate-400">በአንቀሳቃሽ ሰሌዳው ላይ ያሉ</span>
             </div>
         </div>
 
-        <!-- 2. LIVE AD SHOWCASE (ሱፐር አድሚኑ ማስታወቂያዎችን ልክ እንደ ተጠቃሚ በቀጥታ የሚያይበት ክፍል) -->
-        <div class="bg-slate-900 rounded-2xl border-2 border-dashed border-amber-500/40 p-6 relative overflow-hidden">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-800">
+        <!-- 2. LIVE MOVING AD PREVIEW (ሱፐር አድሚኑ የቀጥታ አንቀሳቃሽ ሰሌዳውን የሚያይበት) -->
+        <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-800">
                 <div>
-                    <div class="flex items-center space-x-2">
-                        <span class="flex h-2.5 w-2.5 relative">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                        </span>
-                        <h3 class="text-base font-bold text-white">የቀጥታ ማስታወቂያዎች ማሳያ (Live Ad Experience)</h3>
-                    </div>
-                    <p class="text-xs text-slate-400 mt-0.5">በአሁኑ ሰዓት ወላጆችና መምህራን በስልካቸው የሚያዩት የቀጥታ ማስታወቂያ ይህንን ይመስላል፡</p>
+                    <h3 class="text-base font-bold text-white flex items-center">
+                        <i class="fas fa-play-circle text-emerald-400 mr-2"></i>
+                        የቀጥታ አንቀሳቃሽ ሰሌዳ ቅኝት (Live Carousel Preview)
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-0.5">በአሁኑ ሰዓት ወላጆች፣ መምህራን እና አድሚኖች የሚያዩት ተንቀሳቃሽ ማስታወቂያ፡</p>
                 </div>
-                <span class="text-xs font-bold bg-amber-400/10 text-amber-400 border border-amber-400/30 px-3 py-1 rounded-xl">
-                    <i class="fas fa-mobile-alt mr-1.5"></i>የስልክ እይታ
+                <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full">
+                    <i class="fas fa-sync-alt fa-spin mr-1"></i>በየ 4.5 ሰከንድ ይንሸራተታል
                 </span>
             </div>
 
-            <!-- The Real Ads Rendered Exactly as Users See Them -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                <!-- Ad Sample 1: As seen by Parents -->
-                <div class="space-y-2">
-                    <span class="text-[11px] font-bold text-slate-400 flex items-center">
-                        <i class="fas fa-user-friends text-blue-400 mr-1.5"></i>በወላጆች ደብተር ላይ የሚታየው ማስታወቂያ፡
-                    </span>
-                    <div class="bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-amber-500/10 border-2 border-dashed border-amber-300 rounded-2xl p-4 shadow-sm relative overflow-hidden text-slate-900 bg-white">
-                        <span class="absolute top-2 right-2 text-[9px] font-extrabold uppercase bg-amber-200 text-amber-800 px-2 py-0.5 rounded">የስፖንሰር ማስታወቂያ</span>
-                        <div class="flex flex-col sm:flex-row items-center gap-4 mt-1">
-                            <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=200&auto=format&fit=crop&q=60" 
-                                 alt="Ad" class="w-20 h-20 rounded-xl object-cover shadow-sm">
-                            <div class="flex-1 text-center sm:text-left">
-                                <h4 class="text-sm font-bold text-slate-900">አቢሲንያ የልጆች የቁጠባ ሒሳብ</h4>
-                                <p class="text-xs text-slate-600 mt-1 leading-relaxed">የልጆን የወደፊት ተስፋ ዛሬውኑ በከፍተኛ የወለድ ተመን ያቅዱ። የመጀመሪያውን ደብተር በነፃ ያግኙ!</p>
-                                <div class="mt-2">
-                                    <a href="https://www.bankofabyssinia.com" target="_blank" class="inline-block text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 px-3 py-1.5 rounded-lg shadow-sm transition">
-                                        ይመዝገቡ (ይጎብኙ) <i class="fas fa-external-link-alt ml-1 text-[10px]"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Ad Sample 2: As seen by Teachers -->
-                <div class="space-y-2">
-                    <span class="text-[11px] font-bold text-slate-400 flex items-center">
-                        <i class="fas fa-chalkboard-teacher text-emerald-400 mr-1.5"></i>በመምህራን ዳሽቦርድ ላይ የሚታየው ባነር፡
-                    </span>
-                    <div class="bg-gradient-to-r from-emerald-600 to-teal-700 rounded-2xl p-4 text-white shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3 h-[120px]">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-xl shrink-0">
-                                <i class="fas fa-laptop"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-sm leading-tight">ለመምህራን በረጅም ጊዜ ክፍያ የሚሰጡ ላፕቶፖች!</h4>
-                                <p class="text-[11px] text-emerald-100 mt-1">በወር ከ 1,500 ብር ጀምሮ በኢትዮ ቴሌኮም እና በዳሸን ባንክ ትብብር የቀረበ።</p>
-                            </div>
-                        </div>
-                        <a href="#" class="whitespace-nowrap text-xs font-bold bg-white text-emerald-800 hover:bg-emerald-50 px-3 py-2 rounded-xl transition shadow shrink-0">
-                            ቅጹን ይሙሉ
-                        </a>
-                    </div>
-                </div>
-
-            </div>
+            <!-- Carousel Component Included directly -->
+            @include('partials.ad-slider', ['sliderId' => 'superadmin-preview'])
         </div>
 
-        <!-- 3. MASTER ADVERTISEMENT ENGINE & ANALYTICS -->
+        <!-- 3. AD CAMPAIGN MANAGEMENT TABLE (ኤዲት፣ ማጥፊያ፣ የጊዜ ገደብ መቆጣጠሪያ) -->
         <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-800">
                 <div>
-                    <div class="flex items-center space-x-2">
-                        <h3 class="text-base font-bold text-white flex items-center">
-                            <i class="fas fa-chart-line text-amber-400 mr-2"></i>
-                            የማስታወቂያዎች አፈጻጸም እና ገቢ (Ad Campaign Metrics)
-                        </h3>
-                    </div>
-                    <p class="text-xs text-slate-400 mt-0.5">በሁሉም አጋር ትምህርት ቤቶች ውስጥ ያሉ የማስታወቂያዎች ዝርዝር እና የክሊክ ምጣኔ</p>
+                    <h3 class="text-base font-bold text-white flex items-center">
+                        <i class="fas fa-tasks text-amber-400 mr-2"></i>
+                        የማስታወቂያዎች አስተዳደር (Edit, Replace & Scheduling)
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-0.5">ማስታወቂያዎችን ያርትዑ፣ በሌላ ይተኩ፣ የጊዜ ገደባቸውን ይወስኑ ወይም ያጥፉ</p>
                 </div>
                 <button onclick="openModal('ad-modal')" class="text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-1.5">
                     <i class="fas fa-plus"></i>
@@ -165,37 +114,66 @@
                 </button>
             </div>
 
-            <!-- Ad Stats Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-slate-950/80 rounded-xl border border-slate-800 p-4 flex flex-col justify-between space-y-3">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <h4 class="text-xs font-bold text-white">አቢሲንያ ባንክ - የህፃናት ቁጠባ</h4>
-                            <p class="text-[11px] text-slate-400">ዒላማ፡ ለሁሉም ት/ቤቶች ወላጆች</p>
-                        </div>
-                        <span class="text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full">ንቁ (Live)</span>
-                    </div>
-                    <div class="grid grid-cols-3 gap-2 bg-slate-900/60 p-2.5 rounded-lg text-center text-xs">
-                        <div><p class="text-[10px] text-slate-500">ዕይታ</p><b class="text-slate-200">68,400</b></div>
-                        <div><p class="text-[10px] text-slate-500">ክሊክ</p><b class="text-emerald-400">4,120 (6.0%)</b></div>
-                        <div><p class="text-[10px] text-slate-500">ቦታ</p><b class="text-indigo-400">In-Feed</b></div>
-                    </div>
-                </div>
+            <!-- Ad Management Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="text-slate-400 border-b border-slate-800 bg-slate-950/40">
+                            <th class="p-3">አስተዋዋቂ ድርጅት</th>
+                            <th class="p-3">የርዕስ ጽሁፍ</th>
+                            <th class="p-3">ዒላማ (Audience)</th>
+                            <th class="p-3">የጊዜ ገደብ (Duration)</th>
+                            <th class="p-3">ዕይታ/ክሊክ</th>
+                            <th class="p-3">ሁኔታ</th>
+                            <th class="p-3 text-right">እርምጃ (Actions)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ads-table-body" class="divide-y divide-slate-800 text-slate-300">
+                        
+                        <!-- Ad Row 1 -->
+                        <tr id="ad-row-1" class="hover:bg-slate-800/40 transition">
+                            <td class="p-3 font-bold text-white flex items-center space-x-2">
+                                <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=60&auto=format&fit=crop&q=60" class="w-7 h-7 rounded-lg object-cover">
+                                <span>የትምህርት ቁሳቁሶች አቅራቢ</span>
+                            </td>
+                            <td class="p-3 text-slate-200">የትምህርት ቁሳቁሶች እና መጻሕፍት 20% ቅናሽ</td>
+                            <td class="p-3"><span class="bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded font-semibold">ወላጆች</span></td>
+                            <td class="p-3 text-emerald-400 font-medium">እስከ ጥቅምት 30 (የተወሰነ)</td>
+                            <td class="p-3 font-semibold text-slate-300">68.4K / 4.1K</td>
+                            <td class="p-3"><span class="bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full text-[10px] font-bold">ንቁ</span></td>
+                            <td class="p-3 text-right space-x-2">
+                                <button onclick="editAd('የትምህርት ቁሳቁሶች አቅራቢ', 'የትምህርት ቁሳቁሶች እና መጻሕፍት 20% ቅናሽ')" class="text-indigo-400 hover:text-indigo-300 font-bold">
+                                    <i class="fas fa-edit mr-0.5"></i>አስተካክል
+                                </button>
+                                <button onclick="deleteAd('ad-row-1')" class="text-rose-400 hover:text-rose-300 font-bold">
+                                    <i class="fas fa-trash-alt mr-0.5"></i>ሰርዝ
+                                </button>
+                            </td>
+                        </tr>
 
-                <div class="bg-slate-950/80 rounded-xl border border-slate-800 p-4 flex flex-col justify-between space-y-3">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <h4 class="text-xs font-bold text-white">ኢትዮ ቴሌኮም - የመምህራን ላፕቶፕ</h4>
-                            <p class="text-[11px] text-slate-400">ዒላማ፡ ለሁሉም ት/ቤቶች መምህራን</p>
-                        </div>
-                        <span class="text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full">ንቁ (Live)</span>
-                    </div>
-                    <div class="grid grid-cols-3 gap-2 bg-slate-900/60 p-2.5 rounded-lg text-center text-xs">
-                        <div><p class="text-[10px] text-slate-500">ዕይታ</p><b class="text-slate-200">12,200</b></div>
-                        <div><p class="text-[10px] text-slate-500">ክሊክ</p><b class="text-emerald-400">1,890 (15.4%)</b></div>
-                        <div><p class="text-[10px] text-slate-500">ቦታ</p><b class="text-indigo-400">Top Banner</b></div>
-                    </div>
-                </div>
+                        <!-- Ad Row 2 -->
+                        <tr id="ad-row-2" class="hover:bg-slate-800/40 transition">
+                            <td class="p-3 font-bold text-white flex items-center space-x-2">
+                                <div class="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center"><i class="fas fa-piggy-bank"></i></div>
+                                <span>አዋሽ ባንክ (የልጆች ሒሳብ)</span>
+                            </td>
+                            <td class="p-3 text-slate-200">የልጆች የቁጠባ ሒሳብ በከፍተኛ ወለድ</td>
+                            <td class="p-3"><span class="bg-purple-500/20 text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded font-semibold">ሁሉንም</span></td>
+                            <td class="p-3 text-slate-400 font-medium">ያልተገደበ (ቋሚ ውል)</td>
+                            <td class="p-3 font-semibold text-slate-300">54.2K / 3.8K</td>
+                            <td class="p-3"><span class="bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full text-[10px] font-bold">ንቁ</span></td>
+                            <td class="p-3 text-right space-x-2">
+                                <button onclick="editAd('አዋሽ ባንክ', 'የልጆች የቁጠባ ሒሳብ በከፍተኛ ወለድ')" class="text-indigo-400 hover:text-indigo-300 font-bold">
+                                    <i class="fas fa-edit mr-0.5"></i>አስተካክል
+                                </button>
+                                <button onclick="deleteAd('ad-row-2')" class="text-rose-400 hover:text-rose-300 font-bold">
+                                    <i class="fas fa-trash-alt mr-0.5"></i>ሰርዝ
+                                </button>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -205,13 +183,13 @@
                 <div>
                     <h3 class="text-base font-bold text-white flex items-center">
                         <i class="fas fa-school text-indigo-400 mr-2"></i>
-                        አጋር ትምህርት ቤቶች እና የቁጥጥር ሰሌዳ (Partner Schools Control)
+                        አጋር ትምህርት ቤቶች (Partner Schools Control)
                     </h3>
                     <p class="text-xs text-slate-400 mt-0.5">ትምህርት ቤቶችን ማገድ (Suspend)፣ ማንቃት (Activate) እና የአድሚን ሊንካቸውን መቆጣጠሪያ</p>
                 </div>
                 <button onclick="openModal('school-modal')" class="text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-1.5">
                     <i class="fas fa-plus"></i>
-                    <span>አዲስ ት/ቤት መዝግብ (Add School)</span>
+                    <span>አዲስ ት/ቤት መዝግብ</span>
                 </button>
             </div>
 
@@ -225,12 +203,11 @@
                             <th class="p-3">ተማሪዎች</th>
                             <th class="p-3">የአድሚን ስልክ</th>
                             <th class="p-3">ሁኔታ (Status)</th>
-                            <th class="p-3">ማዕከላዊ ቁጥጥር (Control)</th>
+                            <th class="p-3">ማዕከላዊ ቁጥጥር</th>
                             <th class="p-3 text-right">የአድሚን መግቢያ ሊንክ</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-800 text-slate-300">
-                        <!-- School 1 -->
                         <tr id="school-row-1" class="hover:bg-slate-800/40 transition">
                             <td class="p-3 font-bold text-white flex items-center space-x-2">
                                 <span class="status-dot w-2 h-2 rounded-full bg-emerald-400"></span>
@@ -240,9 +217,7 @@
                             <td class="p-3 font-semibold">840</td>
                             <td class="p-3">0911223344</td>
                             <td class="p-3">
-                                <span class="status-badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                                    ንቁ (Active)
-                                </span>
+                                <span class="status-badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold">ንቁ (Active)</span>
                             </td>
                             <td class="p-3">
                                 <button onclick="toggleSchoolStatus(this, 'school-row-1', 'ብስራተ ገብርኤል ት/ቤት')" 
@@ -251,36 +226,7 @@
                                 </button>
                             </td>
                             <td class="p-3 text-right">
-                                <button onclick="copySchoolLink('BG-001')" 
-                                        class="text-xs bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white px-3 py-1.5 rounded-lg border border-indigo-500/30 transition">
-                                    <i class="fas fa-copy mr-1"></i>ሊንክ ቅዳ
-                                </button>
-                            </td>
-                        </tr>
-
-                        <!-- School 2 -->
-                        <tr id="school-row-2" class="hover:bg-slate-800/40 transition">
-                            <td class="p-3 font-bold text-white flex items-center space-x-2">
-                                <span class="status-dot w-2 h-2 rounded-full bg-emerald-400"></span>
-                                <span class="school-name">ፊውቸር ጄኔሬሽን አካዳሚ</span>
-                            </td>
-                            <td class="p-3 text-indigo-400 font-mono">FGA-002</td>
-                            <td class="p-3 font-semibold">1,250</td>
-                            <td class="p-3">0922334455</td>
-                            <td class="p-3">
-                                <span class="status-badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                                    ንቁ (Active)
-                                </span>
-                            </td>
-                            <td class="p-3">
-                                <button onclick="toggleSchoolStatus(this, 'school-row-2', 'ፊውቸር ጄኔሬሽን አካዳሚ')" 
-                                        class="toggle-btn text-[11px] font-bold px-2.5 py-1 rounded-lg border transition bg-rose-500/10 text-rose-400 border-rose-500/30 hover:bg-rose-500/20">
-                                    <i class="fas fa-ban mr-1"></i>እገድ (Suspend)
-                                </button>
-                            </td>
-                            <td class="p-3 text-right">
-                                <button onclick="copySchoolLink('FGA-002')" 
-                                        class="text-xs bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white px-3 py-1.5 rounded-lg border border-indigo-500/30 transition">
+                                <button onclick="copySchoolLink('BG-001')" class="text-xs bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white px-3 py-1.5 rounded-lg border border-indigo-500/30 transition">
                                     <i class="fas fa-copy mr-1"></i>ሊንክ ቅዳ
                                 </button>
                             </td>
@@ -294,81 +240,51 @@
 
     <!-- ==================== MODALS ==================== -->
 
-    <!-- 1. ADD PARTNER SCHOOL MODAL -->
-    <div id="school-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-slate-900 rounded-2xl max-w-md w-full p-6 border border-slate-800 shadow-2xl text-slate-100">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-                <h3 class="font-bold text-sm text-white flex items-center">
-                    <i class="fas fa-school text-indigo-400 mr-2"></i>
-                    አዲስ ት/ቤት መመዝገቢያ
-                </h3>
-                <button onclick="closeModal('school-modal')" class="text-slate-400 hover:text-white">✕</button>
-            </div>
-            <form action="#" onsubmit="event.preventDefault(); alert('አዲሱ ትምህርት ቤት ተመዝግቧል! የአድሚን ሊንኩ ተፈጥሯል።'); closeModal('school-modal');" class="my-4 space-y-3">
-                <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1">የትምህርት ቤቱ ሙሉ ስም</label>
-                    <input type="text" placeholder="ምሳሌ፡ ዳግማዊ ሚኒሊክ ት/ቤት" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">የመለያ ኮድ (School Code)</label>
-                        <input type="text" placeholder="DMN-004" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-indigo-400">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">ከተማ / አድራሻ</label>
-                        <input type="text" placeholder="አዲስ አበባ" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1">የት/ቤቱ ዋና አድሚን ስልክ ቁጥር</label>
-                    <input type="text" placeholder="09xxxxxxxx" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
-                </div>
-                <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow mt-2">
-                    ት/ቤቱን መዝግብ እና ሊንክ አመንጭ
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- 2. ADD GLOBAL AD MODAL -->
+    <!-- ADD / EDIT AD MODAL (ለአዲስም ለማስተካከያም የሚያገለግል) -->
     <div id="ad-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-slate-900 rounded-2xl max-w-md w-full p-6 border border-slate-800 shadow-2xl text-slate-100">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-                <h3 class="font-bold text-sm text-white flex items-center">
+                <h3 id="ad-modal-title" class="font-bold text-sm text-white flex items-center">
                     <i class="fas fa-ad text-amber-400 mr-2"></i>
-                    አዲስ ዓለም አቀፍ ማስታወቂያ ስቀል
+                    አዲስ ማስታወቂያ ስቀል / አስተካክል
                 </h3>
                 <button onclick="closeModal('ad-modal')" class="text-slate-400 hover:text-white">✕</button>
             </div>
-            <form action="#" onsubmit="event.preventDefault(); alert('ማስታወቂያው በሁሉም ት/ቤቶች ኔትወርክ ላይ ተለጥፏል!'); closeModal('ad-modal');" class="my-4 space-y-3">
+            <form action="#" onsubmit="event.preventDefault(); saveAd();" class="my-4 space-y-3">
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">አስተዋዋቂ ድርጅት</label>
-                    <input type="text" placeholder="ምሳሌ፡ አዋሽ ባንክ / ዩኒፎርም አቅራቢ" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                    <input type="text" id="ad-company" placeholder="ምሳሌ፡ አዋሽ ባንክ / ዩኒፎርም አቅራቢ" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1">የማስታወቂያው ርዕስ</label>
-                    <input type="text" placeholder="ምሳሌ፡ የ 20% የትምህርት ቁሳቁሶች ቅናሽ" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                    <label class="block text-xs font-bold text-slate-300 mb-1">የማስታወቂያው ርዕስ/ጽሁፍ (Headline)</label>
+                    <input type="text" id="ad-headline" placeholder="ምሳሌ፡ የ 20% የትምህርት ቁሳቁሶች ቅናሽ" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">የማስታወቂያው ቦታ</label>
-                        <select class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
-                            <option>In-Feed Native (በደብተር መሃል)</option>
-                            <option>Top Banner (ከላይ)</option>
-                            <option>Login Banner</option>
-                        </select>
-                    </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-300 mb-1">ዒላማ (Target Audience)</label>
                         <select class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
                             <option>ወላጆች በሙሉ</option>
                             <option>መምህራን በሙሉ</option>
+                            <option>የት/ቤት አድሚኖች</option>
                             <option>ለሁሉም ተጠቃሚዎች</option>
                         </select>
                     </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">የጊዜ ገደብ (Duration)</label>
+                        <select class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                            <option>ያልተገደበ (ቋሚ)</option>
+                            <option>ለ 1 ወር ብቻ</option>
+                            <option>ለ 3 ወራት</option>
+                            <option>ለ 1 ዓመት</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">ሲጫኑት የሚወስደው ሊንክ ወይም ስልክ</label>
+                    <input type="text" placeholder="https://... ወይም tel:09xxxxxxxx" class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
                 </div>
                 <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-500 shadow mt-2">
-                    በሁሉም ኔትወርክ ላይ አሰራጭ (Publish to All)
+                    ማስታወቂያውን አስቀምጥ / በአንቀሳቃሽ ሰሌዳው ላይ ለጥፍ
                 </button>
             </form>
         </div>
@@ -377,10 +293,29 @@
     <!-- Mela Solution Shared Footer -->
     @include('partials.footer')
 
-    <!-- Scripts -->
+    <!-- Scripts for CRUD -->
     <script>
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function deleteAd(rowId) {
+            if (confirm('እርግጠኛ ነዎት ይህ ማስታወቂያ ከሁሉም ት/ቤቶች ሰሌዳ ላይ እንዲነሳ ይፈልጋሉ?')) {
+                document.getElementById(rowId).remove();
+                alert('ማስታወቂያው በተሳካ ሁኔታ ተሰርዟል!');
+            }
+        }
+
+        function editAd(company, headline) {
+            document.getElementById('ad-modal-title').innerText = 'ማስታወቂያውን አስተካክል (Edit Ad)';
+            document.getElementById('ad-company').value = company;
+            document.getElementById('ad-headline').value = headline;
+            openModal('ad-modal');
+        }
+
+        function saveAd() {
+            alert('ማስታወቂያው ተስተካክሏል! በአንቀሳቃሽ ሰሌዳው ላይ ወዲያውኑ ስራ ጀምሯል።');
+            closeModal('ad-modal');
+        }
 
         function copySchoolLink(code) {
             navigator.clipboard.writeText('https://smart-debter-ethiopia.vercel.app/dashboard/admin?school=' + code);
@@ -393,28 +328,22 @@
             const dot = row.querySelector('.status-dot');
             const nameEl = row.querySelector('.school-name');
 
-            if (btn.innerText.includes('እገድ') || btn.innerText.includes('Suspend')) {
+            if (btn.innerText.includes('እገድ')) {
                 badge.className = 'status-badge bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold';
                 badge.innerText = 'የታገደ (Suspended)';
                 dot.className = 'status-dot w-2 h-2 rounded-full bg-rose-500';
                 nameEl.classList.add('line-through', 'text-slate-400');
-                row.classList.add('opacity-70');
-
                 btn.className = 'toggle-btn text-[11px] font-bold px-2.5 py-1 rounded-lg border transition bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20';
                 btn.innerHTML = '<i class="fas fa-check mr-1"></i>አንቃ (Activate)';
-
-                alert('⚠️ ' + schoolName + ' አገልግሎቱ ወዲያውኑ ታግዷል! የአድሚንና የመምህራን መግቢያ ተዘግቷል።');
+                alert('⚠️ ' + schoolName + ' አገልግሎቱ ታግዷል!');
             } else {
                 badge.className = 'status-badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold';
                 badge.innerText = 'ንቁ (Active)';
                 dot.className = 'status-dot w-2 h-2 rounded-full bg-emerald-400';
                 nameEl.classList.remove('line-through', 'text-slate-400');
-                row.classList.remove('opacity-70');
-
                 btn.className = 'toggle-btn text-[11px] font-bold px-2.5 py-1 rounded-lg border transition bg-rose-500/10 text-rose-400 border-rose-500/30 hover:bg-rose-500/20';
                 btn.innerHTML = '<i class="fas fa-ban mr-1"></i>እገድ (Suspend)';
-
-                alert('✅ ' + schoolName + ' አገልግሎቱ በተሳካ ሁኔታ ነቅቷል!');
+                alert('✅ ' + schoolName + ' አገልግሎቱ ነቅቷል!');
             }
         }
     </script>
