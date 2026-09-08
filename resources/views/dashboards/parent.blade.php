@@ -190,7 +190,8 @@
         </div>
 
     </main>
-
+<!-- Mela Solution Shared Footer -->
+    @include('partials.footer')
     <!-- PWA & Signature Scripts -->
     <script>
         // 1. Service Worker Registration
