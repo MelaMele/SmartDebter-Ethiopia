@@ -102,7 +102,24 @@
             </div>
         </div>
 
-        <!-- 2. STUDENT & CLASS MANAGEMENT ACTION BAR -->
+        <!-- 2. SPONSORED BANNER FOR SCHOOL ADMINS (ለት/ቤት ባለቤቶችና አድሚኖች የሚታይ ማስታወቂያ) -->
+        <div class="bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 rounded-2xl p-4 sm:p-5 text-white shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 border border-purple-800/40 relative overflow-hidden">
+            <span class="absolute top-2 right-2 text-[9px] font-bold bg-amber-400 text-slate-950 px-2 py-0.5 rounded uppercase">ስፖንሰር የተደረገ</span>
+            <div class="flex items-center space-x-3.5">
+                <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-2xl text-amber-400 shrink-0">
+                    <i class="fas fa-bus"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm sm:text-base text-white">ለትምህርት ቤቶች የተዘጋጁ ዘመናዊ ሰርቪስ አውቶቡሶች (School Buses)!</h4>
+                    <p class="text-xs text-purple-200 mt-0.5 leading-relaxed">በ 30% ቅድመ ክፍያ ብቻ በቀሪው በረጅም ጊዜ ብድር ከሞኤንኮ (MOENCO) በትብብር የቀረበ።</p>
+                </div>
+            </div>
+            <a href="#" class="whitespace-nowrap text-xs font-bold bg-amber-400 hover:bg-amber-300 text-slate-950 px-4 py-2.5 rounded-xl transition shadow shrink-0">
+                ዋጋ እና ዝርዝር እይ <i class="fas fa-arrow-right ml-1"></i>
+            </a>
+        </div>
+
+        <!-- 3. STUDENT & CLASS MANAGEMENT ACTION BAR -->
         <div class="bg-white rounded-2xl border shadow-sm p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
                 <h3 class="text-sm font-bold text-slate-900 flex items-center">
@@ -130,7 +147,7 @@
             </div>
         </div>
 
-        <!-- 3. TEACHER CLASSROOM ASSIGNMENT & LINK GENERATOR -->
+        <!-- 4. TEACHER CLASSROOM ASSIGNMENT & LINK GENERATOR -->
         <div class="bg-white rounded-2xl border shadow-sm p-6">
             <div class="flex items-center justify-between mb-4 pb-3 border-b">
                 <div>
@@ -195,7 +212,7 @@
             </div>
         </div>
 
-        <!-- 4. SCHOOL INTERNAL ANNOUNCEMENTS (የት/ቤቱ የውስጥ ማስታወቂያዎች ብቻ) -->
+        <!-- 5. SCHOOL INTERNAL ANNOUNCEMENTS -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             
             <!-- Send School Announcement -->
@@ -223,7 +240,7 @@
                 </form>
             </div>
 
-            <!-- Recent Internal Circulars & Classroom Activity -->
+            <!-- Recent Internal Circulars -->
             <div class="bg-white rounded-2xl border shadow-sm p-5 md:col-span-2 flex flex-col justify-between">
                 <div>
                     <h3 class="text-sm font-bold text-slate-900 mb-3 flex items-center justify-between">
