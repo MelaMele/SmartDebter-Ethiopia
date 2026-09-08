@@ -103,7 +103,70 @@
                 <span class="text-[10px] text-slate-500">የወላጆች የዕለት ምላሽ ምጣኔ</span>
             </div>
         </div>
+<!-- TEACHER CLASSROOM ASSIGNMENT & LINK GENERATOR (መምህራንን በክፍል መመደቢያ እና ሊንክ ማመንጫ) -->
+        <div class="bg-white rounded-2xl border shadow-sm p-6">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900 flex items-center">
+                        <i class="fas fa-link text-emerald-600 mr-2"></i>
+                        የመምህራን የክፍል ምደባ እና የመግቢያ ሊንክ (Teacher Invite Link)
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">ለመምህራን የተመደቡበትን ክፍል ብቻ እንዲያገኙ ይህንን ሊንክ በ Telegram/SMS ይላኩላቸው።</p>
+                </div>
+                <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
+                    የተጠበቀ አሰራር
+                </span>
+            </div>
 
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Teacher 1 -->
+                <div class="p-4 bg-slate-50 rounded-xl border flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-slate-900">መምህር አለሙ ተሾመ</span>
+                            <span class="text-[10px] font-bold bg-purple-100 text-purple-700 px-2 py-0.5 rounded">ክፍል 7-B</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mb-3">የ 36 ተማሪዎች የቤት ስራ እና ባህሪ ብቻ ማስተዳደር ይችላሉ።</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="text" readonly value="https://smart-debter-ethiopia.vercel.app/teacher/entry?class=7-B&name=መምህር+አለሙ" 
+                               class="text-[10px] bg-white border p-1.5 rounded flex-1 text-slate-600 select-all">
+                        <button onclick="navigator.clipboard.writeText('https://smart-debter-ethiopia.vercel.app/teacher/entry?class=7-B&name=መምህር+አለሙ'); alert('ሊንኩ ተገልብጧል! ለመምህሩ ይላኩለት።')" 
+                                class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1.5 rounded transition">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Teacher 2 -->
+                <div class="p-4 bg-slate-50 rounded-xl border flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-slate-900">መምህርት ትዕግስት በቀለ</span>
+                            <span class="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded">ክፍል 3-A</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mb-3">የ 30 ተማሪዎች የቤት ስራ እና ባህሪ ብቻ ማስተዳደር ይችላሉ።</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="text" readonly value="https://smart-debter-ethiopia.vercel.app/teacher/entry?class=3-A&name=መምህርት+ትዕግስት" 
+                               class="text-[10px] bg-white border p-1.5 rounded flex-1 text-slate-600 select-all">
+                        <button onclick="navigator.clipboard.writeText('https://smart-debter-ethiopia.vercel.app/teacher/entry?class=3-A&name=መምህርት+ትዕግስት'); alert('ሊንኩ ተገልብጧል! ለመምህሯ ይላኩላት።')" 
+                                class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1.5 rounded transition">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Add New Teacher Assignment -->
+                <div class="p-4 border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center text-center">
+                    <div class="w-8 h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-sm mb-2">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <span class="text-xs font-bold text-slate-800">አዲስ መምህር በክፍል መድብ</span>
+                    <p class="text-[10px] text-slate-500 mt-1">መምህር እና ክፍል መርጠው ሊንክ ያመንጩ</p>
+                </div>
+            </div>
+        </div>
         <!-- 2. ADVERTISEMENT MANAGEMENT SECTION -->
         <div class="bg-white rounded-2xl border shadow-sm p-6">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b">
