@@ -200,7 +200,8 @@
         </div>
 
     </main>
-
+<!-- Mela Solution Shared Footer -->
+    @include('partials.footer')
     <!-- PWA Script -->
     <script>
         if ('serviceWorker' in navigator) {
