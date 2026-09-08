@@ -48,7 +48,7 @@
                     <i class="fas fa-school text-indigo-400"></i>
                 </div>
                 <h3 class="text-3xl font-black text-white">12</h3>
-                <span class="text-[10px] text-emerald-400 font-medium">ሁሉም ንቁ ናቸው</span>
+                <span class="text-[10px] text-emerald-400 font-medium">11 ንቁ • 1 የታገደ</span>
             </div>
 
             <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm">
@@ -79,7 +79,7 @@
             </div>
         </div>
 
-        <!-- 2. MASTER ADVERTISEMENT ENGINE (ዓለም አቀፍ የማስታወቂያ ሰሌዳ) -->
+        <!-- 2. MASTER ADVERTISEMENT ENGINE -->
         <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-800">
                 <div>
@@ -100,7 +100,6 @@
 
             <!-- Active Campaigns Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Ad Card 1 -->
                 <div class="bg-slate-950/80 rounded-xl border border-slate-800 p-4 flex flex-col justify-between space-y-3">
                     <div class="flex items-start justify-between">
                         <div class="flex items-center space-x-3">
@@ -120,7 +119,6 @@
                     </div>
                 </div>
 
-                <!-- Ad Card 2 -->
                 <div class="bg-slate-950/80 rounded-xl border border-slate-800 p-4 flex flex-col justify-between space-y-3">
                     <div class="flex items-start justify-between">
                         <div class="flex items-center space-x-3">
@@ -143,15 +141,15 @@
             </div>
         </div>
 
-        <!-- 3. PARTNER SCHOOLS MANAGEMENT (የት/ቤቶች አስተዳደር እና የአድሚን ሊንክ ማመንጫ) -->
+        <!-- 3. PARTNER SCHOOLS MANAGEMENT (ከነ ማገድ እና ማንቃት ቁልፍ) -->
         <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-800">
                 <div>
                     <h3 class="text-base font-bold text-white flex items-center">
                         <i class="fas fa-school text-indigo-400 mr-2"></i>
-                        አጋር ትምህርት ቤቶች (Partner Schools Network)
+                        አጋር ትምህርት ቤቶች እና የቁጥጥር ሰሌዳ (Partner Schools Control)
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">አዲስ ት/ቤት ሲመጣ እዚህ ይመዝግቡ፤ የመግቢያ የአድሚን ሊንካቸውን ያመንጩ</p>
+                    <p class="text-xs text-slate-400 mt-0.5">ትምህርት ቤቶችን ማገድ (Suspend)፣ ማንቃት (Activate) እና የአድሚን ሊንካቸውን መቆጣጠሪያ</p>
                 </div>
                 <button onclick="openModal('school-modal')" class="text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-1.5">
                     <i class="fas fa-plus"></i>
@@ -169,49 +167,94 @@
                             <th class="p-3">ተማሪዎች</th>
                             <th class="p-3">የአድሚን ስልክ</th>
                             <th class="p-3">ሁኔታ (Status)</th>
-                            <th class="p-3 text-right">የአድሚን መግቢያ ሊንክ (Magic Link)</th>
+                            <th class="p-3">ማዕከላዊ ቁጥጥር (Control)</th>
+                            <th class="p-3 text-right">የአድሚን መግቢያ ሊንክ</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-800 text-slate-300">
-                        <!-- School 1 -->
-                        <tr class="hover:bg-slate-800/40 transition">
+                        
+                        <!-- School 1 (Active) -->
+                        <tr id="school-row-1" class="hover:bg-slate-800/40 transition">
                             <td class="p-3 font-bold text-white flex items-center space-x-2">
-                                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                                <span>ብስራተ ገብርኤል ት/ቤት</span>
+                                <span class="status-dot w-2 h-2 rounded-full bg-emerald-400"></span>
+                                <span class="school-name">ብስራተ ገብርኤል ት/ቤት</span>
                             </td>
                             <td class="p-3 text-indigo-400 font-mono">BG-001</td>
                             <td class="p-3 font-semibold">840</td>
                             <td class="p-3">0911223344</td>
                             <td class="p-3">
-                                <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold">ንቁ (Active)</span>
+                                <span class="status-badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold">
+                                    ንቁ (Active)
+                                </span>
+                            </td>
+                            <td class="p-3">
+                                <!-- Suspend / Activate Toggle Button -->
+                                <button onclick="toggleSchoolStatus(this, 'school-row-1', 'ብስራተ ገብርኤል ት/ቤት')" 
+                                        class="toggle-btn text-[11px] font-bold px-2.5 py-1 rounded-lg border transition bg-rose-500/10 text-rose-400 border-rose-500/30 hover:bg-rose-500/20">
+                                    <i class="fas fa-ban mr-1"></i>እገድ (Suspend)
+                                </button>
                             </td>
                             <td class="p-3 text-right">
-                                <button onclick="navigator.clipboard.writeText('https://smart-debter-ethiopia.vercel.app/dashboard/admin?school=BG-001'); alert('የት/ቤቱ የአድሚን ሊንክ ተገልብጧል!')" 
+                                <button onclick="copySchoolLink('BG-001')" 
                                         class="text-xs bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white px-3 py-1.5 rounded-lg border border-indigo-500/30 transition">
-                                    <i class="fas fa-copy mr-1"></i>የአድሚን ሊንክ ቅዳ
+                                    <i class="fas fa-copy mr-1"></i>ሊንክ ቅዳ
                                 </button>
                             </td>
                         </tr>
 
-                        <!-- School 2 -->
-                        <tr class="hover:bg-slate-800/40 transition">
+                        <!-- School 2 (Active) -->
+                        <tr id="school-row-2" class="hover:bg-slate-800/40 transition">
                             <td class="p-3 font-bold text-white flex items-center space-x-2">
-                                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                                <span>ፊውቸር ጄኔሬሽን አካዳሚ</span>
+                                <span class="status-dot w-2 h-2 rounded-full bg-emerald-400"></span>
+                                <span class="school-name">ፊውቸር ጄኔሬሽን አካዳሚ</span>
                             </td>
                             <td class="p-3 text-indigo-400 font-mono">FGA-002</td>
                             <td class="p-3 font-semibold">1,250</td>
                             <td class="p-3">0922334455</td>
                             <td class="p-3">
-                                <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold">ንቁ (Active)</span>
+                                <span class="status-badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold">
+                                    ንቁ (Active)
+                                </span>
+                            </td>
+                            <td class="p-3">
+                                <button onclick="toggleSchoolStatus(this, 'school-row-2', 'ፊውቸር ጄኔሬሽን አካዳሚ')" 
+                                        class="toggle-btn text-[11px] font-bold px-2.5 py-1 rounded-lg border transition bg-rose-500/10 text-rose-400 border-rose-500/30 hover:bg-rose-500/20">
+                                    <i class="fas fa-ban mr-1"></i>እገድ (Suspend)
+                                </button>
                             </td>
                             <td class="p-3 text-right">
-                                <button onclick="navigator.clipboard.writeText('https://smart-debter-ethiopia.vercel.app/dashboard/admin?school=FGA-002'); alert('የት/ቤቱ የአድሚን ሊንክ ተገልብጧል!')" 
+                                <button onclick="copySchoolLink('FGA-002')" 
                                         class="text-xs bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white px-3 py-1.5 rounded-lg border border-indigo-500/30 transition">
-                                    <i class="fas fa-copy mr-1"></i>የአድሚን ሊንክ ቅዳ
+                                    <i class="fas fa-copy mr-1"></i>ሊንክ ቅዳ
                                 </button>
                             </td>
                         </tr>
+
+                        <!-- School 3 (Pre-Suspended Demo) -->
+                        <tr id="school-row-3" class="hover:bg-slate-800/40 transition opacity-70">
+                            <td class="p-3 font-bold text-slate-400 flex items-center space-x-2">
+                                <span class="status-dot w-2 h-2 rounded-full bg-rose-500"></span>
+                                <span class="school-name line-through">አንድነት ኢንተርናሽናል</span>
+                            </td>
+                            <td class="p-3 text-slate-500 font-mono">AND-003</td>
+                            <td class="p-3 font-semibold text-slate-500">420</td>
+                            <td class="p-3 text-slate-500">0933445566</td>
+                            <td class="p-3">
+                                <span class="status-badge bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold">
+                                    የታገደ (Suspended)
+                                </span>
+                            </td>
+                            <td class="p-3">
+                                <button onclick="toggleSchoolStatus(this, 'school-row-3', 'አንድነት ኢንተርናሽናል')" 
+                                        class="toggle-btn text-[11px] font-bold px-2.5 py-1 rounded-lg border transition bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20">
+                                    <i class="fas fa-check mr-1"></i>አንቃ (Activate)
+                                </button>
+                            </td>
+                            <td class="p-3 text-right">
+                                <span class="text-[10px] text-rose-400 italic">አገልግሎቱ ቆሟል</span>
+                            </td>
+                        </tr>
+
                     </tbody>
                 </table>
             </div>
@@ -239,7 +282,7 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-300 mb-1">የመለያ ኮድ (School Code)</label>
-                        <input type="text" placeholder="DMN-003" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-indigo-400">
+                        <input type="text" placeholder="DMN-004" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-indigo-400">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-300 mb-1">ከተማ / አድራሻ</label>
@@ -294,10 +337,6 @@
                         </select>
                     </div>
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1">የማስታወቂያ ምስል (Banner URL / File)</label>
-                    <input type="file" class="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-500/20 file:text-amber-300">
-                </div>
                 <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-500 shadow mt-2">
                     በሁሉም ኔትወርክ ላይ አሰራጭ (Publish to All)
                 </button>
@@ -308,10 +347,49 @@
     <!-- Mela Solution Shared Footer -->
     @include('partials.footer')
 
-    <!-- Scripts -->
+    <!-- Scripts for Instant Suspension & Activation -->
     <script>
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function copySchoolLink(code) {
+            navigator.clipboard.writeText('https://smart-debter-ethiopia.vercel.app/dashboard/admin?school=' + code);
+            alert('የትምህርት ቤቱ የአድሚን ሊንክ ተገልብጧል!');
+        }
+
+        // ONE-CLICK SUSPEND / ACTIVATE FUNCTION
+        function toggleSchoolStatus(btn, rowId, schoolName) {
+            const row = document.getElementById(rowId);
+            const badge = row.querySelector('.status-badge');
+            const dot = row.querySelector('.status-dot');
+            const nameEl = row.querySelector('.school-name');
+
+            if (btn.innerText.includes('እገድ') || btn.innerText.includes('Suspend')) {
+                // SUSPEND ACTION
+                badge.className = 'status-badge bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold';
+                badge.innerText = 'የታገደ (Suspended)';
+                dot.className = 'status-dot w-2 h-2 rounded-full bg-rose-500';
+                nameEl.classList.add('line-through', 'text-slate-400');
+                row.classList.add('opacity-70');
+
+                btn.className = 'toggle-btn text-[11px] font-bold px-2.5 py-1 rounded-lg border transition bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20';
+                btn.innerHTML = '<i class="fas fa-check mr-1"></i>አንቃ (Activate)';
+
+                alert('⚠️ ' + schoolName + ' አገልግሎቱ ወዲያውኑ ታግዷል! የአድሚንና የመምህራን መግቢያ ተዘግቷል።');
+            } else {
+                // ACTIVATE ACTION
+                badge.className = 'status-badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold';
+                badge.innerText = 'ንቁ (Active)';
+                dot.className = 'status-dot w-2 h-2 rounded-full bg-emerald-400';
+                nameEl.classList.remove('line-through', 'text-slate-400');
+                row.classList.remove('opacity-70');
+
+                btn.className = 'toggle-btn text-[11px] font-bold px-2.5 py-1 rounded-lg border transition bg-rose-500/10 text-rose-400 border-rose-500/30 hover:bg-rose-500/20';
+                btn.innerHTML = '<i class="fas fa-ban mr-1"></i>እገድ (Suspend)';
+
+                alert('✅ ' + schoolName + ' አገልግሎቱ በተሳካ ሁኔታ ነቅቷል!');
+            }
+        }
     </script>
 
 </body>
