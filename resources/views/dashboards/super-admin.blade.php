@@ -116,11 +116,11 @@
                         <i class="fas fa-tasks text-amber-400 mr-2"></i>
                         የማስታወቂያዎች አስተዳደር (Ad Campaigns)
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">አዳዲስ ማስታወቂያዎችን (ሙሉ ፖስተር ወይም ጽሁፍ) እዚህ ይስቀሉ</p>
+                    <p class="text-xs text-slate-400 mt-0.5">ማስታወቂያዎችን በቀጥታ ከስልክዎ ወይም ከኮምፒውተርዎ Upload ያድርጉ</p>
                 </div>
                 <button onclick="openModal('ad-modal')" class="text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-1.5">
-                    <i class="fas fa-plus"></i>
-                    <span>አዲስ ማስታወቂያ ስቀል</span>
+                    <i class="fas fa-upload"></i>
+                    <span>አዲስ ፖስተር ጫን (Upload Ad)</span>
                 </button>
             </div>
 
@@ -129,7 +129,7 @@
                     <thead>
                         <tr class="text-slate-400 border-b border-slate-800 bg-slate-950/40">
                             <th class="p-3">አስተዋዋቂ ድርጅት</th>
-                            <th class="p-3">የርዕስ ጽሁፍ</th>
+                            <th class="p-3">የተሰቀለው ፖስተር</th>
                             <th class="p-3">ዒላማ</th>
                             <th class="p-3">የጊዜ ገደብ</th>
                             <th class="p-3">ሁኔታ</th>
@@ -140,7 +140,9 @@
                         @forelse($ads as $ad)
                             <tr class="hover:bg-slate-800/40 transition">
                                 <td class="p-3 font-bold text-white">{{ $ad->company_name }}</td>
-                                <td class="p-3 text-slate-200">{{ $ad->title }}</td>
+                                <td class="p-3">
+                                    <img src="{{ $ad->image_url }}" alt="Ad Banner" class="w-16 h-9 object-cover rounded-lg border border-slate-700">
+                                </td>
                                 <td class="p-3"><span class="bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded font-semibold">{{ $ad->target_audience }}</span></td>
                                 <td class="p-3 text-emerald-400 font-medium">{{ $ad->duration }}</td>
                                 <td class="p-3"><span class="bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full text-[10px] font-bold">ንቁ</span></td>
@@ -157,8 +159,8 @@
                         @empty
                             <tr>
                                 <td colspan="6" class="p-8 text-center text-slate-500">
-                                    <i class="fas fa-ad text-3xl mb-2 text-slate-700 block"></i>
-                                    እስካሁን በዳታቤዙ ውስጥ የተሰቀለ ማስታወቂያ የለም። "አዲስ ማስታወቂያ ስቀል" የሚለውን ነክተው የመጀመሪያውን ማስታወቂያ ይለጥፉ።
+                                    <i class="fas fa-upload text-3xl mb-2 text-slate-700 block"></i>
+                                    እስካሁን የተሰቀለ ማስታወቂያ የለም። "አዲስ ፖስተር ጫን" የሚለውን ነክተው የመጀመሪያውን ማስታወቂያ ይስቀሉ።
                                 </td>
                             </tr>
                         @endforelse
@@ -281,75 +283,58 @@
         </div>
     </div>
 
-    <!-- 2. ADD / EDIT AD MODAL (ከነ 2ቱ የማስታወቂያ ቅርጾች ጋር) -->
+    <!-- 2. DIRECT FILE UPLOAD AD MODAL (በቀጥታ ከስልክ/ኮምፒውተር ፎቶ መርጦ መጫኛ) -->
     <div id="ad-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-slate-900 rounded-2xl max-w-md w-full p-6 border border-slate-800 shadow-2xl text-slate-100">
+        <div class="bg-slate-900 rounded-2xl max-w-md w-full p-6 border border-slate-800 shadow-2xl text-slate-100 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
                 <h3 class="font-bold text-sm text-white flex items-center">
-                    <i class="fas fa-ad text-amber-400 mr-2"></i>
-                    አዲስ ማስታወቂያ ስቀል
+                    <i class="fas fa-upload text-amber-400 mr-2"></i>
+                    ማስታወቂያ ከስልክዎ / ኮምፒውተርዎ ይጫኑ
                 </h3>
                 <button onclick="closeModal('ad-modal')" class="text-slate-400 hover:text-white">✕</button>
             </div>
 
-            <!-- AD FORMAT SELECTOR -->
-            <div class="my-4">
-                <label class="block text-xs font-bold text-slate-300 mb-2">የማስታወቂያው ቅርጽ ይምረጡ፡</label>
-                <div class="grid grid-cols-2 gap-2">
-                    <button type="button" onclick="setAdFormat('full_banner')" id="btn-format-full" 
-                            class="p-2.5 rounded-xl border-2 border-amber-400 bg-amber-400/10 text-amber-300 text-xs font-bold text-left transition flex items-center space-x-2">
-                        <i class="fas fa-image text-base"></i>
-                        <div>
-                            <p class="leading-tight">ሙሉ ፖስተር / ባነር</p>
-                            <p class="text-[9px] text-slate-400 font-normal">ድርጅቱ ያዘጋጀው ሙሉ ዲዛይን</p>
-                        </div>
-                    </button>
-
-                    <button type="button" onclick="setAdFormat('template')" id="btn-format-template" 
-                            class="p-2.5 rounded-xl border border-slate-700 bg-slate-950 text-slate-400 text-xs font-bold text-left transition flex items-center space-x-2">
-                        <i class="fas fa-file-alt text-base"></i>
-                        <div>
-                            <p class="leading-tight">ጽሁፍና ምስል</p>
-                            <p class="text-[9px] text-slate-500 font-normal">መደበኛ ቴምፕሌት</p>
-                        </div>
-                    </button>
-                </div>
-            </div>
-
-            <form action="/super-admin/ads/store" method="POST" class="space-y-3">
+            <form action="/super-admin/ads/store" method="POST" class="my-4 space-y-3" onsubmit="return validateAdForm();">
                 @csrf
-                <input type="hidden" name="ad_type" id="ad-type-input" value="full_banner">
+                <!-- Base64 Stored Image -->
+                <input type="hidden" name="image_base64" id="image-base64-input">
 
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">አስተዋዋቂ ድርጅት</label>
                     <input type="text" name="company_name" placeholder="ምሳሌ፡ አቢሲንያ ባንክ" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
                 </div>
 
-                <div id="template-fields" class="hidden space-y-3">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">የማስታወቂያው ርዕስ/ጽሁፍ</label>
-                        <input type="text" name="title" id="ad-title-input" placeholder="ምሳሌ፡ የ 20% የትምህርት ቁሳቁሶች ቅናሽ" class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                <!-- DIRECT FILE UPLOADER DROPZONE -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">የማስታወቂያው ፖስተር / ባነር ይምረጡ</label>
+                    <div class="border-2 border-dashed border-amber-400/50 bg-amber-400/5 hover:bg-amber-400/10 rounded-2xl p-5 text-center cursor-pointer transition"
+                         onclick="document.getElementById('ad-file-upload').click()">
+                        <i class="fas fa-cloud-upload-alt text-3xl text-amber-400 mb-2"></i>
+                        <p class="text-xs font-bold text-white">ፎቶውን ከስልክዎ ወይም ኮምፒውተርዎ ይምረጡ</p>
+                        <p class="text-[10px] text-slate-400 mt-1">PNG, JPG, JPEG (Landscape ባነር ይመረጣል)</p>
+                        <input type="file" id="ad-file-upload" accept="image/*" class="hidden" onchange="previewSelectedAd(this)">
+                    </div>
+
+                    <!-- Instant Image Preview Box -->
+                    <div id="image-preview-wrapper" class="hidden mt-3 p-2 bg-slate-950 rounded-xl border border-slate-800 text-center">
+                        <p class="text-[10px] text-emerald-400 font-bold mb-1">✅ ፖስተሩ ተመርጧል (ቅድመ-እይታ)፡</p>
+                        <img id="image-preview-tag" src="#" class="w-full h-28 object-cover rounded-lg border border-slate-700">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1" id="image-label">የፖስተሩ ምስል ሊንክ (Poster Image URL)</label>
-                    <input type="url" name="image_url" placeholder="https://..." required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white font-mono">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1">ሲነካ የሚወስደው ሊንክ ወይም ስልክ</label>
-                    <input type="text" name="target_url" placeholder="https://... ወይም tel:09xxxxxxxx" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white font-mono">
+                    <label class="block text-xs font-bold text-slate-300 mb-1">ፖስተሩ ሲነካ የሚወስደው ሊንክ ወይም ስልክ</label>
+                    <input type="text" name="target_url" placeholder="https://t.me/... ወይም tel:09xxxxxxxx" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white font-mono">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-300 mb-1">ዒላማ</label>
                         <select name="target_audience" class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                            <option value="ለሁሉም ተጠቃሚዎች">ለሁሉም ተጠቃሚዎች</option>
                             <option value="ወላጆች በሙሉ">ወላጆች በሙሉ</option>
                             <option value="መምህራን በሙሉ">መምህራን በሙሉ</option>
                             <option value="የት/ቤት አድሚኖች">የት/ቤት አድሚኖች</option>
-                            <option value="ለሁሉም ተጠቃሚዎች">ለሁሉም ተጠቃሚዎች</option>
                         </select>
                     </div>
                     <div>
@@ -364,7 +349,7 @@
                 </div>
 
                 <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-500 shadow mt-2">
-                    ማስታወቂያውን በአንቀሳቃሽ ሰሌዳው ላይ ለጥፍ
+                    ፖስተሩን ዳታቤዝ ላይ ስቀል እና ለጥፍ
                 </button>
             </form>
         </div>
@@ -378,24 +363,32 @@
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-        function setAdFormat(format) {
-            document.getElementById('ad-type-input').value = format;
-            const btnFull = document.getElementById('btn-format-full');
-            const btnTemplate = document.getElementById('btn-format-template');
-            const templateFields = document.getElementById('template-fields');
-            const imageLabel = document.getElementById('image-label');
+        // FILE PREVIEW & BASE64 CONVERTER
+        function previewSelectedAd(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
 
-            if (format === 'full_banner') {
-                btnFull.className = 'p-2.5 rounded-xl border-2 border-amber-400 bg-amber-400/10 text-amber-300 text-xs font-bold text-left transition flex items-center space-x-2';
-                btnTemplate.className = 'p-2.5 rounded-xl border border-slate-700 bg-slate-950 text-slate-400 text-xs font-bold text-left transition flex items-center space-x-2';
-                templateFields.classList.add('hidden');
-                imageLabel.innerText = 'የፖስተሩ ምስል ሊንክ (Poster Image URL)';
-            } else {
-                btnTemplate.className = 'p-2.5 rounded-xl border-2 border-amber-400 bg-amber-400/10 text-amber-300 text-xs font-bold text-left transition flex items-center space-x-2';
-                btnFull.className = 'p-2.5 rounded-xl border border-slate-700 bg-slate-950 text-slate-400 text-xs font-bold text-left transition flex items-center space-x-2';
-                templateFields.classList.remove('hidden');
-                imageLabel.innerText = 'የማስታወቂያው አዶ/ፎቶ ሊንክ (Icon/Image URL)';
+                reader.onload = function(e) {
+                    // Set base64 string
+                    document.getElementById('image-base64-input').value = e.target.result;
+
+                    // Show preview
+                    document.getElementById('image-preview-tag').src = e.target.result;
+                    document.getElementById('image-preview-wrapper').classList.remove('hidden');
+                };
+
+                reader.readAsDataURL(file);
             }
+        }
+
+        function validateAdForm() {
+            const base64 = document.getElementById('image-base64-input').value;
+            if (!base64) {
+                alert('እባክዎ መጀመሪያ የፖስተር ፎቶ ይምረጡ!');
+                return false;
+            }
+            return true;
         }
     </script>
 
