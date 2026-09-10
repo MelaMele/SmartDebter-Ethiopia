@@ -17,30 +17,41 @@ Route::get('/login', function () {
     return view('login');
 });
 
-// 3. Parent Login Verification
+// 3. Parent Login Verification (በስልክ ቁጥር እና በተማሪ መለያ ID ያረጋግጣል)
 Route::post('/parent/verify', function (Request $request) {
-    $phone = $request->input('phone');
+    $phone = trim($request->input('phone'));
+    $studentCode = trim($request->input('student_code'));
+    $schoolCode = $request->input('school_code');
 
+    // 1. ከ Clever Cloud MySQL ዳታቤዝ ተማሪውን እና ወላጁን መፈለግ
     $student = DB::table('students')
         ->join('parent_student', 'students.id', '=', 'parent_student.student_id')
         ->join('users', 'users.id', '=', 'parent_student.parent_id')
         ->where('users.phone', $phone)
+        ->where('students.student_id_number', $studentCode)
         ->select('students.*', 'users.name as parent_name')
         ->first();
 
-    if ($student) {
-        $parent = [
-            'name' => $student->parent_name,
-            'children' => [
-                ['name' => $student->first_name . ' ' . $student->last_name, 'grade' => 'ክፍል ' . $student->classroom_id]
-            ]
-        ];
-    } else {
-        $parent = [
-            'name' => 'የተማሪ ወላጅ',
-            'children' => [['name' => 'ተማሪ', 'grade' => 'ክፍል 7-B']]
+    // 2. ለሙከራ (Fallback Demo) የሚሆን ፍተሻ
+    if (!$student && ($phone === '0911000000' && ($studentCode === '1001' || $studentCode === 'BG-1001' || $studentCode === '123456'))) {
+        $student = (object)[
+            'first_name' => 'ዮናስ',
+            'last_name' => 'ዳዊት',
+            'classroom_id' => '7-B',
+            'parent_name' => 'አቶ ዳዊት በቀለ'
         ];
     }
+
+    if (!$student) {
+        return back()->with('error', 'የተሳሳተ ስልክ ቁጥር ወይም የተማሪ መለያ ኮድ (Student ID)! እባክዎ በትክክል ያስገቡ።');
+    }
+
+    $parent = [
+        'name' => $student->parent_name,
+        'children' => [
+            ['name' => $student->first_name . ' ' . $student->last_name, 'grade' => 'ክፍል ' . $student->classroom_id]
+        ]
+    ];
 
     $activeAds = DB::table('advertisements')->where('is_active', true)->get();
     return view('dashboards.parent', compact('parent', 'phone', 'activeAds'));
@@ -113,16 +124,13 @@ Route::post('/super-admin/schools/store', function (Request $request) {
 Route::post('/super-admin/schools/toggle-status', function (Request $request) {
     $schoolId = $request->input('id');
     $current = DB::table('schools')->where('id', $schoolId)->first();
-    
     $newStatus = ($current->status == 'active') ? 'suspended' : 'active';
     DB::table('schools')->where('id', $schoolId)->update(['status' => $newStatus, 'updated_at' => now()]);
-
     return back();
 });
 
-// 9. Store Ad (ከስልክ ወይም ከኮምፒውተር በቀጥታ የተሰቀለን ፎቶ ይቀበላል)
+// 9. Store Ad
 Route::post('/super-admin/ads/store', function (Request $request) {
-    // Make sure image column can hold full resolution Base64 image
     try {
         DB::statement('ALTER TABLE advertisements MODIFY image_url LONGTEXT');
     } catch (\Exception $e) {}
@@ -133,7 +141,7 @@ Route::post('/super-admin/ads/store', function (Request $request) {
         'target_audience' => $request->input('target_audience', 'ለሁሉም ተጠቃሚዎች'),
         'duration' => $request->input('duration', 'ያልተገደበ (ቋሚ)'),
         'target_url' => $request->input('target_url', 'tel:0913064239'),
-        'image_url' => $request->input('image_base64'), // በቀጥታ የተሰቀለው ሙሉ ፎቶ
+        'image_url' => $request->input('image_base64'),
         'is_active' => true,
         'impressions' => 0,
         'clicks' => 0,
@@ -141,7 +149,7 @@ Route::post('/super-admin/ads/store', function (Request $request) {
         'updated_at' => now(),
     ]);
 
-    return back()->with('success', 'የተሰቀለው ማስታወቂያ በዳታቤዝ ተመዝግቦ በሰሌዳው ላይ በቀጥታ ተለጥፏል!');
+    return back()->with('success', 'ማስታወቂያው በዳታቤዝ ተመዝግቧል!');
 });
 
 // 10. Delete Ad
