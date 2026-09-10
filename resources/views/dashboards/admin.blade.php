@@ -122,7 +122,6 @@
 
     <main class="max-w-6xl mx-auto px-4 mt-6 space-y-6">
 
-        <!-- 1. GENERAL PRINCIPAL VIEW VS UNIT LEADER VIEW -->
         @if($division == 'all')
             <!-- ONBOARDING FOR GENERAL PRINCIPAL -->
             <div class="bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 rounded-2xl p-5 sm:p-6 text-white shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -132,7 +131,7 @@
                         <h3 class="text-base font-bold">የዋና ርዕሰ-መምህር ማዕከል (General Director Hub)</h3>
                     </div>
                     <p class="text-xs text-purple-200 leading-relaxed max-w-2xl">
-                        እዚህ ሆነው የ 4ቱን ዲቪዥኖች ተጠሪዎች (Unit Leaders) በስማቸው መድበው ሊንካቸውን ይሰጣሉ፤ ተጠሪዎቹ ደግሞ የየራሳቸውን መምህራን በክፍል ይመድባሉ።
+                        እዚህ ሆነው ለወላጆች የሚላከውን የመግቢያ ሊንክ ለቻናል ያሰራጩ፤ የ 4ቱን ዲቪዥኖች ተጠሪዎች (Unit Leaders) በስማቸው መድበው ሊንካቸውን ይላኩላቸው።
                     </p>
                 </div>
                 <button onclick="openModal('excel-modal')" class="whitespace-nowrap text-xs font-bold bg-amber-400 hover:bg-amber-300 text-slate-950 px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-1.5 shrink-0">
@@ -141,7 +140,39 @@
                 </button>
             </div>
 
-            <!-- ================= SECTION A: ASSIGN UNIT LEADERS (የ 4ቱ ዲቪዥን ተጠሪዎች ምደባ) ================= -->
+            <!-- ================= SECTION 1: PARENT PORTAL BROADCAST CARD (ለቴሌግራም/SMS የሚላከው ዝግጁ መልእክት) ================= -->
+            <div class="bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900 rounded-2xl p-5 sm:p-6 text-white shadow-md border border-blue-800/50">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-blue-800/60">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="p-2 bg-blue-500/20 text-blue-400 rounded-xl text-base"><i class="fas fa-bullhorn"></i></span>
+                            <h3 class="text-base font-bold text-white">የወላጆች መግቢያ ሊንክ ማሰራጫ (Telegram & SMS Broadcast)</h3>
+                        </div>
+                        <p class="text-xs text-blue-200 mt-1">ለትምህርት ቤትዎ ወላጆች በሙሉ በቴሌግራም ቻናልዎ ወይም በ SMS የሚላክ ዝግጁ መልእክት፡</p>
+                    </div>
+                    <div class="flex items-center space-x-2 w-full sm:w-auto">
+                        <button onclick="copyParentLink('{{ $schoolCode }}', '{{ $schoolName }}')" class="flex-1 sm:flex-none text-xs bg-white/10 hover:bg-white/20 text-white font-bold px-3.5 py-2 rounded-xl transition border border-white/20 flex items-center justify-center space-x-1.5">
+                            <i class="fas fa-link text-xs"></i>
+                            <span>ሊንኩን ብቻ ቅዳ</span>
+                        </button>
+                        <button onclick="copyParentBroadcastMessage('{{ $schoolName }}', '{{ $schoolCode }}')" class="flex-1 sm:flex-none text-xs bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-xl transition shadow flex items-center justify-center space-x-1.5">
+                            <i class="fas fa-copy text-xs"></i>
+                            <span>የቴሌግራም መልእክት ቅዳ</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Preview of the text message -->
+                <div class="mt-4 p-3.5 bg-black/40 rounded-xl border border-blue-900/60 text-xs text-slate-300 font-sans space-y-1.5 leading-relaxed">
+                    <p class="font-bold text-white">📢 ክቡራን የ{{ $schoolName }} ወላጆች፡</p>
+                    <p>የልጅዎን የዕለት ውሎ፣ የቤት ስራ እና ማስታወሻዎች በስልክዎ ለመከታተል የትምህርት ቤታችንን የዲጂታል ግንኙነት ደብተር ይጠቀሙ።</p>
+                    <p class="text-blue-300 font-mono font-bold">👉 የመግቢያ ሊንክ፡ https://smart-debter-ethiopia.vercel.app/login?role=parent&school={{ $schoolCode }}&school_name={{ urlencode($schoolName) }}</p>
+                    <p>👤 <b>ተጠቃሚ ስም (Username)፡</b> በት/ቤቱ ያስመዘገቡት ስልክ ቁጥር</p>
+                    <p>🔑 <b>የይለፍ ቃል (Password)፡</b> የልጅዎ የተማሪ መለያ ቁጥር (Student ID)</p>
+                </div>
+            </div>
+
+            <!-- ================= SECTION 2: ASSIGN UNIT LEADERS (የ 4ቱ ዲቪዥን ተጠሪዎች ምደባ) ================= -->
             <div class="bg-white rounded-2xl border shadow-sm p-6">
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4 pb-3 border-b">
                     <div>
@@ -157,8 +188,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    
-                    <!-- 1. KG Leader -->
+                    <!-- KG Leader -->
                     <div class="p-4 rounded-xl border border-pink-200 bg-pink-50/40 flex flex-col justify-between space-y-3">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-2">
@@ -178,7 +208,7 @@
                         </div>
                     </div>
 
-                    <!-- 2. 1-4 Leader -->
+                    <!-- 1-4 Leader -->
                     <div class="p-4 rounded-xl border border-blue-200 bg-blue-50/40 flex flex-col justify-between space-y-3">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-2">
@@ -198,7 +228,7 @@
                         </div>
                     </div>
 
-                    <!-- 3. 5-8 Leader -->
+                    <!-- 5-8 Leader -->
                     <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/40 flex flex-col justify-between space-y-3">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-2">
@@ -218,7 +248,7 @@
                         </div>
                     </div>
 
-                    <!-- 4. 9-12 Leader -->
+                    <!-- 9-12 Leader -->
                     <div class="p-4 rounded-xl border border-amber-200 bg-amber-50/40 flex flex-col justify-between space-y-3">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-2">
@@ -237,12 +267,11 @@
                             </button>
                         </div>
                     </div>
-
                 </div>
             </div>
 
         @else
-            <!-- ================= UNIT LEADER PORTAL (የዲቪዥን ተጠሪ ገጽ) ================= -->
+            <!-- ================= UNIT LEADER PORTAL ================= -->
             <div class="bg-gradient-to-r from-purple-800 to-indigo-900 rounded-2xl p-5 sm:p-6 text-white shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div class="space-y-1">
                     <div class="flex items-center space-x-2">
@@ -283,7 +312,7 @@
             </div>
         @endif
 
-        <!-- 2. Clean Metrics -->
+        <!-- Clean Metrics -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div class="bg-white p-5 rounded-2xl border shadow-xs">
                 <div class="flex items-center justify-between text-slate-400 mb-2">
@@ -309,7 +338,7 @@
                     <i class="fas fa-chalkboard-teacher text-emerald-600"></i>
                 </div>
                 <h3 id="teacher-count" class="text-2xl font-black text-slate-900">0</h3>
-                <span class="text-[10px] text-slate-400">የተመደቡ መምህራን</span>
+                <span class="text-[10px] text-slate-400">የዲቪዥኑ መምህራን</span>
             </div>
 
             <div class="bg-white p-5 rounded-2xl border shadow-xs">
@@ -318,14 +347,14 @@
                     <i class="fas fa-signature text-amber-600"></i>
                 </div>
                 <h3 id="sign-rate" class="text-2xl font-black text-slate-400">0%</h3>
-                <span class="text-[10px] text-slate-400">የወላጆች ምላሽ ምጣኔ</span>
+                <span class="text-[10px] text-slate-400">የወላጆች ምላሽ</span>
             </div>
         </div>
 
-        <!-- 3. Dynamic Moving Ad Carousel -->
+        <!-- Dynamic Moving Ad Carousel -->
         @include('partials.ad-slider', ['sliderId' => 'admin-slider'])
 
-        <!-- 4. Student & Section Action Bar -->
+        <!-- Student & Section Action Bar -->
         <div class="bg-white rounded-2xl border shadow-sm p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
                 <h3 class="text-sm font-bold text-slate-900 flex items-center">
@@ -346,7 +375,7 @@
             </div>
         </div>
 
-        <!-- 5. Internal Announcements -->
+        <!-- Internal Announcements -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-white rounded-2xl border shadow-sm p-5 md:col-span-1">
                 <h3 class="text-sm font-bold text-slate-900 mb-2 flex items-center">
@@ -390,8 +419,7 @@
 
     </main>
 
-    <!-- ==================== MODALS ==================== -->
-
+    <!-- Modals -->
     <!-- 1. EXCEL MODAL -->
     <div id="excel-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border">
@@ -406,7 +434,7 @@
             <div class="my-4 space-y-4">
                 <div class="flex items-center justify-between text-xs p-3 bg-slate-50 rounded-xl border">
                     <span class="text-slate-600 font-medium">የተዘጋጀ የናሙና Excel ቅጽ ያውርዱ፡</span>
-                    <a href="data:text/csv;charset=utf-8,StudentName,Grade,Section,Gender,ParentPhone%0Aዮናስ ዳዊት,Grade 7,B,Male,0911000000%0Aሳራ ዳዊት,Grade 3,A,Female,0922000000" 
+                    <a href="data:text/csv;charset=utf-8,StudentName,Grade,Section,Gender,ParentPhone,StudentID%0Aዮናስ ዳዊት,Grade 7,B,Male,0911000000,1001%0Aሳራ ዳዊት,Grade 3,A,Female,0922000000,1002" 
                        download="smartdebter_sample_students.csv" 
                        class="text-emerald-700 font-bold hover:underline flex items-center space-x-1">
                         <i class="fas fa-download"></i>
@@ -432,7 +460,7 @@
 
     <!-- 2. STUDENT MODAL -->
     <div id="student-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3 border-b">
                 <h3 class="font-bold text-sm text-slate-900">አዲስ ተማሪ መመዝገቢያ</h3>
                 <button onclick="closeModal('student-modal')" class="text-slate-400 hover:text-slate-600">✕</button>
@@ -446,13 +474,16 @@
                     <input type="text" placeholder="ክፍል (ምሳሌ፡ 7 ወይም KG 2)" required class="p-2.5 bg-slate-50 border rounded-xl text-xs">
                     <input type="text" placeholder="ሴክሽን (ምሳሌ፡ A)" required class="p-2.5 bg-slate-50 border rounded-xl text-xs">
                 </div>
-                <input type="text" placeholder="የወላጅ ስልክ ቁጥር (09xxxxxxxx)" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs">
+                <div class="grid grid-cols-2 gap-3">
+                    <input type="text" placeholder="የወላጅ ስልክ ቁጥር (09xxxxxxxx)" required class="p-2.5 bg-slate-50 border rounded-xl text-xs">
+                    <input type="text" placeholder="የተማሪ መለያ ቁጥር (ID: ምሳሌ 1001)" required class="p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-blue-900">
+                </div>
                 <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 shadow">ተማሪ መዝግብ</button>
             </form>
         </div>
     </div>
 
-    <!-- 3. TEACHER ASSIGN MODAL (ለዲቪዥን ተጠሪዎች ብቻ የሚከፈት) -->
+    <!-- 3. TEACHER MODAL -->
     <div id="teacher-assign-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border">
             <div class="flex items-center justify-between pb-3 border-b">
@@ -460,14 +491,8 @@
                 <button onclick="closeModal('teacher-assign-modal')" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
             </div>
             <form action="#" onsubmit="event.preventDefault(); addTeacher();" class="my-4 space-y-3">
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-600 mb-1">የመምህሩ ሙሉ ስም</label>
-                    <input type="text" id="assign-teacher-name" placeholder="ምሳሌ፡ መምህር ከበደ ተሾመ" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs">
-                </div>
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-600 mb-1">የተመደበበት ክፍል</label>
-                    <input type="text" id="assign-teacher-class" placeholder="ምሳሌ፡ ክፍል 7-B" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-purple-700">
-                </div>
+                <input type="text" id="assign-teacher-name" placeholder="የመምህሩ ሙሉ ስም" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs">
+                <input type="text" id="assign-teacher-class" placeholder="የተመደበበት ክፍል (ምሳሌ፡ ክፍል 7-B)" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-purple-700">
                 <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 shadow">ሊንክ አመንጭ</button>
             </form>
         </div>
@@ -486,7 +511,23 @@
             label.innerText = (label.innerText === 'English') ? 'አማርኛ' : 'English';
         }
 
-        // GENERATE UNIT LEADER LINK WITH CUSTOM NAME (ዋና ርዕሰ-መምህሩ ተጠሪዎችን በስማቸው ሊንክ የሚያመነጭበት)
+        // 1. COPY PARENT BROADCAST READY-MADE MESSAGE (ቴሌግራም ላይ የሚለጠፈውን መልእክት መቅጃ)
+        function copyParentBroadcastMessage(schoolName, schoolCode) {
+            const link = `https://smart-debter-ethiopia.vercel.app/login?role=parent&school=${schoolCode}&school_name=${encodeURIComponent(schoolName)}`;
+            
+            const message = `📢 ክቡራን የ${schoolName} ወላጆች፡\n\nየልጅዎን የዕለት ውሎ፣ የቤት ስራ እና ማስታወሻዎች በስልክዎ በቀጥታ ለመከታተል የትምህርት ቤታችንን የዲጂታል ግንኙነት ደብተር (SmartDebter) ይጠቀሙ።\n\n👉 የመግቢያ ሊንክ፡\n${link}\n\n👤 ተጠቃሚ ስም (Username)፡ በት/ቤቱ ያስመዘገቡት ስልክ ቁጥር\n🔑 የይለፍ ቃል (Password)፡ የልጅዎ የተማሪ መለያ ቁጥር (Student ID)\n\n-${schoolName} አስተዳደር-`;
+
+            navigator.clipboard.writeText(message);
+            alert('🎉 የቴሌግራም/SMS መልእክቱ ተገልብጧል (Copied)! በት/ቤትዎ የቴሌግራም ቻናል ላይ መለጠፍ ይችላሉ።');
+        }
+
+        function copyParentLink(schoolCode, schoolName) {
+            const link = `https://smart-debter-ethiopia.vercel.app/login?role=parent&school=${schoolCode}&school_name=${encodeURIComponent(schoolName)}`;
+            navigator.clipboard.writeText(link);
+            alert('የወላጆች መግቢያ ሊንክ ተገልብጧል!');
+        }
+
+        // GENERATE UNIT LEADER LINK
         function generateLeaderLink(divCode) {
             const input = document.getElementById('leader-name-' + divCode);
             const leaderName = input.value.trim();
@@ -502,7 +543,7 @@
             const link = `https://smart-debter-ethiopia.vercel.app/dashboard/admin?school=${schoolCode}&division=${divCode}&leader=${encodeURIComponent(leaderName)}&school_name=${encodeURIComponent(schoolName)}`;
 
             navigator.clipboard.writeText(link);
-            alert(`🎉 የ ${leaderName} የዲቪዥን ሊንክ ተፈጥሮ ተገልብጧል (Copied)! በቴሌግራም ወይም SMS ይላኩላቸው።`);
+            alert(`🎉 የ ${leaderName} የዲቪዥን ሊንክ ተገልብጧል! በቴሌግራም ወይም SMS ይላኩላቸው።`);
         }
 
         function fileSelected(input) {
@@ -532,7 +573,6 @@
             closeModal('student-modal');
         }
 
-        // UNIT LEADER ASSIGNING TEACHER
         function addTeacher() {
             const name = document.getElementById('assign-teacher-name').value;
             const cls = document.getElementById('assign-teacher-class').value;
@@ -560,7 +600,7 @@
             `;
             document.getElementById('teachers-container').prepend(card);
             closeModal('teacher-assign-modal');
-            alert(`🎉 ${name} ለ ${cls} ተመድቧል! ሊንኩን ለመምህሩ ይላኩለት።`);
+            alert('መምህሩ ተመድቧል!');
         }
 
         function postNotice(form) {
