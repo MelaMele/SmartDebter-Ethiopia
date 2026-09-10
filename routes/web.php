@@ -6,7 +6,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
-// 1. Landing Page (ከዳታቤዝ ንቁ ማስታወቂያዎችን ይዞ ይከፍታል)
+// 1. Landing Page
 Route::get('/', function () {
     $activeAds = DB::table('advertisements')->where('is_active', true)->get();
     return view('welcome', compact('activeAds'));
@@ -17,7 +17,7 @@ Route::get('/login', function () {
     return view('login');
 });
 
-// 3. Parent Login Verification (በስልክ ቁጥር ከዳታቤዝ ተማሪውን ያጣራል)
+// 3. Parent Login Verification
 Route::post('/parent/verify', function (Request $request) {
     $phone = $request->input('phone');
 
@@ -79,7 +79,7 @@ Route::get('/dashboard/admin', function (Request $request) {
     return view('dashboards.admin', compact('school', 'activeAds'));
 });
 
-// 6. Super Admin Dashboard (ከ Clever Cloud ዳታቤዝ ት/ቤቶችን እና ማስታወቂያዎችን ያነባል)
+// 6. Super Admin Dashboard
 Route::get('/dashboard/super-admin', function () {
     $schools = DB::table('schools')->orderBy('id', 'desc')->get();
     $ads = DB::table('advertisements')->orderBy('id', 'desc')->get();
@@ -94,7 +94,7 @@ Route::get('/dashboard/super-admin', function () {
     return view('dashboards.super-admin', compact('schools', 'ads', 'stats'));
 });
 
-// 7. SUPER ADMIN: አዲስ ት/ቤት መመዝገቢያ (Direct MySQL Insert)
+// 7. Store School
 Route::post('/super-admin/schools/store', function (Request $request) {
     DB::table('schools')->insert([
         'name' => $request->input('name'),
@@ -109,7 +109,7 @@ Route::post('/super-admin/schools/store', function (Request $request) {
     return back()->with('success', 'ትምህርት ቤቱ በ Clever Cloud ዳታቤዝ ላይ ተመዝግቧል!');
 });
 
-// 8. SUPER ADMIN: ት/ቤት ማገድ / ማንቃት (Direct MySQL Status Update)
+// 8. Toggle School Status
 Route::post('/super-admin/schools/toggle-status', function (Request $request) {
     $schoolId = $request->input('id');
     $current = DB::table('schools')->where('id', $schoolId)->first();
@@ -120,15 +120,20 @@ Route::post('/super-admin/schools/toggle-status', function (Request $request) {
     return back();
 });
 
-// 9. SUPER ADMIN: አዲስ ማስታወቂያ መጫኛ (Direct MySQL Ad Insert)
+// 9. Store Ad (ከስልክ ወይም ከኮምፒውተር በቀጥታ የተሰቀለን ፎቶ ይቀበላል)
 Route::post('/super-admin/ads/store', function (Request $request) {
+    // Make sure image column can hold full resolution Base64 image
+    try {
+        DB::statement('ALTER TABLE advertisements MODIFY image_url LONGTEXT');
+    } catch (\Exception $e) {}
+
     DB::table('advertisements')->insert([
         'company_name' => $request->input('company_name'),
-        'title' => $request->input('title'),
-        'target_audience' => $request->input('target_audience', 'all'),
-        'duration' => $request->input('duration', 'unlimited'),
+        'title' => $request->input('title', 'ስፖንሰር ማስታወቂያ'),
+        'target_audience' => $request->input('target_audience', 'ለሁሉም ተጠቃሚዎች'),
+        'duration' => $request->input('duration', 'ያልተገደበ (ቋሚ)'),
         'target_url' => $request->input('target_url', 'tel:0913064239'),
-        'image_url' => $request->input('image_url', 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=200&auto=format&fit=crop&q=60'),
+        'image_url' => $request->input('image_base64'), // በቀጥታ የተሰቀለው ሙሉ ፎቶ
         'is_active' => true,
         'impressions' => 0,
         'clicks' => 0,
@@ -136,10 +141,10 @@ Route::post('/super-admin/ads/store', function (Request $request) {
         'updated_at' => now(),
     ]);
 
-    return back()->with('success', 'ማስታወቂያው በዳታቤዝ ላይ ተመዝግቦ በሁሉም አንቀሳቃሽ ሰሌዳዎች ላይ ተሰራጭቷል!');
+    return back()->with('success', 'የተሰቀለው ማስታወቂያ በዳታቤዝ ተመዝግቦ በሰሌዳው ላይ በቀጥታ ተለጥፏል!');
 });
 
-// 10. SUPER ADMIN: ማስታወቂያ ማጥፊያ (Direct MySQL Delete)
+// 10. Delete Ad
 Route::post('/super-admin/ads/delete', function (Request $request) {
     DB::table('advertisements')->where('id', $request->input('id'))->delete();
     return back();
