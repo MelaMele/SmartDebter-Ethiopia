@@ -108,66 +108,40 @@
             @include('partials.ad-slider', ['sliderId' => 'superadmin-preview'])
         </div>
 
-        <!-- 3. AD CAMPAIGN MANAGEMENT TABLE -->
-        <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-800">
-                <div>
-                    <h3 class="text-base font-bold text-white flex items-center">
-                        <i class="fas fa-tasks text-amber-400 mr-2"></i>
-                        የማስታወቂያዎች አስተዳደር (Ad Campaigns)
-                    </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">ማስታወቂያዎችን በቀጥታ ከስልክዎ ወይም ከኮምፒውተርዎ Upload ያድርጉ</p>
-                </div>
-                <button onclick="openModal('ad-modal')" class="text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-1.5">
-                    <i class="fas fa-upload"></i>
-                    <span>አዲስ ፖስተር ጫን (Upload Ad)</span>
-                </button>
-            </div>
+        // ፎቶውን በራስ-ሰር አሳንሶ (Compress) ወደ ዳታቤዝ የሚያዘጋጅ ስክሪፕት
+        function previewSelectedAd(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
 
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs">
-                    <thead>
-                        <tr class="text-slate-400 border-b border-slate-800 bg-slate-950/40">
-                            <th class="p-3">አስተዋዋቂ ድርጅት</th>
-                            <th class="p-3">የተሰቀለው ፖስተር</th>
-                            <th class="p-3">ዒላማ</th>
-                            <th class="p-3">የጊዜ ገደብ</th>
-                            <th class="p-3">ሁኔታ</th>
-                            <th class="p-3 text-right">እርምጃ</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-800 text-slate-300">
-                        @forelse($ads as $ad)
-                            <tr class="hover:bg-slate-800/40 transition">
-                                <td class="p-3 font-bold text-white">{{ $ad->company_name }}</td>
-                                <td class="p-3">
-                                    <img src="{{ $ad->image_url }}" alt="Ad Banner" class="w-16 h-9 object-cover rounded-lg border border-slate-700">
-                                </td>
-                                <td class="p-3"><span class="bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded font-semibold">{{ $ad->target_audience }}</span></td>
-                                <td class="p-3 text-emerald-400 font-medium">{{ $ad->duration }}</td>
-                                <td class="p-3"><span class="bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full text-[10px] font-bold">ንቁ</span></td>
-                                <td class="p-3 text-right">
-                                    <form action="/super-admin/ads/delete" method="POST" onsubmit="return confirm('ማስታወቂያው ከዳታቤዝ ይሰረዝ?');" class="inline">
-                                        @csrf
-                                        <input type="hidden" name="id" value="{{ $ad->id }}">
-                                        <button type="submit" class="text-rose-400 hover:text-rose-300 font-bold">
-                                            <i class="fas fa-trash-alt mr-0.5"></i>ሰርዝ
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="p-8 text-center text-slate-500">
-                                    <i class="fas fa-upload text-3xl mb-2 text-slate-700 block"></i>
-                                    እስካሁን የተሰቀለ ማስታወቂያ የለም። "አዲስ ፖስተር ጫን" የሚለውን ነክተው የመጀመሪያውን ማስታወቂያ ይስቀሉ።
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.src = e.target.result;
+
+                    img.onload = function() {
+                        // Canvas ተጠቅመን ፎቶውን ጥራቱ ሳይበላሽ መጠኑን እናሳንሰዋለን
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+
+                        const maxWidth = 900; // ለባነር ተስማሚ ስፋት
+                        const scale = maxWidth / img.width;
+                        canvas.width = (img.width > maxWidth) ? maxWidth : img.width;
+                        canvas.height = (img.width > maxWidth) ? (img.height * scale) : img.height;
+
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                        // የተጨመቀውን አነስተኛ መጠን ያለው ፎቶ እናስቀምጣለን
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+
+                        document.getElementById('image-base64-input').value = compressedBase64;
+                        document.getElementById('image-preview-tag').src = compressedBase64;
+                        document.getElementById('image-preview-wrapper').classList.remove('hidden');
+                    };
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
 
         <!-- 4. PARTNER SCHOOLS MANAGEMENT -->
         <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6">
