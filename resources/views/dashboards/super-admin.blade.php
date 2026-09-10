@@ -108,7 +108,7 @@
             @include('partials.ad-slider', ['sliderId' => 'superadmin-preview'])
         </div>
 
-        <!-- 3. AD CAMPAIGN MANAGEMENT TABLE (ከ Clever Cloud የሚመጣ ዝርዝር) -->
+        <!-- 3. AD CAMPAIGN MANAGEMENT TABLE -->
         <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-800">
                 <div>
@@ -116,7 +116,7 @@
                         <i class="fas fa-tasks text-amber-400 mr-2"></i>
                         የማስታወቂያዎች አስተዳደር (Ad Campaigns)
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">አዳዲስ ማስታወቂያዎችን ይስቀሉ፤ በቀጥታ MySQL ዳታቤዝ ላይ ይቀመጣሉ</p>
+                    <p class="text-xs text-slate-400 mt-0.5">አዳዲስ ማስታወቂያዎችን (ሙሉ ፖስተር ወይም ጽሁፍ) እዚህ ይስቀሉ</p>
                 </div>
                 <button onclick="openModal('ad-modal')" class="text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-1.5">
                     <i class="fas fa-plus"></i>
@@ -167,7 +167,7 @@
             </div>
         </div>
 
-        <!-- 4. PARTNER SCHOOLS MANAGEMENT (ከ Clever Cloud የሚመጣ ዝርዝር) -->
+        <!-- 4. PARTNER SCHOOLS MANAGEMENT -->
         <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-800">
                 <div>
@@ -244,7 +244,7 @@
 
     <!-- ==================== MODALS ==================== -->
 
-    <!-- 1. ADD PARTNER SCHOOL MODAL (Direct to MySQL) -->
+    <!-- 1. ADD PARTNER SCHOOL MODAL -->
     <div id="school-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-slate-900 rounded-2xl max-w-md w-full p-6 border border-slate-800 shadow-2xl text-slate-100">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
@@ -281,26 +281,67 @@
         </div>
     </div>
 
-    <!-- 2. ADD AD MODAL (Direct to MySQL) -->
+    <!-- 2. ADD / EDIT AD MODAL (ከነ 2ቱ የማስታወቂያ ቅርጾች ጋር) -->
     <div id="ad-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-slate-900 rounded-2xl max-w-md w-full p-6 border border-slate-800 shadow-2xl text-slate-100">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
                 <h3 class="font-bold text-sm text-white flex items-center">
                     <i class="fas fa-ad text-amber-400 mr-2"></i>
-                    አዲስ ማስታወቂያ ስቀል (MySQL)
+                    አዲስ ማስታወቂያ ስቀል
                 </h3>
                 <button onclick="closeModal('ad-modal')" class="text-slate-400 hover:text-white">✕</button>
             </div>
-            <form action="/super-admin/ads/store" method="POST" class="my-4 space-y-3">
+
+            <!-- AD FORMAT SELECTOR -->
+            <div class="my-4">
+                <label class="block text-xs font-bold text-slate-300 mb-2">የማስታወቂያው ቅርጽ ይምረጡ፡</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <button type="button" onclick="setAdFormat('full_banner')" id="btn-format-full" 
+                            class="p-2.5 rounded-xl border-2 border-amber-400 bg-amber-400/10 text-amber-300 text-xs font-bold text-left transition flex items-center space-x-2">
+                        <i class="fas fa-image text-base"></i>
+                        <div>
+                            <p class="leading-tight">ሙሉ ፖስተር / ባነር</p>
+                            <p class="text-[9px] text-slate-400 font-normal">ድርጅቱ ያዘጋጀው ሙሉ ዲዛይን</p>
+                        </div>
+                    </button>
+
+                    <button type="button" onclick="setAdFormat('template')" id="btn-format-template" 
+                            class="p-2.5 rounded-xl border border-slate-700 bg-slate-950 text-slate-400 text-xs font-bold text-left transition flex items-center space-x-2">
+                        <i class="fas fa-file-alt text-base"></i>
+                        <div>
+                            <p class="leading-tight">ጽሁፍና ምስል</p>
+                            <p class="text-[9px] text-slate-500 font-normal">መደበኛ ቴምፕሌት</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <form action="/super-admin/ads/store" method="POST" class="space-y-3">
                 @csrf
+                <input type="hidden" name="ad_type" id="ad-type-input" value="full_banner">
+
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">አስተዋዋቂ ድርጅት</label>
-                    <input type="text" name="company_name" placeholder="ምሳሌ፡ አዋሽ ባንክ" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                    <input type="text" name="company_name" placeholder="ምሳሌ፡ አቢሲንያ ባንክ" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
                 </div>
+
+                <div id="template-fields" class="hidden space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">የማስታወቂያው ርዕስ/ጽሁፍ</label>
+                        <input type="text" name="title" id="ad-title-input" placeholder="ምሳሌ፡ የ 20% የትምህርት ቁሳቁሶች ቅናሽ" class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                    </div>
+                </div>
+
                 <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1">የማስታወቂያው ርዕስ/ጽሁፍ</label>
-                    <input type="text" name="title" placeholder="ምሳሌ፡ የ 20% የትምህርት ቁሳቁሶች ቅናሽ" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                    <label class="block text-xs font-bold text-slate-300 mb-1" id="image-label">የፖስተሩ ምስል ሊንክ (Poster Image URL)</label>
+                    <input type="url" name="image_url" placeholder="https://..." required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white font-mono">
                 </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">ሲነካ የሚወስደው ሊንክ ወይም ስልክ</label>
+                    <input type="text" name="target_url" placeholder="https://... ወይም tel:09xxxxxxxx" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white font-mono">
+                </div>
+
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-300 mb-1">ዒላማ</label>
@@ -321,8 +362,9 @@
                         </select>
                     </div>
                 </div>
+
                 <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-500 shadow mt-2">
-                    ማስታወቂያውን ዳታቤዝ ላይ ለጥፍ
+                    ማስታወቂያውን በአንቀሳቃሽ ሰሌዳው ላይ ለጥፍ
                 </button>
             </form>
         </div>
@@ -335,6 +377,26 @@
     <script>
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function setAdFormat(format) {
+            document.getElementById('ad-type-input').value = format;
+            const btnFull = document.getElementById('btn-format-full');
+            const btnTemplate = document.getElementById('btn-format-template');
+            const templateFields = document.getElementById('template-fields');
+            const imageLabel = document.getElementById('image-label');
+
+            if (format === 'full_banner') {
+                btnFull.className = 'p-2.5 rounded-xl border-2 border-amber-400 bg-amber-400/10 text-amber-300 text-xs font-bold text-left transition flex items-center space-x-2';
+                btnTemplate.className = 'p-2.5 rounded-xl border border-slate-700 bg-slate-950 text-slate-400 text-xs font-bold text-left transition flex items-center space-x-2';
+                templateFields.classList.add('hidden');
+                imageLabel.innerText = 'የፖስተሩ ምስል ሊንክ (Poster Image URL)';
+            } else {
+                btnTemplate.className = 'p-2.5 rounded-xl border-2 border-amber-400 bg-amber-400/10 text-amber-300 text-xs font-bold text-left transition flex items-center space-x-2';
+                btnFull.className = 'p-2.5 rounded-xl border border-slate-700 bg-slate-950 text-slate-400 text-xs font-bold text-left transition flex items-center space-x-2';
+                templateFields.classList.remove('hidden');
+                imageLabel.innerText = 'የማስታወቂያው አዶ/ፎቶ ሊንክ (Icon/Image URL)';
+            }
+        }
     </script>
 
 </body>
