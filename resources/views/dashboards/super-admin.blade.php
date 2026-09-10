@@ -27,7 +27,7 @@
                         <h2 class="text-sm font-bold text-white tracking-wide">Mela Solution</h2>
                         <span class="text-[10px] bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded-full font-bold">SUPER ADMIN</span>
                     </div>
-                    <p class="text-[11px] text-slate-400">Clever Cloud MySQL Live ዳታቤዝ የተገናኘበት ማዕከል</p>
+                    <p class="text-[11px] text-slate-400">ማዕከላዊ የትምህርት ቤቶች፣ ዲቪዥኖች እና ማስታወቂያዎች መቆጣጠሪያ</p>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
@@ -169,15 +169,15 @@
             </div>
         </div>
 
-        <!-- 4. PARTNER SCHOOLS MANAGEMENT -->
+        <!-- 4. PARTNER SCHOOLS & DIVISIONS MANAGEMENT (የት/ቤቶችና ዲቪዥኖች ሠንጠረዥ) -->
         <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-800">
                 <div>
                     <h3 class="text-base font-bold text-white flex items-center">
                         <i class="fas fa-school text-indigo-400 mr-2"></i>
-                        አጋር ትምህርት ቤቶች (Partner Schools Network)
+                        አጋር ትምህርት ቤቶች እና የዲቪዥን ተጠሪዎች (Partner Schools & Divisions)
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">አዲስ ት/ቤት ሲመዘገብ በቀጥታ Clever Cloud MySQL ላይ ይቀመጣል</p>
+                    <p class="text-xs text-slate-400 mt-0.5">የት/ቤቱን ዋና አድሚን እንዲሁም የኬጂ፣ 1-4፣ 5-8፣ እና 9-12 ተጠሪ ሊንኮችን ያመንጩ</p>
                 </div>
                 <button onclick="openModal('school-modal')" class="text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-1.5">
                     <i class="fas fa-plus"></i>
@@ -194,7 +194,7 @@
                             <th class="p-3">የአድሚን ስልክ</th>
                             <th class="p-3">ሁኔታ</th>
                             <th class="p-3">ማዕከላዊ ቁጥጥር</th>
-                            <th class="p-3 text-right">የአድሚን መግቢያ ሊንክ</th>
+                            <th class="p-3 text-right">የዲቪዥን ተጠሪዎች ሊንክ</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-800 text-slate-300">
@@ -204,7 +204,7 @@
                                     <span class="w-2 h-2 rounded-full {{ $school->status == 'active' ? 'bg-emerald-400' : 'bg-rose-500' }}"></span>
                                     <span class="{{ $school->status == 'suspended' ? 'line-through text-slate-500' : '' }}">{{ $school->name }}</span>
                                 </td>
-                                <td class="p-3 text-indigo-400 font-mono">{{ $school->code }}</td>
+                                <td class="p-3 text-indigo-400 font-mono font-bold">{{ $school->code }}</td>
                                 <td class="p-3">{{ $school->phone }}</td>
                                 <td class="p-3">
                                     @if($school->status == 'active')
@@ -223,9 +223,11 @@
                                     </form>
                                 </td>
                                 <td class="p-3 text-right">
-                                    <button onclick="navigator.clipboard.writeText('https://smart-debter-ethiopia.vercel.app/dashboard/admin?school={{ $school->code }}'); alert('የ {{ $school->name }} የአድሚን ሊንክ ተገልብጧል!');" 
-                                            class="text-xs bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white px-3 py-1.5 rounded-lg border border-indigo-500/30 transition">
-                                        <i class="fas fa-copy mr-1"></i>ሊንክ ቅዳ
+                                    <!-- Button to open Division Links Modal -->
+                                    <button onclick="openDivisionModal('{{ $school->name }}', '{{ $school->code }}')" 
+                                            class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-xs flex items-center space-x-1 ml-auto">
+                                        <i class="fas fa-sitemap mr-1"></i>
+                                        <span>የዲቪዥን ሊንኮች እይ</span>
                                     </button>
                                 </td>
                             </tr>
@@ -246,7 +248,118 @@
 
     <!-- ==================== MODALS ==================== -->
 
-    <!-- 1. ADD PARTNER SCHOOL MODAL -->
+    <!-- 1. DIVISION LINKS POPUP MODAL (የ 5ቱ ዲቪዥኖች ሊንክ መቅጃ) -->
+    <div id="division-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-slate-900 rounded-2xl max-w-lg w-full p-6 border border-slate-800 shadow-2xl text-slate-100">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div>
+                    <h3 class="font-bold text-sm text-white flex items-center" id="div-modal-school-title">
+                        <i class="fas fa-sitemap text-indigo-400 mr-2"></i>
+                        የዲቪዥን ተጠሪዎች የመግቢያ ሊንኮች
+                    </h3>
+                    <p class="text-[11px] text-slate-400 mt-0.5">እያንዳንዱን ሊንክ ኮፒ በማድረግ ለሚመለከተው ዩኒት ሊደር ይላኩለት፡</p>
+                </div>
+                <button onclick="closeModal('division-modal')" class="text-slate-400 hover:text-white text-lg">✕</button>
+            </div>
+
+            <div class="my-4 space-y-3">
+                
+                <!-- 1. ዋና ርዕሰ-መምህር (General Director) -->
+                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-xs font-bold text-white flex items-center">
+                            <span class="w-2 h-2 rounded-full bg-purple-400 mr-1.5"></span>
+                            👑 ዋና ርዕሰ-መምህር (ሁሉንም ዲቪዥኖች የሚያይ)
+                        </span>
+                        <span class="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-bold">General Principal</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="text" id="link-div-all" readonly class="w-full p-2 bg-slate-900 border border-slate-800 rounded-lg text-xs font-mono text-slate-300">
+                        <button onclick="copyDivLink('link-div-all')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded-lg font-bold transition">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. ኬጂ ዲቪዥን (KG Unit Leader) -->
+                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-xs font-bold text-white flex items-center">
+                            <span class="w-2 h-2 rounded-full bg-pink-400 mr-1.5"></span>
+                            👶 የኬጂ ዲቪዥን ተጠሪ (የህፃናት ማቆያ & KG 1-3)
+                        </span>
+                        <span class="text-[10px] bg-pink-500/20 text-pink-300 px-2 py-0.5 rounded font-bold">KG Leader</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="text" id="link-div-kg" readonly class="w-full p-2 bg-slate-900 border border-slate-800 rounded-lg text-xs font-mono text-slate-300">
+                        <button onclick="copyDivLink('link-div-kg')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded-lg font-bold transition">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. 1ኛ - 4ኛ ዲቪዥን (Lower Primary) -->
+                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-xs font-bold text-white flex items-center">
+                            <span class="w-2 h-2 rounded-full bg-blue-400 mr-1.5"></span>
+                            🎒 የ 1ኛ - 4ኛ ዲቪዥን ተጠሪ (Lower Primary)
+                        </span>
+                        <span class="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded font-bold">Grade 1-4 Leader</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="text" id="link-div-1-4" readonly class="w-full p-2 bg-slate-900 border border-slate-800 rounded-lg text-xs font-mono text-slate-300">
+                        <button onclick="copyDivLink('link-div-1-4')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded-lg font-bold transition">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4. 5ኛ - 8ኛ ዲቪዥን (Middle School) -->
+                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-xs font-bold text-white flex items-center">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5"></span>
+                            📚 የ 5ኛ - 8ኛ ዲቪዥን ተጠሪ (Middle School)
+                        </span>
+                        <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold">Grade 5-8 Leader</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="text" id="link-div-5-8" readonly class="w-full p-2 bg-slate-900 border border-slate-800 rounded-lg text-xs font-mono text-slate-300">
+                        <button onclick="copyDivLink('link-div-5-8')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded-lg font-bold transition">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 5. 9ኛ - 12ኛ ዲቪዥን (High School) -->
+                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-xs font-bold text-white flex items-center">
+                            <span class="w-2 h-2 rounded-full bg-amber-400 mr-1.5"></span>
+                            🎓 የ 9ኛ - 12ኛ ዲቪዥን ተጠሪ (High School)
+                        </span>
+                        <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-bold">Grade 9-12 Leader</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="text" id="link-div-9-12" readonly class="w-full p-2 bg-slate-900 border border-slate-800 rounded-lg text-xs font-mono text-slate-300">
+                        <button onclick="copyDivLink('link-div-9-12')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded-lg font-bold transition">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="pt-2 text-right">
+                <button onclick="closeModal('division-modal')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold">
+                    ዝጋ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. ADD PARTNER SCHOOL MODAL -->
     <div id="school-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-slate-900 rounded-2xl max-w-md w-full p-6 border border-slate-800 shadow-2xl text-slate-100">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
@@ -283,7 +396,7 @@
         </div>
     </div>
 
-    <!-- 2. DIRECT FILE UPLOAD AD MODAL -->
+    <!-- 3. DIRECT FILE UPLOAD AD MODAL -->
     <div id="ad-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-slate-900 rounded-2xl max-w-md w-full p-6 border border-slate-800 shadow-2xl text-slate-100 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
@@ -360,7 +473,29 @@
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-        // ፎቶውን በራስ-ሰር አሳንሶ (Compress) ወደ ዳታቤዝ የሚያዘጋጅ ስክሪፕት
+        // OPEN DIVISION MODAL WITH 5 LINKS
+        function openDivisionModal(schoolName, code) {
+            document.getElementById('div-modal-school-title').innerHTML = `
+                <i class="fas fa-sitemap text-indigo-400 mr-2"></i>
+                የ ${schoolName} የዲቪዥን ተጠሪዎች ሊንክ (${code})
+            `;
+
+            const base = 'https://smart-debter-ethiopia.vercel.app/dashboard/admin';
+            document.getElementById('link-div-all').value = `${base}?school=${code}&division=all&school_name=${encodeURIComponent(schoolName)}`;
+            document.getElementById('link-div-kg').value = `${base}?school=${code}&division=kg&school_name=${encodeURIComponent(schoolName)}`;
+            document.getElementById('link-div-1-4').value = `${base}?school=${code}&division=1-4&school_name=${encodeURIComponent(schoolName)}`;
+            document.getElementById('link-div-5-8').value = `${base}?school=${code}&division=5-8&school_name=${encodeURIComponent(schoolName)}`;
+            document.getElementById('link-div-9-12').value = `${base}?school=${code}&division=9-12&school_name=${encodeURIComponent(schoolName)}`;
+
+            openModal('division-modal');
+        }
+
+        function copyDivLink(elementId) {
+            const input = document.getElementById(elementId);
+            navigator.clipboard.writeText(input.value);
+            alert('የዲቪዥን ተጠሪው ሊንክ ተገልብጧል!');
+        }
+
         function previewSelectedAd(input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
@@ -373,7 +508,6 @@
                     img.onload = function() {
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
-
                         const maxWidth = 900;
                         const scale = maxWidth / img.width;
                         canvas.width = (img.width > maxWidth) ? maxWidth : img.width;
