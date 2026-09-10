@@ -27,10 +27,13 @@
                         <h2 class="text-sm font-bold text-white tracking-wide">Mela Solution</h2>
                         <span class="text-[10px] bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded-full font-bold">SUPER ADMIN</span>
                     </div>
-                    <p class="text-[11px] text-slate-400">ማዕከላዊ የትምህርት ቤቶች እና የማስታወቂያ መቆጣጠሪያ ኔትወርክ</p>
+                    <p class="text-[11px] text-slate-400">Clever Cloud MySQL Live ዳታቤዝ የተገናኘበት ማዕከል</p>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
+                <span class="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-full font-bold">
+                    <i class="fas fa-database mr-1"></i>MySQL Live
+                </span>
                 <a href="/login" class="text-xs bg-rose-500/10 text-rose-400 border border-rose-500/30 px-3 py-1.5 rounded-xl font-semibold hover:bg-rose-500/20 transition">
                     <i class="fas fa-sign-out-alt mr-1"></i>ውጣ
                 </a>
@@ -40,15 +43,23 @@
 
     <main class="max-w-7xl mx-auto px-4 mt-6 space-y-8">
 
-        <!-- 1. Real Zero Metrics (ሙሉ በሙሉ በ 0 ይጀምራሉ) -->
+        <!-- Flash Message -->
+        @if(session('success'))
+            <div class="p-3 bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 rounded-xl text-xs font-bold flex items-center space-x-2">
+                <i class="fas fa-check-circle text-base"></i>
+                <span>{{ session('success') }}</span>
+            </div>
+        @endif
+
+        <!-- 1. Real Database Metrics -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm">
                 <div class="flex items-center justify-between text-slate-400 mb-2">
                     <span class="text-xs font-bold uppercase tracking-wider text-slate-400">አጋር ት/ቤቶች</span>
                     <i class="fas fa-school text-indigo-400"></i>
                 </div>
-                <h3 id="super-school-count" class="text-3xl font-black text-white">0</h3>
-                <span class="text-[10px] text-slate-400">የተመዘገቡ ት/ቤቶች</span>
+                <h3 class="text-3xl font-black text-white">{{ $stats['schools_count'] ?? 0 }}</h3>
+                <span class="text-[10px] text-slate-400">በ MySQL ዳታቤዝ ያሉ</span>
             </div>
 
             <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm">
@@ -56,8 +67,8 @@
                     <span class="text-xs font-bold uppercase tracking-wider text-slate-400">አጠቃላይ ተማሪዎች</span>
                     <i class="fas fa-user-graduate text-blue-400"></i>
                 </div>
-                <h3 id="super-student-count" class="text-3xl font-black text-white">0</h3>
-                <span class="text-[10px] text-slate-400">በኔትወርኩ ያሉ ተማሪዎች</span>
+                <h3 class="text-3xl font-black text-white">{{ $stats['students_count'] ?? 0 }}</h3>
+                <span class="text-[10px] text-slate-400">የተመዘገቡ ተማሪዎች</span>
             </div>
 
             <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm">
@@ -65,8 +76,8 @@
                     <span class="text-xs font-bold uppercase tracking-wider text-slate-400">የማስታወቂያ ዕይታ</span>
                     <i class="fas fa-eye text-amber-400"></i>
                 </div>
-                <h3 id="super-view-count" class="text-3xl font-black text-amber-400">0</h3>
-                <span class="text-[10px] text-slate-400">የተመዘገበ እይታ</span>
+                <h3 class="text-3xl font-black text-amber-400">{{ $stats['views_count'] ?? 0 }}</h3>
+                <span class="text-[10px] text-slate-400">ጠቅላላ እይታ</span>
             </div>
 
             <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm">
@@ -74,12 +85,12 @@
                     <span class="text-xs font-bold uppercase tracking-wider text-slate-400">ንቁ ማስታወቂያዎች</span>
                     <i class="fas fa-bullhorn text-emerald-400"></i>
                 </div>
-                <h3 id="super-ad-count" class="text-3xl font-black text-emerald-400">0</h3>
-                <span class="text-[10px] text-slate-400">የሚታዩ ማስታወቂያዎች</span>
+                <h3 class="text-3xl font-black text-emerald-400">{{ $stats['ads_count'] ?? 0 }}</h3>
+                <span class="text-[10px] text-slate-400">በሰሌዳው ላይ ያሉ</span>
             </div>
         </div>
 
-        <!-- 2. LIVE MOVING AD PREVIEW (ማስታወቂያ ሲኖር የሚታይበት ሰሌዳ) -->
+        <!-- 2. LIVE MOVING AD PREVIEW -->
         <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-800">
                 <div>
@@ -94,11 +105,10 @@
                 </span>
             </div>
 
-            <!-- Auto-sliding Component -->
             @include('partials.ad-slider', ['sliderId' => 'superadmin-preview'])
         </div>
 
-        <!-- 3. AD CAMPAIGN MANAGEMENT (ንጹህ የማስታወቂያ ሰንጠረዥ) -->
+        <!-- 3. AD CAMPAIGN MANAGEMENT TABLE (ከ Clever Cloud የሚመጣ ዝርዝር) -->
         <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-800">
                 <div>
@@ -106,7 +116,7 @@
                         <i class="fas fa-tasks text-amber-400 mr-2"></i>
                         የማስታወቂያዎች አስተዳደር (Ad Campaigns)
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">አዳዲስ ድርጅታዊ ማስታወቂያዎችን እዚህ ይስቀሉ፤ ያርትዑ ወይም ያጥፉ</p>
+                    <p class="text-xs text-slate-400 mt-0.5">አዳዲስ ማስታወቂያዎችን ይስቀሉ፤ በቀጥታ MySQL ዳታቤዝ ላይ ይቀመጣሉ</p>
                 </div>
                 <button onclick="openModal('ad-modal')" class="text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-1.5">
                     <i class="fas fa-plus"></i>
@@ -114,7 +124,6 @@
                 </button>
             </div>
 
-            <!-- Ad Table -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs">
                     <thead>
@@ -127,20 +136,38 @@
                             <th class="p-3 text-right">እርምጃ</th>
                         </tr>
                     </thead>
-                    <tbody id="ads-table-body" class="divide-y divide-slate-800 text-slate-300">
-                        <!-- Empty State for Ads -->
-                        <tr id="empty-ads-row">
-                            <td colspan="6" class="p-8 text-center text-slate-500">
-                                <i class="fas fa-ad text-3xl mb-2 text-slate-700 block"></i>
-                                እስካሁን የተሰቀለ ማስታወቂያ የለም። "አዲስ ማስታወቂያ ስቀል" የሚለውን ነክተው የመጀመሪያውን ማስታወቂያ ይለጥፉ።
-                            </td>
-                        </tr>
+                    <tbody class="divide-y divide-slate-800 text-slate-300">
+                        @forelse($ads as $ad)
+                            <tr class="hover:bg-slate-800/40 transition">
+                                <td class="p-3 font-bold text-white">{{ $ad->company_name }}</td>
+                                <td class="p-3 text-slate-200">{{ $ad->title }}</td>
+                                <td class="p-3"><span class="bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded font-semibold">{{ $ad->target_audience }}</span></td>
+                                <td class="p-3 text-emerald-400 font-medium">{{ $ad->duration }}</td>
+                                <td class="p-3"><span class="bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full text-[10px] font-bold">ንቁ</span></td>
+                                <td class="p-3 text-right">
+                                    <form action="/super-admin/ads/delete" method="POST" onsubmit="return confirm('ማስታወቂያው ከዳታቤዝ ይሰረዝ?');" class="inline">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $ad->id }}">
+                                        <button type="submit" class="text-rose-400 hover:text-rose-300 font-bold">
+                                            <i class="fas fa-trash-alt mr-0.5"></i>ሰርዝ
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="p-8 text-center text-slate-500">
+                                    <i class="fas fa-ad text-3xl mb-2 text-slate-700 block"></i>
+                                    እስካሁን በዳታቤዙ ውስጥ የተሰቀለ ማስታወቂያ የለም። "አዲስ ማስታወቂያ ስቀል" የሚለውን ነክተው የመጀመሪያውን ማስታወቂያ ይለጥፉ።
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- 4. PARTNER SCHOOLS MANAGEMENT (ንጹህ የት/ቤቶች ሰንጠረዥ) -->
+        <!-- 4. PARTNER SCHOOLS MANAGEMENT (ከ Clever Cloud የሚመጣ ዝርዝር) -->
         <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-800">
                 <div>
@@ -148,7 +175,7 @@
                         <i class="fas fa-school text-indigo-400 mr-2"></i>
                         አጋር ትምህርት ቤቶች (Partner Schools Network)
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">አዲስ ት/ቤት ሲመጣ እዚህ ይመዝግቡ፤ የመግቢያ የአድሚን ሊንካቸውን ያመንጩ</p>
+                    <p class="text-xs text-slate-400 mt-0.5">አዲስ ት/ቤት ሲመዘገብ በቀጥታ Clever Cloud MySQL ላይ ይቀመጣል</p>
                 </div>
                 <button onclick="openModal('school-modal')" class="text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-1.5">
                     <i class="fas fa-plus"></i>
@@ -156,7 +183,6 @@
                 </button>
             </div>
 
-            <!-- Schools Table -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs">
                     <thead>
@@ -169,14 +195,46 @@
                             <th class="p-3 text-right">የአድሚን መግቢያ ሊንክ</th>
                         </tr>
                     </thead>
-                    <tbody id="schools-table-body" class="divide-y divide-slate-800 text-slate-300">
-                        <!-- Empty State for Schools -->
-                        <tr id="empty-schools-row">
-                            <td colspan="6" class="p-8 text-center text-slate-500">
-                                <i class="fas fa-school text-3xl mb-2 text-slate-700 block"></i>
-                                እስካሁን የተመዘገበ ትምህርት ቤት የለም። "አዲስ ት/ቤት መዝግብ" የሚለውን ነክተው የመጀመሪያውን ት/ቤት ያስገቡ።
-                            </td>
-                        </tr>
+                    <tbody class="divide-y divide-slate-800 text-slate-300">
+                        @forelse($schools as $school)
+                            <tr class="hover:bg-slate-800/40 transition">
+                                <td class="p-3 font-bold text-white flex items-center space-x-2">
+                                    <span class="w-2 h-2 rounded-full {{ $school->status == 'active' ? 'bg-emerald-400' : 'bg-rose-500' }}"></span>
+                                    <span class="{{ $school->status == 'suspended' ? 'line-through text-slate-500' : '' }}">{{ $school->name }}</span>
+                                </td>
+                                <td class="p-3 text-indigo-400 font-mono">{{ $school->code }}</td>
+                                <td class="p-3">{{ $school->phone }}</td>
+                                <td class="p-3">
+                                    @if($school->status == 'active')
+                                        <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold">ንቁ (Active)</span>
+                                    @else
+                                        <span class="bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold">የታገደ</span>
+                                    @endif
+                                </td>
+                                <td class="p-3">
+                                    <form action="/super-admin/schools/toggle-status" method="POST" class="inline">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $school->id }}">
+                                        <button type="submit" class="text-[11px] font-bold px-2.5 py-1 rounded-lg border transition {{ $school->status == 'active' ? 'bg-rose-500/10 text-rose-400 border-rose-500/30 hover:bg-rose-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20' }}">
+                                            {{ $school->status == 'active' ? 'እገድ' : 'አንቃ' }}
+                                        </button>
+                                    </form>
+                                </td>
+                                <td class="p-3 text-right">
+                                    <button onclick="navigator.clipboard.writeText('https://smart-debter-ethiopia.vercel.app/dashboard/admin?school={{ $school->code }}'); alert('የ {{ $school->name }} የአድሚን ሊንክ ተገልብጧል!');" 
+                                            class="text-xs bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white px-3 py-1.5 rounded-lg border border-indigo-500/30 transition">
+                                        <i class="fas fa-copy mr-1"></i>ሊንክ ቅዳ
+                                    </button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="p-8 text-center text-slate-500">
+                                    <i class="fas fa-school text-3xl mb-2 text-slate-700 block"></i>
+                                    እስካሁን በዳታቤዙ ውስጥ የተመዘገበ ትምህርት ቤት የለም። "አዲስ ት/ቤት መዝግብ" የሚለውን ነክተው የመጀመሪያውን ት/ቤት ያስገቡ።
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -186,83 +244,85 @@
 
     <!-- ==================== MODALS ==================== -->
 
-    <!-- 1. ADD PARTNER SCHOOL MODAL -->
+    <!-- 1. ADD PARTNER SCHOOL MODAL (Direct to MySQL) -->
     <div id="school-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-slate-900 rounded-2xl max-w-md w-full p-6 border border-slate-800 shadow-2xl text-slate-100">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
                 <h3 class="font-bold text-sm text-white flex items-center">
                     <i class="fas fa-school text-indigo-400 mr-2"></i>
-                    አዲስ ት/ቤት መመዝገቢያ
+                    አዲስ ት/ቤት መመዝገቢያ (MySQL)
                 </h3>
                 <button onclick="closeModal('school-modal')" class="text-slate-400 hover:text-white">✕</button>
             </div>
-            <form action="#" onsubmit="event.preventDefault(); addNewSchool();" class="my-4 space-y-3">
+            <form action="/super-admin/schools/store" method="POST" class="my-4 space-y-3">
+                @csrf
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">የትምህርት ቤቱ ሙሉ ስም</label>
-                    <input type="text" id="new-school-name" placeholder="ምሳሌ፡ ዳግማዊ ሚኒሊክ ት/ቤት" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                    <input type="text" name="name" placeholder="ምሳሌ፡ ዳግማዊ ሚኒሊክ ት/ቤት" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">የመለያ ኮድ (School Code)</label>
-                        <input type="text" id="new-school-code" placeholder="DMN-001" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-indigo-400">
+                        <label class="block text-xs font-bold text-slate-300 mb-1">የመለያ ኮድ (Code)</label>
+                        <input type="text" name="code" placeholder="DMN-001" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-indigo-400 uppercase">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-300 mb-1">ከተማ / አድራሻ</label>
-                        <input type="text" id="new-school-city" placeholder="አዲስ አበባ" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                        <input type="text" name="city" placeholder="አዲስ አበባ" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
                     </div>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">የት/ቤቱ ዋና አድሚን ስልክ ቁጥር</label>
-                    <input type="text" id="new-school-phone" placeholder="09xxxxxxxx" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                    <input type="text" name="phone" placeholder="09xxxxxxxx" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
                 </div>
                 <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow mt-2">
-                    ት/ቤቱን መዝግብ እና ሊንክ አመንጭ
+                    ት/ቤቱን ዳታቤዝ ላይ መዝግብ እና ሊንክ አመንጭ
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- 2. ADD / EDIT AD MODAL -->
+    <!-- 2. ADD AD MODAL (Direct to MySQL) -->
     <div id="ad-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-slate-900 rounded-2xl max-w-md w-full p-6 border border-slate-800 shadow-2xl text-slate-100">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
                 <h3 class="font-bold text-sm text-white flex items-center">
                     <i class="fas fa-ad text-amber-400 mr-2"></i>
-                    አዲስ ማስታወቂያ ስቀል
+                    አዲስ ማስታወቂያ ስቀል (MySQL)
                 </h3>
                 <button onclick="closeModal('ad-modal')" class="text-slate-400 hover:text-white">✕</button>
             </div>
-            <form action="#" onsubmit="event.preventDefault(); addNewAd();" class="my-4 space-y-3">
+            <form action="/super-admin/ads/store" method="POST" class="my-4 space-y-3">
+                @csrf
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">አስተዋዋቂ ድርጅት</label>
-                    <input type="text" id="new-ad-company" placeholder="ምሳሌ፡ አዋሽ ባንክ / ዩኒፎርም አቅራቢ" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                    <input type="text" name="company_name" placeholder="ምሳሌ፡ አዋሽ ባንክ" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">የማስታወቂያው ርዕስ/ጽሁፍ</label>
-                    <input type="text" id="new-ad-headline" placeholder="ምሳሌ፡ የ 20% የትምህርት ቁሳቁሶች ቅናሽ" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                    <input type="text" name="title" placeholder="ምሳሌ፡ የ 20% የትምህርት ቁሳቁሶች ቅናሽ" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-300 mb-1">ዒላማ</label>
-                        <select id="new-ad-target" class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
-                            <option>ወላጆች በሙሉ</option>
-                            <option>መምህራን በሙሉ</option>
-                            <option>የት/ቤት አድሚኖች</option>
-                            <option>ለሁሉም ተጠቃሚዎች</option>
+                        <select name="target_audience" class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                            <option value="ወላጆች በሙሉ">ወላጆች በሙሉ</option>
+                            <option value="መምህራን በሙሉ">መምህራን በሙሉ</option>
+                            <option value="የት/ቤት አድሚኖች">የት/ቤት አድሚኖች</option>
+                            <option value="ለሁሉም ተጠቃሚዎች">ለሁሉም ተጠቃሚዎች</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-300 mb-1">የጊዜ ገደብ</label>
-                        <select id="new-ad-duration" class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
-                            <option>ያልተገደበ (ቋሚ)</option>
-                            <option>ለ 1 ወር ብቻ</option>
-                            <option>ለ 3 ወራት</option>
-                            <option>ለ 1 ዓመት</option>
+                        <select name="duration" class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                            <option value="ያልተገደበ (ቋሚ)">ያልተገደበ (ቋሚ)</option>
+                            <option value="ለ 1 ወር ብቻ">ለ 1 ወር ብቻ</option>
+                            <option value="ለ 3 ወራት">ለ 3 ወራት</option>
+                            <option value="ለ 1 ዓመት">ለ 1 ዓመት</option>
                         </select>
                     </div>
                 </div>
                 <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-500 shadow mt-2">
-                    ማስታወቂያውን በአንቀሳቃሽ ሰሌዳው ላይ ለጥፍ
+                    ማስታወቂያውን ዳታቤዝ ላይ ለጥፍ
                 </button>
             </form>
         </div>
@@ -275,106 +335,6 @@
     <script>
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
-        // ADD NEW SCHOOL DYNAMICALLY
-        function addNewSchool() {
-            const name = document.getElementById('new-school-name').value;
-            const code = document.getElementById('new-school-code').value;
-            const phone = document.getElementById('new-school-phone').value;
-
-            document.getElementById('empty-schools-row')?.remove();
-
-            const cur = parseInt(document.getElementById('super-school-count').innerText) || 0;
-            document.getElementById('super-school-count').innerText = cur + 1;
-
-            const row = document.createElement('tr');
-            row.id = 'school-' + code;
-            row.className = 'hover:bg-slate-800/40 transition';
-            row.innerHTML = `
-                <td class="p-3 font-bold text-white flex items-center space-x-2">
-                    <span class="status-dot w-2 h-2 rounded-full bg-emerald-400"></span>
-                    <span class="school-name">${name}</span>
-                </td>
-                <td class="p-3 text-indigo-400 font-mono">${code}</td>
-                <td class="p-3">${phone}</td>
-                <td class="p-3">
-                    <span class="status-badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold">ንቁ (Active)</span>
-                </td>
-                <td class="p-3">
-                    <button onclick="toggleSchoolStatus(this, 'school-${code}', '${name}')" 
-                            class="text-[11px] font-bold px-2.5 py-1 rounded-lg border transition bg-rose-500/10 text-rose-400 border-rose-500/30 hover:bg-rose-500/20">
-                        <i class="fas fa-ban mr-1"></i>እገድ
-                    </button>
-                </td>
-                <td class="p-3 text-right">
-                    <button onclick="navigator.clipboard.writeText('https://smart-debter-ethiopia.vercel.app/dashboard/admin?school=${code}'); alert('የትምህርት ቤቱ የአድሚን ሊንክ ተገልብጧል!');" 
-                            class="text-xs bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white px-3 py-1.5 rounded-lg border border-indigo-500/30 transition">
-                        <i class="fas fa-copy mr-1"></i>ሊንክ ቅዳ
-                    </button>
-                </td>
-            `;
-
-            document.getElementById('schools-table-body').prepend(row);
-            closeModal('school-modal');
-            alert('🎉 ' + name + ' በተሳካ ሁኔታ ተመዝግቧል! የአድሚን ሊንኩ ተፈጥሯል።');
-        }
-
-        // ADD NEW AD DYNAMICALLY
-        function addNewAd() {
-            const comp = document.getElementById('new-ad-company').value;
-            const head = document.getElementById('new-ad-headline').value;
-            const target = document.getElementById('new-ad-target').value;
-            const dur = document.getElementById('new-ad-duration').value;
-
-            document.getElementById('empty-ads-row')?.remove();
-
-            const cur = parseInt(document.getElementById('super-ad-count').innerText) || 0;
-            document.getElementById('super-ad-count').innerText = cur + 1;
-
-            const row = document.createElement('tr');
-            row.className = 'hover:bg-slate-800/40 transition';
-            row.innerHTML = `
-                <td class="p-3 font-bold text-white">${comp}</td>
-                <td class="p-3 text-slate-200">${head}</td>
-                <td class="p-3"><span class="bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded font-semibold">${target}</span></td>
-                <td class="p-3 text-emerald-400 font-medium">${dur}</td>
-                <td class="p-3"><span class="bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full text-[10px] font-bold">ንቁ</span></td>
-                <td class="p-3 text-right">
-                    <button onclick="this.closest('tr').remove();" class="text-rose-400 hover:text-rose-300 font-bold">
-                        <i class="fas fa-trash-alt mr-0.5"></i>ሰርዝ
-                    </button>
-                </td>
-            `;
-
-            document.getElementById('ads-table-body').prepend(row);
-            closeModal('ad-modal');
-            alert('🎉 ማስታወቂያው ተለጥፏል! በአንቀሳቃሽ ሰሌዳው ላይ ወዲያውኑ ይታያል።');
-        }
-
-        function toggleSchoolStatus(btn, rowId, schoolName) {
-            const row = document.getElementById(rowId);
-            const badge = row.querySelector('.status-badge');
-            const dot = row.querySelector('.status-dot');
-            const nameEl = row.querySelector('.school-name');
-
-            if (btn.innerText.includes('እገድ')) {
-                badge.className = 'status-badge bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold';
-                badge.innerText = 'የታገደ (Suspended)';
-                dot.className = 'status-dot w-2 h-2 rounded-full bg-rose-500';
-                nameEl.classList.add('line-through', 'text-slate-400');
-                btn.className = 'text-[11px] font-bold px-2.5 py-1 rounded-lg border transition bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20';
-                btn.innerHTML = '<i class="fas fa-check mr-1"></i>አንቃ';
-                alert('⚠️ ' + schoolName + ' አገልግሎቱ ታግዷል!');
-            } else {
-                badge.className = 'status-badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold';
-                badge.innerText = 'ንቁ (Active)';
-                dot.className = 'status-dot w-2 h-2 rounded-full bg-emerald-400';
-                nameEl.classList.remove('line-through', 'text-slate-400');
-                btn.className = 'text-[11px] font-bold px-2.5 py-1 rounded-lg border transition bg-rose-500/10 text-rose-400 border-rose-500/30 hover:bg-rose-500/20';
-                btn.innerHTML = '<i class="fas fa-ban mr-1"></i>እገድ';
-                alert('✅ ' + schoolName + ' አገልግሎቱ ነቅቷል!');
-            }
-        }
     </script>
 
 </body>
