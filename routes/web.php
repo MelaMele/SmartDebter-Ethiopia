@@ -23,14 +23,6 @@ Route::post('/parent/verify', function (Request $request) {
     $studentCode = trim($request->input('student_code'));
     $schoolCode = $request->input('school_code');
 
-    // የትምህርት ቤቱን ሁኔታ መፈተሽ
-    if ($schoolCode) {
-        $school = DB::table('schools')->where('code', $schoolCode)->first();
-        if ($school && $school->status === 'suspended') {
-            return back()->with('error', 'ይህ ትምህርት ቤት አገልግሎቱ ለጊዜው ታግዷል! እባክዎ ት/ቤቱን ያነጋግሩ።');
-        }
-    }
-
     $student = DB::table('students')
         ->join('parent_student', 'students.id', '=', 'parent_student.student_id')
         ->join('users', 'users.id', '=', 'parent_student.parent_id')
@@ -49,7 +41,7 @@ Route::post('/parent/verify', function (Request $request) {
     }
 
     if (!$student) {
-        return back()->with('error', 'የተሳሳተ ስልክ ቁጥር ወይም የተማሪ መለያ ኮድ (Student ID)! እባክዎ በትክክል ያስገቡ።');
+        return back()->with('error', 'የተሳሳተ ስልክ ቁጥር ወይም የተማሪ መለያ ኮድ (Student ID)!');
     }
 
     $parent = [
@@ -88,7 +80,7 @@ Route::get('/dashboard/teacher', function () {
     return view('dashboards.teacher', compact('classCode', 'teacherName', 'activeAds'));
 });
 
-// 5. School Admin Dashboard (ት/ቤቱ ከታገደ መግቢያውን ይቆልፋል)
+// 5. School Admin Dashboard
 Route::get('/dashboard/admin', function (Request $request) {
     $schoolCode = $request->query('school', 'BG-001');
     $school = DB::table('schools')->where('code', $schoolCode)->first();
@@ -126,7 +118,27 @@ Route::post('/super-admin/schools/store', function (Request $request) {
     return back()->with('success', 'ትምህርት ቤቱ በ Clever Cloud ዳታቤዝ ላይ ተመዝግቧል!');
 });
 
-// 8. Toggle School Status (ማገድ ወይም ማንቃት)
+// 8. UPDATE SCHOOL (ት/ቤትን ማስተካከያ)
+Route::post('/super-admin/schools/update', function (Request $request) {
+    $schoolId = $request->input('id');
+    DB::table('schools')->where('id', $schoolId)->update([
+        'name' => $request->input('name'),
+        'code' => strtoupper($request->input('code')),
+        'city' => $request->input('city'),
+        'phone' => $request->input('phone'),
+        'updated_at' => now(),
+    ]);
+
+    return back()->with('success', 'የትምህርት ቤቱ መረጃ በተሳካ ሁኔታ ተስተካክሏል!');
+});
+
+// 9. DELETE SCHOOL (ት/ቤትን ከዳታቤዝ ማጥፊያ)
+Route::post('/super-admin/schools/delete', function (Request $request) {
+    DB::table('schools')->where('id', $request->input('id'))->delete();
+    return back()->with('success', 'ትምህርት ቤቱ ከዳታቤዝ ተሰርዟል!');
+});
+
+// 10. Toggle School Status
 Route::post('/super-admin/schools/toggle-status', function (Request $request) {
     $schoolId = $request->input('id');
     $current = DB::table('schools')->where('id', $schoolId)->first();
@@ -135,7 +147,7 @@ Route::post('/super-admin/schools/toggle-status', function (Request $request) {
     return back();
 });
 
-// 9. Store Ad
+// 11. Store Ad
 Route::post('/super-admin/ads/store', function (Request $request) {
     try {
         DB::statement('ALTER TABLE advertisements MODIFY image_url LONGTEXT');
@@ -158,7 +170,7 @@ Route::post('/super-admin/ads/store', function (Request $request) {
     return back()->with('success', 'ማስታወቂያው በዳታቤዝ ተመዝግቧል!');
 });
 
-// 10. Delete Ad
+// 12. Delete Ad
 Route::post('/super-admin/ads/delete', function (Request $request) {
     DB::table('advertisements')->where('id', $request->input('id'))->delete();
     return back();
