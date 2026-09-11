@@ -10,7 +10,6 @@
     <meta name="theme-color" content="#4f46e5">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="SmartDebter">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2997/2997295.png">
 
     <!-- Tailwind CSS & Icons -->
@@ -26,7 +25,7 @@
                 <img src="https://cdn-icons-png.flaticon.com/512/2997/2997295.png" alt="Logo" class="w-8 h-8 rounded-lg">
                 <div>
                     <p class="text-xs font-bold leading-tight" data-am="SmartDebter አፕሊኬሽን" data-en="SmartDebter App">SmartDebter አፕሊኬሽን</p>
-                    <p class="text-[10px] text-indigo-200" data-am="በቀላሉ ስልክዎ ላይ ጭነው ይጠቀሙ!" data-en="Install on your phone for quick access!">በቀላሉ ስልክዎ ላይ ጭነው ይጠቀሙ!</p>
+                    <p class="text-[10px] text-indigo-200" data-am="በቀላሉ ስልክዎ ላይ ጭነው ይጠቀሙ!" data-en="Install on your phone!">በቀላሉ ስልክዎ ላይ ጭነው ይጠቀሙ!</p>
                 </div>
             </div>
             <div class="flex items-center space-x-2">
@@ -48,7 +47,7 @@
                 </div>
                 <div>
                     <h2 class="text-sm font-bold text-slate-900 leading-tight">{{ $parent['name'] ?? 'የተማሪ ወላጅ' }}</h2>
-                    <p class="text-[11px] text-slate-500"><span data-am="የተመዘገበ ስልክ፡" data-en="Phone:">የተመዘገበ ስልክ፡</span> {{ $phone ?? '09xxxxxxxx' }}</p>
+                    <p class="text-[11px] text-slate-500"><span data-am="የተመዘገበ ስልክ፡" data-en="Phone:">የተመዘገበ ስልክ፡</span> {{ $phone ?? '0911000000' }}</p>
                 </div>
             </div>
 
@@ -73,17 +72,21 @@
         </div>
     </header>
 
-    <!-- Child Profile Card -->
-    <div class="max-w-3xl mx-auto px-4 pt-4">
-        <div class="bg-white rounded-2xl p-3 border shadow-sm flex items-center justify-between overflow-x-auto">
-            <div class="flex items-center space-x-3 min-w-max">
-                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-am="የእርስዎ ተማሪ:" data-en="Your Student:">የእርስዎ ተማሪ:</span>
-                <button class="flex items-center space-x-2 bg-indigo-50 border-2 border-indigo-600 px-3.5 py-1.5 rounded-xl text-xs font-bold text-indigo-950 shadow-xs">
-                    <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
-                    <span>{{ $parent['children'][0]['name'] ?? 'ተማሪ' }} ({{ $parent['children'][0]['grade'] ?? 'ክፍል 7-B' }})</span>
-                </button>
-            </div>
+    <!-- Child Profile Card & Action Bar -->
+    <div class="max-w-3xl mx-auto px-4 pt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div class="bg-white rounded-2xl p-3 border shadow-xs flex items-center space-x-3 flex-1">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-am="የእርስዎ ተማሪ:" data-en="Your Student:">የእርስዎ ተማሪ:</span>
+            <span class="flex items-center space-x-2 bg-indigo-50 border-2 border-indigo-600 px-3 py-1 rounded-xl text-xs font-bold text-indigo-950 shadow-xs">
+                <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
+                <span>{{ $parent['children'][0]['name'] ?? 'ዮናስ ዳዊት' }} ({{ $parent['children'][0]['grade'] ?? 'ክፍል 7-B' }})</span>
+            </span>
         </div>
+
+        <!-- BUTTON TO OPEN MESSAGE TO TEACHER / UNIT LEADER -->
+        <button onclick="openParentMessageModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-sm transition flex items-center justify-center space-x-2 shrink-0">
+            <i class="fas fa-comment-dots text-sm"></i>
+            <span data-am="ለመምህሩ መልእክት ይጻፉ" data-en="Message Teacher / Leader">ለመምህሩ መልእክት ይጻፉ</span>
+        </button>
     </div>
 
     <!-- Main Feed / Timeline -->
@@ -92,7 +95,7 @@
         <!-- 1. DYNAMIC MOVING AD CAROUSEL -->
         @include('partials.ad-slider', ['sliderId' => 'parent-feed-slider'])
 
-        <!-- 2. MONTHLY ARCHIVE TABS (የወራት ማህደር ከመስከረም እስከ ጳጉሜ) -->
+        <!-- 2. MONTHLY ARCHIVE TABS -->
         <div class="bg-white rounded-2xl border shadow-sm overflow-hidden">
             <div class="p-3 bg-slate-50/70 border-b flex items-center justify-between">
                 <span class="text-xs font-bold text-slate-700 flex items-center">
@@ -102,7 +105,6 @@
                 <span class="text-[10px] text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md font-bold">2017 ዓ.ም</span>
             </div>
 
-            <!-- Month Tabs Including Pagume -->
             <div class="p-3 bg-white overflow-x-auto flex space-x-2">
                 @php
                     $ethMonths = ['መስከረም', 'ጥቅምት', 'ህዳር', 'ታህሳስ', 'ጥር', 'የካቲት', 'መጋቢት', 'ሚያዝያ', 'ግንቦት', 'ሰኔ', 'ሐምሌ', 'ነሐሴ', 'ጳጉሜ'];
@@ -116,34 +118,80 @@
             </div>
         </div>
 
-        <!-- 3. DEBTER FEED CONTAINER -->
+        <!-- 3. DEBTER FEED CONTAINER (ሁለቱንም ያሳያል፡ ከመምህር የመጣ እና ወላጅ የላከው) -->
         <div id="parent-debter-feed" class="space-y-4">
             
-            <!-- Clean Empty State (መጀመሪያ ላይ ደብተሩ ንጹህ ነው) -->
-            <div class="bg-white rounded-2xl border p-8 text-center shadow-sm">
+            <!-- Clean Empty State -->
+            <div id="parent-empty-state" class="bg-white rounded-2xl border p-8 text-center shadow-sm">
                 <div class="w-14 h-14 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl mx-auto mb-3">
                     <i class="fas fa-book-open"></i>
                 </div>
                 <h4 class="text-sm font-bold text-slate-800" data-am="የልጅዎ ደብተር ንጹህ ነው!" data-en="Debter is Clean & Ready!">የልጅዎ ደብተር ንጹህ ነው!</h4>
-                <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto leading-relaxed" data-am="እስካሁን ከመምህራን የተላከ አዲስ የቤት ስራ ወይም ማስታወሻ የለም። መምህሩ መልእክት ሲልክ እዚህ ገጽ ላይ በቅጽበት ይደርሶዎታል።" data-en="No new homework or notes from teachers yet. They will appear here in real-time.">
-                    እስካሁን ከመምህራን የተላከ አዲስ የቤት ስራ ወይም ማስታወሻ የለም። መምህሩ መልእክት ሲልክ እዚህ ገጽ ላይ በቅጽበት ይደርሶዎታል።
+                <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto leading-relaxed" data-am="እስካሁን ከመምህራን የተላከ አዲስ ማስታወሻ የለም። ጥያቄ ካለዎት ከላይ 'ለመምህሩ መልእክት ይጻፉ' የሚለውን ነክተው መላክ ይችላሉ።" data-en="No notes yet. Click 'Message Teacher' above if you have any questions or leave requests.">
+                    እስካሁን ከመምህራን የተላከ አዲስ ማስታወሻ የለም። ጥያቄ ካለዎት ከላይ <b>"ለመምህሩ መልእክት ይጻፉ"</b> የሚለውን ነክተው መላክ ይችላሉ።
                 </p>
-                <div class="mt-4 inline-flex items-center space-x-1.5 text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
-                    <i class="fas fa-check-circle"></i>
-                    <span data-am="ሲስተሙ ከት/ቤቱ ጋር በቀጥታ ተገናኝቷል" data-en="Connected directly to School">ሲስተሙ ከት/ቤቱ ጋር በቀጥታ ተገናኝቷል</span>
-                </div>
             </div>
 
         </div>
 
     </main>
 
+    <!-- ================= MODAL: PARENT MESSAGE TO TEACHER / UNIT LEADER ================= -->
+    <div id="parent-message-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border">
+            <div class="flex items-center justify-between pb-3 border-b">
+                <h3 class="font-bold text-sm text-slate-900 flex items-center">
+                    <i class="fas fa-paper-plane text-emerald-600 mr-2"></i>
+                    <span data-am="ለትምህርት ቤቱ መልእክት ይጻፉ" data-en="Send Message to School">ለትምህርት ቤቱ መልእክት ይጻፉ</span>
+                </h3>
+                <button onclick="closeParentMessageModal()" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+            </div>
+
+            <form action="#" onsubmit="event.preventDefault(); submitParentMessage(this);" class="my-4 space-y-3.5">
+                <!-- 1. Select Recipient (ተቀባይ ይምረጡ) -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1" data-am="መልእክቱ ለማን ይድረስ?" data-en="Send Message To:">መልእክቱ ለማን ይድረስ?</label>
+                    <select id="p-recipient" class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-emerald-500">
+                        <option value="የክፍል ኃላፊ መምህር">👨‍🏫 ለክፍል ኃላፊው መምህር (Homeroom Teacher)</option>
+                        <option value="የዲቪዥን ተጠሪ / ዩኒት ሊደር">🏢 ለዲቪዥኑ ተጠሪ / ዩኒት ሊደር (Division Unit Leader)</option>
+                    </select>
+                </div>
+
+                <!-- 2. Message Category -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1" data-am="የመልእክቱ አይነት" data-en="Message Topic">የመልእክቱ አይነት</label>
+                    <select id="p-category" class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs focus:ring-2 focus:ring-emerald-500">
+                        <option value="የመቅረት ፈቃድ">🤒 የመቅረት ፈቃድ / የህመም ማስታወሻ (Absence Request)</option>
+                        <option value="የቤት ስራ ጥያቄ">❓ ስለ ትምህርት / የቤት ስራ ጥያቄ (Homework Inquiry)</option>
+                        <option value="ስነ-ምግባርና ባህሪ">⚠️ ስለ ባህሪ / አጠቃላይ አስተያየት (Behavior / Concern)</option>
+                        <option value="አጠቃላይ ጥያቄ">💬 አጠቃላይ ጥያቄ (General Inquiry)</option>
+                    </select>
+                </div>
+
+                <!-- 3. Message Body -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1" data-am="የመልእክቱ ዝርዝር" data-en="Message Details">የመልእክቱ ዝርዝር</label>
+                    <textarea rows="4" id="p-body" placeholder="ለልጅዎ መምህር ወይም ዩኒት ሊደር የሚተላለፈውን መልእክት እዚህ ይጻፉ..." required
+                              class="w-full p-3 bg-slate-50 border rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                </div>
+
+                <div class="flex items-center justify-end space-x-2 pt-2 border-t">
+                    <button type="button" onclick="closeParentMessageModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 bg-slate-100" data-am="ይቅር" data-en="Cancel">ይቅር</button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow flex items-center space-x-1.5">
+                        <i class="fas fa-paper-plane text-xs"></i>
+                        <span data-am="መልእክቱን ላክ" data-en="Send Message">መልእክቱን ላክ</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Mela Solution Shared Footer -->
     @include('partials.footer')
 
     <!-- Interactive Scripts -->
     <script>
-        // 1. LANGUAGE SWITCHER (አማርኛ ⇄ English)
+        // 1. LANGUAGE SWITCHER
         let parentLang = 'am';
         function toggleParentLanguage(btn) {
             parentLang = (parentLang === 'am') ? 'en' : 'am';
@@ -179,7 +227,58 @@
             document.getElementById('parent-eth-date').innerText = `🇪🇹 ዛሬ፡ ${ethDate.monthName} ${ethDate.day} / ${ethDate.year} ዓ.ም`;
         });
 
-        // 3. PARENT MONTHLY ARCHIVE FILTER
+        function openParentMessageModal() {
+            document.getElementById('parent-message-modal').classList.remove('hidden');
+        }
+        function closeParentMessageModal() {
+            document.getElementById('parent-message-modal').classList.add('hidden');
+        }
+
+        // 3. SUBMIT PARENT MESSAGE (ወላጁ ሲልክ በደብተሩ ላይ ወዲያውኑ ይቀመጣል)
+        function submitParentMessage(form) {
+            const recipient = document.getElementById('p-recipient').value;
+            const category = document.getElementById('p-category').value;
+            const body = document.getElementById('p-body').value;
+            const ethDate = getEthiopianDate();
+
+            document.getElementById('parent-empty-state')?.remove();
+
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-2xl border border-emerald-200 shadow-sm p-4 space-y-2';
+            card.innerHTML = `
+                <div class="flex items-center justify-between border-b pb-2">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">
+                            <i class="fas fa-paper-plane"></i>
+                        </span>
+                        <div>
+                            <span class="text-[11px] font-bold text-slate-800">ከእርስዎ የተላከ መልእክት</span>
+                            <p class="text-[9px] text-slate-400">${ethDate.monthName} ${ethDate.day} ቀን ${ethDate.year} ዓ.ም</p>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                        ተቀባይ፡ ${recipient}
+                    </span>
+                </div>
+
+                <div class="text-xs text-slate-700 leading-relaxed pt-1">
+                    <span class="font-bold text-slate-900 block mb-0.5">[${category}]</span>
+                    ${body}
+                </div>
+
+                <div class="pt-2 border-t flex items-center justify-between text-[10px] text-slate-400">
+                    <span class="text-amber-600 font-bold flex items-center">
+                        <i class="fas fa-clock mr-1"></i>መልእክቱ ደርሷል (መምህሩ/ተጠሪው ሲያዩት እዚህ ማሳወቂያ ይደርሶዎታል)
+                    </span>
+                </div>
+            `;
+
+            document.getElementById('parent-debter-feed').prepend(card);
+            closeParentMessageModal();
+            form.reset();
+            alert(`🎉 መልእክትዎ ለ${recipient} በተሳካ ሁኔታ ደርሷል!`);
+        }
+
         function parentFilterMonth(monthName) {
             document.querySelectorAll('.parent-month-tab').forEach(t => {
                 t.className = 'parent-month-tab whitespace-nowrap px-3 py-1.5 rounded-xl text-xs font-bold transition bg-slate-50 border text-slate-600 hover:bg-slate-100';
@@ -188,7 +287,6 @@
             alert(`የ ${monthName} ወር የደብተር ማህደር ተመርጧል።`);
         }
 
-        // 4. SIGN BUTTON
         function toggleSign(btn) {
             btn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
             btn.classList.add('bg-emerald-600', 'cursor-default');
