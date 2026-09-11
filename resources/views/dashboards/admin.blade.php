@@ -72,13 +72,9 @@
                 <div>
                     <div class="flex items-center space-x-2 flex-wrap">
                         <h1 class="text-base sm:text-lg font-black text-slate-900 leading-tight tracking-tight">{{ $schoolName }}</h1>
-                        
-                        <!-- Campus Badge -->
                         <span class="text-[10px] bg-indigo-100 text-indigo-800 border border-indigo-200 px-2 py-0.5 rounded-full font-bold">
                             <i class="fas fa-map-marker-alt mr-1"></i>{{ $currentCampusName }}
                         </span>
-
-                        <!-- Division Badge -->
                         <span class="text-[10px] {{ $currentDiv['badge'] }} border px-2 py-0.5 rounded-full font-bold">
                             {{ $leaderName ? $leaderName . ' (' . $currentDiv['role_badge'] . ')' : $currentDiv['title'] }}
                         </span>
@@ -111,8 +107,8 @@
 
     <main class="max-w-6xl mx-auto px-4 mt-6 space-y-6">
 
-        <!-- GENERAL PRINCIPAL CAMPUS & DIVISION TABS -->
         @if($division == 'all')
+        <!-- GENERAL PRINCIPAL CAMPUS TABS -->
         <div class="bg-white rounded-2xl p-3 border shadow-xs flex items-center justify-between gap-3 flex-wrap">
             <div class="flex items-center space-x-2 overflow-x-auto">
                 <span class="text-xs font-bold text-slate-500 px-1 uppercase shrink-0">ካምፓስ ምረጥ፡</span>
@@ -140,7 +136,7 @@
                     <h3 class="text-base font-bold">የዋና ርዕሰ-መምህር ማዕከል • {{ $currentCampusName }}</h3>
                 </div>
                 <p class="text-xs text-purple-200 leading-relaxed max-w-2xl">
-                    ለካምፓስ 1 እና ለካምፓስ 2 ተጠሪዎች (Unit Leaders) በስማቸው ሊንክ ያመንጩ፤ የተማሪዎችን Excel ፋይልም በጅምላ ይጫኑ።
+                    የዲቪዥን ተጠሪዎች ስራ ቢለቁ ስማቸውን አስተካክለው (Edit) አዲስ ሊንክ መስጠት ወይም መሰረዝ ይችላሉ።
                 </p>
             </div>
             <button onclick="openModal('excel-modal')" class="whitespace-nowrap text-xs font-bold bg-amber-400 hover:bg-amber-300 text-slate-950 px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-1.5 shrink-0">
@@ -180,15 +176,15 @@
             </div>
         </div>
 
-        <!-- SECTION 2: ASSIGN UNIT LEADERS -->
+        <!-- SECTION 2: ASSIGN & MANAGE UNIT LEADERS (ከነ Edit እና Reset ጋር) -->
         <div class="bg-white rounded-2xl border shadow-sm p-6">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4 pb-3 border-b">
                 <div>
                     <h3 class="text-base font-bold text-slate-900 flex items-center">
                         <i class="fas fa-users-cog text-purple-600 mr-2"></i>
-                        የዲቪዥን ተጠሪዎች ምደባ እና የመግቢያ ሊንክ ({{ $currentCampusName }})
+                        የዲቪዥን ተጠሪዎች ምደባ እና አስተዳደር ({{ $currentCampusName }})
                     </h3>
-                    <p class="text-xs text-slate-500 mt-0.5">ለእያንዳንዱ ዲቪዥን ኃላፊ በስሙ/በስሟ ሊንክ ያመንጩና በቴሌግራም/SMS ይላኩላቸው፡</p>
+                    <p class="text-xs text-slate-500 mt-0.5">ተጠሪዎችን ይመድቡ፤ ስራ ቢለቁ ስማቸውን አስተካክለው (Edit) አዲስ ሊንክ ይስጡ ወይም ያጥፉ</p>
                 </div>
                 <span class="text-xs font-bold text-purple-700 bg-purple-50 border border-purple-200 px-3 py-1 rounded-full">
                     የስልጣን ውክልና
@@ -196,6 +192,7 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
                 <!-- KG Leader -->
                 <div class="p-4 rounded-xl border border-pink-200 bg-pink-50/40 flex flex-col justify-between space-y-3">
                     <div class="flex items-center justify-between">
@@ -206,10 +203,15 @@
                                 <p class="text-[10px] text-slate-500">{{ $currentCampusName }}</p>
                             </div>
                         </div>
+                        <button onclick="resetLeader('kg')" title="ስሙን አጥፋ / አሰናብት" class="text-[10px] text-rose-600 hover:underline font-bold">
+                            <i class="fas fa-user-times mr-0.5"></i>አሰናብት
+                        </button>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <input type="text" id="leader-name-kg" placeholder="የተጠሪዋ ስም (ምሳሌ፡ ወ/ሮ ሰላማዊት)" class="text-xs p-2 bg-white border border-slate-200 rounded-lg flex-1">
-                        <button onclick="generateLeaderLink('kg')" class="bg-pink-600 hover:bg-pink-700 text-white text-xs font-bold px-3 py-2 rounded-lg transition shadow-xs">ሊንክ ውሰድ</button>
+                        <input type="text" id="leader-name-kg" placeholder="የተጠሪዋ ስም (ምሳሌ፡ ወ/ሮ ሰላማዊት)" class="text-xs p-2 bg-white border border-slate-200 rounded-lg flex-1 font-semibold">
+                        <button onclick="generateLeaderLink('kg')" class="bg-pink-600 hover:bg-pink-700 text-white text-xs font-bold px-3 py-2 rounded-lg transition shadow-xs flex items-center space-x-1">
+                            <i class="fas fa-link text-xs"></i><span>ሊንክ ውሰድ</span>
+                        </button>
                     </div>
                 </div>
 
@@ -223,10 +225,15 @@
                                 <p class="text-[10px] text-slate-500">{{ $currentCampusName }}</p>
                             </div>
                         </div>
+                        <button onclick="resetLeader('1-4')" title="ስሙን አጥፋ / አሰናብት" class="text-[10px] text-rose-600 hover:underline font-bold">
+                            <i class="fas fa-user-times mr-0.5"></i>አሰናብት
+                        </button>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <input type="text" id="leader-name-1-4" placeholder="የተጠሪው ስም (ምሳሌ፡ አቶ ከበደ)" class="text-xs p-2 bg-white border border-slate-200 rounded-lg flex-1">
-                        <button onclick="generateLeaderLink('1-4')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-2 rounded-lg transition shadow-xs">ሊንክ ውሰድ</button>
+                        <input type="text" id="leader-name-1-4" placeholder="የተጠሪው ስም (ምሳሌ፡ አቶ ከበደ)" class="text-xs p-2 bg-white border border-slate-200 rounded-lg flex-1 font-semibold">
+                        <button onclick="generateLeaderLink('1-4')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-2 rounded-lg transition shadow-xs flex items-center space-x-1">
+                            <i class="fas fa-link text-xs"></i><span>ሊንክ ውሰድ</span>
+                        </button>
                     </div>
                 </div>
 
@@ -240,10 +247,15 @@
                                 <p class="text-[10px] text-slate-500">{{ $currentCampusName }}</p>
                             </div>
                         </div>
+                        <button onclick="resetLeader('5-8')" title="ስሙን አጥፋ / አሰናብት" class="text-[10px] text-rose-600 hover:underline font-bold">
+                            <i class="fas fa-user-times mr-0.5"></i>አሰናብት
+                        </button>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <input type="text" id="leader-name-5-8" placeholder="የተጠሪው ስም (ምሳሌ፡ መምህር ግርማ)" class="text-xs p-2 bg-white border border-slate-200 rounded-lg flex-1">
-                        <button onclick="generateLeaderLink('5-8')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg transition shadow-xs">ሊንክ ውሰድ</button>
+                        <input type="text" id="leader-name-5-8" placeholder="የተጠሪው ስም (ምሳሌ፡ መምህር ግርማ)" class="text-xs p-2 bg-white border border-slate-200 rounded-lg flex-1 font-semibold">
+                        <button onclick="generateLeaderLink('5-8')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg transition shadow-xs flex items-center space-x-1">
+                            <i class="fas fa-link text-xs"></i><span>ሊንክ ውሰድ</span>
+                        </button>
                     </div>
                 </div>
 
@@ -257,17 +269,23 @@
                                 <p class="text-[10px] text-slate-500">{{ $currentCampusName }}</p>
                             </div>
                         </div>
+                        <button onclick="resetLeader('9-12')" title="ስሙን አጥፋ / አሰናብት" class="text-[10px] text-rose-600 hover:underline font-bold">
+                            <i class="fas fa-user-times mr-0.5"></i>አሰናብት
+                        </button>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <input type="text" id="leader-name-9-12" placeholder="የተጠሪው ስም (ምሳሌ፡ አቶ ታደሰ)" class="text-xs p-2 bg-white border border-slate-200 rounded-lg flex-1">
-                        <button onclick="generateLeaderLink('9-12')" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-2 rounded-lg transition shadow-xs">ሊንክ ውሰድ</button>
+                        <input type="text" id="leader-name-9-12" placeholder="የተጠሪው ስም (ምሳሌ፡ አቶ ታደሰ)" class="text-xs p-2 bg-white border border-slate-200 rounded-lg flex-1 font-semibold">
+                        <button onclick="generateLeaderLink('9-12')" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-2 rounded-lg transition shadow-xs flex items-center space-x-1">
+                            <i class="fas fa-link text-xs"></i><span>ሊንክ ውሰድ</span>
+                        </button>
                     </div>
                 </div>
+
             </div>
         </div>
 
         @else
-        <!-- ================= UNIT LEADER PORTAL ================= -->
+        <!-- ================= UNIT LEADER PORTAL (ከነ TEACHER EDIT & DELETE ጋር) ================= -->
         <div class="bg-gradient-to-r from-purple-800 to-indigo-900 rounded-2xl p-5 sm:p-6 text-white shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div class="space-y-1">
                 <div class="flex items-center space-x-2">
@@ -275,7 +293,7 @@
                     <h3 class="text-base font-bold">እንኳን ደህና መጡ {{ $leaderName ? $leaderName : $currentDiv['title'] }}!</h3>
                 </div>
                 <p class="text-xs text-purple-200 leading-relaxed max-w-2xl">
-                    ይህ ፖርታል ለ {{ $currentCampusName }} • {{ $currentDiv['title'] }} የተዘጋጀ ነው። መምህራንን መድበው ሊንክ ይላኩላቸው።
+                    ይህ ፖርታል ለ {{ $currentCampusName }} • {{ $currentDiv['title'] }} የተዘጋጀ ነው። መምህራንን መመደብ፣ ማስተካከል (Edit) ወይም ማሰናበት ይችላሉ።
                 </p>
             </div>
             <button onclick="openModal('teacher-assign-modal')" class="whitespace-nowrap text-xs font-bold bg-amber-400 hover:bg-amber-300 text-slate-950 px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-1.5 shrink-0">
@@ -284,15 +302,15 @@
             </button>
         </div>
 
-        <!-- TEACHER ASSIGNMENT CARD -->
+        <!-- TEACHER ASSIGNMENT & MANAGEMENT CARD -->
         <div class="bg-white rounded-2xl border shadow-sm p-6">
             <div class="flex items-center justify-between mb-4 pb-3 border-b">
                 <div>
                     <h3 class="text-base font-bold text-slate-900 flex items-center">
                         <i class="fas fa-link text-emerald-600 mr-2"></i>
-                        የ{{ $currentDiv['title'] }} መምህራን ሊንክ ማመንጫ ({{ $currentCampusName }})
+                        የመምህራን ምደባ እና አስተዳደር ({{ $currentDiv['title'] }})
                     </h3>
-                    <p class="text-xs text-slate-500 mt-0.5">በዚህ ካምፓስ ስር ላሉ መምህራን የመግቢያ ሊንክ አመንጭተው ይላኩላቸው።</p>
+                    <p class="text-xs text-slate-500 mt-0.5">በዚህ ዲቪዥን ስር መምህራንን ይመድቡ፤ ክፍላቸውን ያርትዑ (Edit) ወይም ያሰናብቱ (Delete)</p>
                 </div>
             </div>
 
@@ -343,7 +361,7 @@
                     <i class="fas fa-signature text-amber-600"></i>
                 </div>
                 <h3 id="sign-rate" class="text-2xl font-black text-slate-400">0%</h3>
-                <span class="text-[10px] text-slate-400">የወላጆች ምላሽ ምጣኔ</span>
+                <span class="text-[10px] text-slate-400">የወላጆች ምላሽ</span>
             </div>
         </div>
 
@@ -477,17 +495,24 @@
         </div>
     </div>
 
-    <!-- 3. TEACHER MODAL -->
+    <!-- 3. TEACHER ASSIGN MODAL -->
     <div id="teacher-assign-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border">
             <div class="flex items-center justify-between pb-3 border-b">
-                <h3 class="font-bold text-sm text-slate-900">አዲስ መምህር በክፍል መድብ ({{ $currentCampusName }})</h3>
+                <h3 class="font-bold text-sm text-slate-900" id="teacher-modal-title">አዲስ መምህር በክፍል መድብ</h3>
                 <button onclick="closeModal('teacher-assign-modal')" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
             </div>
-            <form action="#" onsubmit="event.preventDefault(); addTeacher();" class="my-4 space-y-3">
-                <input type="text" id="assign-teacher-name" placeholder="የመምህሩ ሙሉ ስም" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs">
-                <input type="text" id="assign-teacher-class" placeholder="የተመደበበት ክፍል (ምሳሌ፡ ክፍል 7-B)" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-purple-700">
-                <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 shadow">ሊንክ አመንጭ</button>
+            <form action="#" onsubmit="event.preventDefault(); saveTeacher();" class="my-4 space-y-3">
+                <input type="hidden" id="edit-teacher-card-id">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-600 mb-1">የመምህሩ ሙሉ ስም</label>
+                    <input type="text" id="assign-teacher-name" placeholder="ምሳሌ፡ መምህር ከበደ ተሾመ" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-600 mb-1">የተመደበበት ክፍል</label>
+                    <input type="text" id="assign-teacher-class" placeholder="ምሳሌ፡ ክፍል 7-B" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-purple-700">
+                </div>
+                <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 shadow" id="teacher-submit-btn">ሊንክ አመንጭ</button>
             </form>
         </div>
     </div>
@@ -518,6 +543,7 @@
             alert('የወላጆች መግቢያ ሊንክ ተገልብጧል!');
         }
 
+        // GENERATE & EDIT UNIT LEADER LINK
         function generateLeaderLink(divCode) {
             const input = document.getElementById('leader-name-' + divCode);
             const leaderName = input.value.trim();
@@ -535,6 +561,15 @@
 
             navigator.clipboard.writeText(link);
             alert(`🎉 የ ${leaderName} የዲቪዥን ሊንክ ተገልብጧል! በቴሌግራም ወይም SMS ይላኩላቸው።`);
+        }
+
+        // RESET / REMOVE UNIT LEADER
+        function resetLeader(divCode) {
+            const input = document.getElementById('leader-name-' + divCode);
+            if (confirm('እርግጠኛ ነዎት ይህ ተጠሪ ከስራ ስለለቀቀ መለያው እንዲሰረዝ ይፈልጋሉ?')) {
+                input.value = '';
+                alert('የተጠሪው መለያ ተሰርዟል! አዲስ ተጠሪ ሲመጣ ስማቸውን ማስገባት ይችላሉ።');
+            }
         }
 
         function fileSelected(input) {
@@ -564,34 +599,78 @@
             closeModal('student-modal');
         }
 
-        function addTeacher() {
-            const name = document.getElementById('assign-teacher-name').value;
-            const cls = document.getElementById('assign-teacher-class').value;
-            const cur = parseInt(document.getElementById('teacher-count').innerText) || 0;
-            document.getElementById('teacher-count').innerText = cur + 1;
+        // TEACHER ADD & EDIT LOGIC
+        let teacherCounter = 0;
 
-            const card = document.createElement('div');
-            card.className = 'p-4 bg-slate-50 rounded-xl border flex flex-col justify-between';
-            card.innerHTML = `
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-bold text-slate-900">${name}</span>
-                        <span class="text-[10px] font-bold bg-purple-100 text-purple-700 px-2 py-0.5 rounded">${cls}</span>
+        function saveTeacher() {
+            const name = document.getElementById('assign-teacher-name').value.trim();
+            const cls = document.getElementById('assign-teacher-class').value.trim();
+            const editId = document.getElementById('edit-teacher-card-id').value;
+
+            if (editId) {
+                // EDIT EXISTING TEACHER
+                const card = document.getElementById(editId);
+                card.querySelector('.teacher-display-name').innerText = name;
+                card.querySelector('.teacher-display-class').innerText = cls;
+                const link = `https://smart-debter-ethiopia.vercel.app/teacher/entry?class=${encodeURIComponent(cls)}&name=${encodeURIComponent(name)}`;
+                card.querySelector('.teacher-link-input').value = link;
+                alert('የመምህሩ መረጃ በተሳካ ሁኔታ ተስተካክሏል!');
+            } else {
+                // ADD NEW TEACHER
+                teacherCounter++;
+                const cardId = 'teacher-card-' + teacherCounter;
+                const cur = parseInt(document.getElementById('teacher-count').innerText) || 0;
+                document.getElementById('teacher-count').innerText = cur + 1;
+
+                const link = `https://smart-debter-ethiopia.vercel.app/teacher/entry?class=${encodeURIComponent(cls)}&name=${encodeURIComponent(name)}`;
+
+                const card = document.createElement('div');
+                card.id = cardId;
+                card.className = 'p-4 bg-slate-50 rounded-xl border flex flex-col justify-between space-y-3';
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-xs font-bold text-slate-900 teacher-display-name">${name}</span>
+                            <span class="text-[10px] font-bold bg-purple-100 text-purple-700 px-2 py-0.5 rounded teacher-display-class">${cls}</span>
+                        </div>
+                        <p class="text-[10px] text-slate-500">የ ${cls} ደብተር መግቢያ ሊንክ፡</p>
                     </div>
-                    <p class="text-[11px] text-slate-500 mb-3">የ ${cls} ደብተር መግቢያ ሊንክ፡</p>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <input type="text" readonly value="https://smart-debter-ethiopia.vercel.app/teacher/entry?class=${encodeURIComponent(cls)}&name=${encodeURIComponent(name)}" 
-                           class="text-[10px] bg-white border p-1.5 rounded flex-1 text-slate-600 select-all">
-                    <button onclick="navigator.clipboard.writeText('https://smart-debter-ethiopia.vercel.app/teacher/entry?class=${encodeURIComponent(cls)}&name=${encodeURIComponent(name)}'); alert('የመምህሩ ሊንክ ተገልብጧል!');" 
-                            class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1.5 rounded transition">
-                        <i class="fas fa-copy"></i>
-                    </button>
-                </div>
-            `;
-            document.getElementById('teachers-container').prepend(card);
+                    <div class="flex items-center space-x-1.5">
+                        <input type="text" readonly value="${link}" class="teacher-link-input text-[10px] bg-white border p-1.5 rounded flex-1 text-slate-600 select-all font-mono">
+                        <button onclick="navigator.clipboard.writeText('${link}'); alert('የመምህሩ ሊንክ ተገልብጧል!');" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-1.5 rounded transition" title="ሊንክ ቅዳ">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button onclick="editTeacherCard('${cardId}', '${name}', '${cls}')" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold p-1.5 rounded transition" title="አስተካክል">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteTeacherCard('${cardId}')" class="text-xs bg-rose-100 hover:bg-rose-200 text-rose-600 font-bold p-1.5 rounded transition" title="አሰናብት / ሰርዝ">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                `;
+                document.getElementById('teachers-container').prepend(card);
+                alert(`🎉 ${name} ለ ${cls} ተመድቧል! ሊንኩን ለመምህሩ ይላኩለት።`);
+            }
+
             closeModal('teacher-assign-modal');
-            alert('መምህሩ ተመድቧል!');
+        }
+
+        function editTeacherCard(cardId, name, cls) {
+            document.getElementById('teacher-modal-title').innerText = 'የመምህሩን መረጃ አስተካክል (Edit Teacher)';
+            document.getElementById('edit-teacher-card-id').value = cardId;
+            document.getElementById('assign-teacher-name').value = name;
+            document.getElementById('assign-teacher-class').value = cls;
+            document.getElementById('teacher-submit-btn').innerText = 'ለውጡን መዝግብ';
+            openModal('teacher-assign-modal');
+        }
+
+        function deleteTeacherCard(cardId) {
+            if (confirm('እርግጠኛ ነዎት ይህ መምህር ከስራ ስለለቀቀ መለያው እንዲሰረዝ ይፈልጋሉ?')) {
+                document.getElementById(cardId).remove();
+                const cur = parseInt(document.getElementById('teacher-count').innerText) || 1;
+                document.getElementById('teacher-count').innerText = Math.max(0, cur - 1);
+                alert('መምህሩ በተሳካ ሁኔታ ተሰናብቷል/ተሰርዟል!');
+            }
         }
 
         function postNotice(form) {
