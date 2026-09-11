@@ -175,3 +175,7 @@ Route::post('/super-admin/ads/delete', function (Request $request) {
     DB::table('advertisements')->where('id', $request->input('id'))->delete();
     return back();
 });
+// 13. Official Proposal Document for Neway Challenge Academy
+Route::get('/proposal/neway-challenge', function () {
+    return view('documents.proposal-neway');
+});
