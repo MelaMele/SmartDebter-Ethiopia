@@ -179,3 +179,12 @@ Route::post('/super-admin/ads/delete', function (Request $request) {
 Route::get('/proposal/neway-challenge', function () {
     return view('documents.proposal-neway');
 });
+// 14. Dynamic School Proposal Generator (ለሁሉም ት/ቤቶች)
+Route::get('/proposal/school', function () {
+    return view('documents.proposal-school');
+});
+
+// 15. Corporate Sponsorship Proposal (ለባንኮችና አስተዋዋቂ ድርጅቶች)
+Route::get('/proposal/sponsorship', function () {
+    return view('documents.proposal-sponsorship');
+});
