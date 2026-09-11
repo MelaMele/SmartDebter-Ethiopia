@@ -27,7 +27,7 @@
                         <h2 class="text-sm font-bold text-white tracking-wide">Mela Solution</h2>
                         <span class="text-[10px] bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded-full font-bold">SUPER ADMIN</span>
                     </div>
-                    <p class="text-[11px] text-slate-400">ማዕከላዊ የትምህርት ቤቶች፣ ዲቪዥኖች እና ማስታወቂያዎች መቆጣጠሪያ</p>
+                    <p class="text-[11px] text-slate-400">ማዕከላዊ የትምህርት ቤቶች፣ ካምፓሶች እና ማስታወቂያዎች መቆጣጠሪያ</p>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
@@ -169,15 +169,15 @@
             </div>
         </div>
 
-        <!-- 4. PARTNER SCHOOLS & DIVISIONS MANAGEMENT (የት/ቤቶችና ዲቪዥኖች ሠንጠረዥ) -->
+        <!-- 4. PARTNER SCHOOLS, CAMPUSES & DIVISIONS -->
         <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-800">
                 <div>
                     <h3 class="text-base font-bold text-white flex items-center">
                         <i class="fas fa-school text-indigo-400 mr-2"></i>
-                        አጋር ትምህርት ቤቶች እና የዲቪዥን ተጠሪዎች (Partner Schools & Divisions)
+                        አጋር ትምህርት ቤቶች (የካምፓስ 1 እና 2 ሊንክ ማመንጫ)
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">የት/ቤቱን ዋና አድሚን እንዲሁም የኬጂ፣ 1-4፣ 5-8፣ እና 9-12 ተጠሪ ሊንኮችን ያመንጩ</p>
+                    <p class="text-xs text-slate-400 mt-0.5">ለትምህርት ቤቱ ዋና ዳይሬክተር፣ ለካምፓስ 1 እና ለካምፓስ 2 ተጠሪዎች የተከፋፈሉ ሊንኮችን ያመንጩ</p>
                 </div>
                 <button onclick="openModal('school-modal')" class="text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-1.5">
                     <i class="fas fa-plus"></i>
@@ -194,7 +194,7 @@
                             <th class="p-3">የአድሚን ስልክ</th>
                             <th class="p-3">ሁኔታ</th>
                             <th class="p-3">ማዕከላዊ ቁጥጥር</th>
-                            <th class="p-3 text-right">የዲቪዥን ተጠሪዎች ሊንክ</th>
+                            <th class="p-3 text-right">የካምፓስ እና ዲቪዥን ሊንኮች</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-800 text-slate-300">
@@ -223,11 +223,10 @@
                                     </form>
                                 </td>
                                 <td class="p-3 text-right">
-                                    <!-- Button to open Division Links Modal -->
-                                    <button onclick="openDivisionModal('{{ $school->name }}', '{{ $school->code }}')" 
+                                    <button onclick="openCampusDivisionModal('{{ $school->name }}', '{{ $school->code }}')" 
                                             class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-xs flex items-center space-x-1 ml-auto">
                                         <i class="fas fa-sitemap mr-1"></i>
-                                        <span>የዲቪዥን ሊንኮች እይ</span>
+                                        <span>የካምፓስ ሊንኮች እይ</span>
                                     </button>
                                 </td>
                             </tr>
@@ -248,118 +247,137 @@
 
     <!-- ==================== MODALS ==================== -->
 
-    <!-- 1. DIVISION LINKS POPUP MODAL (የ 5ቱ ዲቪዥኖች ሊንክ መቅጃ) -->
-    <div id="division-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-slate-900 rounded-2xl max-w-lg w-full p-6 border border-slate-800 shadow-2xl text-slate-100">
+    <!-- MULTI-CAMPUS & DIVISION LINKS MODAL (የካምፓስ 1 እና 2 ሊንክ ማመንጫ ፖፕ-አፕ) -->
+    <div id="campus-division-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-slate-900 rounded-2xl max-w-xl w-full p-6 border border-slate-800 shadow-2xl text-slate-100 max-h-[92vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
                 <div>
-                    <h3 class="font-bold text-sm text-white flex items-center" id="div-modal-school-title">
+                    <h3 class="font-bold text-sm text-white flex items-center" id="campus-modal-title">
                         <i class="fas fa-sitemap text-indigo-400 mr-2"></i>
-                        የዲቪዥን ተጠሪዎች የመግቢያ ሊንኮች
+                        የካምፓሶች እና የዲቪዥን ተጠሪዎች ሊንክ
                     </h3>
-                    <p class="text-[11px] text-slate-400 mt-0.5">እያንዳንዱን ሊንክ ኮፒ በማድረግ ለሚመለከተው ዩኒት ሊደር ይላኩለት፡</p>
+                    <p class="text-[11px] text-slate-400 mt-0.5">ለዋና ዳይሬክተር፣ ለካምፓስ 1 እና ለካምፓስ 2 የተከፋፈሉ የመግቢያ ሊንኮች፡</p>
                 </div>
-                <button onclick="closeModal('division-modal')" class="text-slate-400 hover:text-white text-lg">✕</button>
+                <button onclick="closeModal('campus-division-modal')" class="text-slate-400 hover:text-white text-lg">✕</button>
             </div>
 
-            <div class="my-4 space-y-3">
+            <div class="my-4 space-y-4">
                 
-                <!-- 1. ዋና ርዕሰ-መምህር (General Director) -->
-                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
-                    <div class="flex items-center justify-between mb-1.5">
+                <!-- 👑 GENERAL PRINCIPAL (ሁሉንም ካምፓስ የሚቆጣጠር) -->
+                <div class="p-3 bg-purple-950/40 rounded-xl border border-purple-800/60">
+                    <div class="flex items-center justify-between mb-1">
                         <span class="text-xs font-bold text-white flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-purple-400 mr-1.5"></span>
-                            👑 ዋና ርዕሰ-መምህር (ሁሉንም ዲቪዥኖች የሚያይ)
+                            👑 ዋና ርዕሰ-መምህር (ሁሉንም ካምፓሶችና ዲቪዥኖች የሚያይ)
                         </span>
-                        <span class="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-bold">General Principal</span>
+                        <span class="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-bold">All Campuses</span>
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <input type="text" id="link-div-all" readonly class="w-full p-2 bg-slate-900 border border-slate-800 rounded-lg text-xs font-mono text-slate-300">
-                        <button onclick="copyDivLink('link-div-all')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded-lg font-bold transition">
+                    <div class="flex items-center space-x-2 mt-1">
+                        <input type="text" id="link-main-principal" readonly class="w-full p-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-mono text-slate-300">
+                        <button onclick="copyLinkInput('link-main-principal')" class="bg-purple-600 hover:bg-purple-700 text-white text-xs px-3 py-2 rounded-lg font-bold transition">
                             <i class="fas fa-copy"></i>
                         </button>
                     </div>
                 </div>
 
-                <!-- 2. ኬጂ ዲቪዥን (KG Unit Leader) -->
-                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
-                    <div class="flex items-center justify-between mb-1.5">
-                        <span class="text-xs font-bold text-white flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-pink-400 mr-1.5"></span>
-                            👶 የኬጂ ዲቪዥን ተጠሪ (የህፃናት ማቆያ & KG 1-3)
+                <!-- 📍 ካምፓስ 1 (ቅርንጫፍ 1) -->
+                <div class="p-3.5 bg-slate-950 rounded-xl border border-blue-900/60 space-y-2.5">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                        <span class="text-xs font-black text-blue-400 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-1.5"></i>📍 ካምፓስ 1 (ቅርንጫፍ 1)
                         </span>
-                        <span class="text-[10px] bg-pink-500/20 text-pink-300 px-2 py-0.5 rounded font-bold">KG Leader</span>
+                        <span class="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded font-bold">Campus 1</span>
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <input type="text" id="link-div-kg" readonly class="w-full p-2 bg-slate-900 border border-slate-800 rounded-lg text-xs font-mono text-slate-300">
-                        <button onclick="copyDivLink('link-div-kg')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded-lg font-bold transition">
-                            <i class="fas fa-copy"></i>
-                        </button>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        <div class="p-2 bg-slate-900 rounded-lg border border-slate-800">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-slate-300 text-[11px]">👶 ኬጂ ተጠሪ (KG)</span>
+                                <button onclick="copyLinkInput('c1-kg')" class="text-blue-400 hover:underline font-bold text-[10px]"><i class="fas fa-copy mr-0.5"></i>ቅዳ</button>
+                            </div>
+                            <input type="text" id="c1-kg" readonly class="w-full p-1 bg-slate-950 rounded text-[10px] font-mono text-slate-400">
+                        </div>
+
+                        <div class="p-2 bg-slate-900 rounded-lg border border-slate-800">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-slate-300 text-[11px]">🎒 1ኛ - 4ኛ ተጠሪ</span>
+                                <button onclick="copyLinkInput('c1-1-4')" class="text-blue-400 hover:underline font-bold text-[10px]"><i class="fas fa-copy mr-0.5"></i>ቅዳ</button>
+                            </div>
+                            <input type="text" id="c1-1-4" readonly class="w-full p-1 bg-slate-950 rounded text-[10px] font-mono text-slate-400">
+                        </div>
+
+                        <div class="p-2 bg-slate-900 rounded-lg border border-slate-800">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-slate-300 text-[11px]">📚 5ኛ - 8ኛ ተጠሪ</span>
+                                <button onclick="copyLinkInput('c1-5-8')" class="text-blue-400 hover:underline font-bold text-[10px]"><i class="fas fa-copy mr-0.5"></i>ቅዳ</button>
+                            </div>
+                            <input type="text" id="c1-5-8" readonly class="w-full p-1 bg-slate-950 rounded text-[10px] font-mono text-slate-400">
+                        </div>
+
+                        <div class="p-2 bg-slate-900 rounded-lg border border-slate-800">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-slate-300 text-[11px]">🎓 9ኛ - 12ኛ ተጠሪ</span>
+                                <button onclick="copyLinkInput('c1-9-12')" class="text-blue-400 hover:underline font-bold text-[10px]"><i class="fas fa-copy mr-0.5"></i>ቅዳ</button>
+                            </div>
+                            <input type="text" id="c1-9-12" readonly class="w-full p-1 bg-slate-950 rounded text-[10px] font-mono text-slate-400">
+                        </div>
                     </div>
                 </div>
 
-                <!-- 3. 1ኛ - 4ኛ ዲቪዥን (Lower Primary) -->
-                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
-                    <div class="flex items-center justify-between mb-1.5">
-                        <span class="text-xs font-bold text-white flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-blue-400 mr-1.5"></span>
-                            🎒 የ 1ኛ - 4ኛ ዲቪዥን ተጠሪ (Lower Primary)
+                <!-- 📍 ካምፓስ 2 (ቅርንጫፍ 2) -->
+                <div class="p-3.5 bg-slate-950 rounded-xl border border-emerald-900/60 space-y-2.5">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                        <span class="text-xs font-black text-emerald-400 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-1.5"></i>📍 ካምፓስ 2 (ቅርንጫፍ 2)
                         </span>
-                        <span class="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded font-bold">Grade 1-4 Leader</span>
+                        <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold">Campus 2</span>
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <input type="text" id="link-div-1-4" readonly class="w-full p-2 bg-slate-900 border border-slate-800 rounded-lg text-xs font-mono text-slate-300">
-                        <button onclick="copyDivLink('link-div-1-4')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded-lg font-bold transition">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                    </div>
-                </div>
 
-                <!-- 4. 5ኛ - 8ኛ ዲቪዥን (Middle School) -->
-                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
-                    <div class="flex items-center justify-between mb-1.5">
-                        <span class="text-xs font-bold text-white flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5"></span>
-                            📚 የ 5ኛ - 8ኛ ዲቪዥን ተጠሪ (Middle School)
-                        </span>
-                        <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold">Grade 5-8 Leader</span>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <input type="text" id="link-div-5-8" readonly class="w-full p-2 bg-slate-900 border border-slate-800 rounded-lg text-xs font-mono text-slate-300">
-                        <button onclick="copyDivLink('link-div-5-8')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded-lg font-bold transition">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                    </div>
-                </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        <div class="p-2 bg-slate-900 rounded-lg border border-slate-800">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-slate-300 text-[11px]">👶 ኬጂ ተጠሪ (KG)</span>
+                                <button onclick="copyLinkInput('c2-kg')" class="text-emerald-400 hover:underline font-bold text-[10px]"><i class="fas fa-copy mr-0.5"></i>ቅዳ</button>
+                            </div>
+                            <input type="text" id="c2-kg" readonly class="w-full p-1 bg-slate-950 rounded text-[10px] font-mono text-slate-400">
+                        </div>
 
-                <!-- 5. 9ኛ - 12ኛ ዲቪዥን (High School) -->
-                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
-                    <div class="flex items-center justify-between mb-1.5">
-                        <span class="text-xs font-bold text-white flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-amber-400 mr-1.5"></span>
-                            🎓 የ 9ኛ - 12ኛ ዲቪዥን ተጠሪ (High School)
-                        </span>
-                        <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-bold">Grade 9-12 Leader</span>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <input type="text" id="link-div-9-12" readonly class="w-full p-2 bg-slate-900 border border-slate-800 rounded-lg text-xs font-mono text-slate-300">
-                        <button onclick="copyDivLink('link-div-9-12')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded-lg font-bold transition">
-                            <i class="fas fa-copy"></i>
-                        </button>
+                        <div class="p-2 bg-slate-900 rounded-lg border border-slate-800">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-slate-300 text-[11px]">🎒 1ኛ - 4ኛ ተጠሪ</span>
+                                <button onclick="copyLinkInput('c2-1-4')" class="text-emerald-400 hover:underline font-bold text-[10px]"><i class="fas fa-copy mr-0.5"></i>ቅዳ</button>
+                            </div>
+                            <input type="text" id="c2-1-4" readonly class="w-full p-1 bg-slate-950 rounded text-[10px] font-mono text-slate-400">
+                        </div>
+
+                        <div class="p-2 bg-slate-900 rounded-lg border border-slate-800">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-slate-300 text-[11px]">📚 5ኛ - 8ኛ ተጠሪ</span>
+                                <button onclick="copyLinkInput('c2-5-8')" class="text-emerald-400 hover:underline font-bold text-[10px]"><i class="fas fa-copy mr-0.5"></i>ቅዳ</button>
+                            </div>
+                            <input type="text" id="c2-5-8" readonly class="w-full p-1 bg-slate-950 rounded text-[10px] font-mono text-slate-400">
+                        </div>
+
+                        <div class="p-2 bg-slate-900 rounded-lg border border-slate-800">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-slate-300 text-[11px]">🎓 9ኛ - 12ኛ ተጠሪ</span>
+                                <button onclick="copyLinkInput('c2-9-12')" class="text-emerald-400 hover:underline font-bold text-[10px]"><i class="fas fa-copy mr-0.5"></i>ቅዳ</button>
+                            </div>
+                            <input type="text" id="c2-9-12" readonly class="w-full p-1 bg-slate-950 rounded text-[10px] font-mono text-slate-400">
+                        </div>
                     </div>
                 </div>
 
             </div>
 
             <div class="pt-2 text-right">
-                <button onclick="closeModal('division-modal')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold">
+                <button onclick="closeModal('campus-division-modal')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold">
                     ዝጋ
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- 2. ADD PARTNER SCHOOL MODAL -->
+    <!-- ADD SCHOOL MODAL -->
     <div id="school-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-slate-900 rounded-2xl max-w-md w-full p-6 border border-slate-800 shadow-2xl text-slate-100">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
@@ -373,12 +391,12 @@
                 @csrf
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">የትምህርት ቤቱ ሙሉ ስም</label>
-                    <input type="text" name="name" placeholder="ምሳሌ፡ ዳግማዊ ሚኒሊክ ት/ቤት" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                    <input type="text" name="name" placeholder="ምሳሌ፡ Neway Challenge Academy" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-300 mb-1">የመለያ ኮድ (Code)</label>
-                        <input type="text" name="code" placeholder="DMN-001" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-indigo-400 uppercase">
+                        <input type="text" name="code" placeholder="NCA-001" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-indigo-400 uppercase">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-300 mb-1">ከተማ / አድራሻ</label>
@@ -396,7 +414,7 @@
         </div>
     </div>
 
-    <!-- 3. DIRECT FILE UPLOAD AD MODAL -->
+    <!-- DIRECT FILE UPLOAD AD MODAL -->
     <div id="ad-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-slate-900 rounded-2xl max-w-md w-full p-6 border border-slate-800 shadow-2xl text-slate-100 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
@@ -473,29 +491,41 @@
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-        // OPEN DIVISION MODAL WITH 5 LINKS
-        function openDivisionModal(schoolName, code) {
-            document.getElementById('div-modal-school-title').innerHTML = `
+        // OPEN CAMPUS DIVISION MODAL
+        function openCampusDivisionModal(schoolName, code) {
+            document.getElementById('campus-modal-title').innerHTML = `
                 <i class="fas fa-sitemap text-indigo-400 mr-2"></i>
-                የ ${schoolName} የዲቪዥን ተጠሪዎች ሊንክ (${code})
+                የ ${schoolName} የካምፓሶች እና ዲቪዥን ሊንክ (${code})
             `;
 
             const base = 'https://smart-debter-ethiopia.vercel.app/dashboard/admin';
-            document.getElementById('link-div-all').value = `${base}?school=${code}&division=all&school_name=${encodeURIComponent(schoolName)}`;
-            document.getElementById('link-div-kg').value = `${base}?school=${code}&division=kg&school_name=${encodeURIComponent(schoolName)}`;
-            document.getElementById('link-div-1-4').value = `${base}?school=${code}&division=1-4&school_name=${encodeURIComponent(schoolName)}`;
-            document.getElementById('link-div-5-8').value = `${base}?school=${code}&division=5-8&school_name=${encodeURIComponent(schoolName)}`;
-            document.getElementById('link-div-9-12').value = `${base}?school=${code}&division=9-12&school_name=${encodeURIComponent(schoolName)}`;
+            const sName = encodeURIComponent(schoolName);
 
-            openModal('division-modal');
+            // General Principal
+            document.getElementById('link-main-principal').value = `${base}?school=${code}&campus=all&division=all&school_name=${sName}`;
+
+            // Campus 1 Links
+            document.getElementById('c1-kg').value = `${base}?school=${code}&campus=1&division=kg&school_name=${sName}`;
+            document.getElementById('c1-1-4').value = `${base}?school=${code}&campus=1&division=1-4&school_name=${sName}`;
+            document.getElementById('c1-5-8').value = `${base}?school=${code}&campus=1&division=5-8&school_name=${sName}`;
+            document.getElementById('c1-9-12').value = `${base}?school=${code}&campus=1&division=9-12&school_name=${sName}`;
+
+            // Campus 2 Links
+            document.getElementById('c2-kg').value = `${base}?school=${code}&campus=2&division=kg&school_name=${sName}`;
+            document.getElementById('c2-1-4').value = `${base}?school=${code}&campus=2&division=1-4&school_name=${sName}`;
+            document.getElementById('c2-5-8').value = `${base}?school=${code}&campus=2&division=5-8&school_name=${sName}`;
+            document.getElementById('c2-9-12').value = `${base}?school=${code}&campus=2&division=9-12&school_name=${sName}`;
+
+            openModal('campus-division-modal');
         }
 
-        function copyDivLink(elementId) {
-            const input = document.getElementById(elementId);
+        function copyLinkInput(id) {
+            const input = document.getElementById(id);
             navigator.clipboard.writeText(input.value);
-            alert('የዲቪዥን ተጠሪው ሊንክ ተገልብጧል!');
+            alert('ሊንኩ ተገልብጧል (Copied)!');
         }
 
+        // Image Compressor
         function previewSelectedAd(input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
