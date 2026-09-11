@@ -23,9 +23,9 @@
             <div>
                 <h2 class="text-sm font-bold text-white flex items-center">
                     <i class="fas fa-handshake text-amber-400 mr-2"></i>
-                    የድርጅቶችና ባንኮች የማስታወቂያ ስፖንሰርሺፕ ማመንጫ (Sponsorship Pitch)
+                    የማስታወቂያ ስፖንሰርሺፕ ማመንጫ (ከነ ፊርማና ማህተም መጫኛ)
                 </h2>
-                <p class="text-[11px] text-slate-400">የአስተዋዋቂውን ባንክ/ድርጅት ስም ሲሞሉ ደብዳቤው በራሱ ይስተካከላል፡</p>
+                <p class="text-[11px] text-slate-400">የአስተዋዋቂውን ባንክ/ድርጅት ስም ይቀይሩ፤ የራስዎን ፊርማና ማህተም ይጫኑ፡</p>
             </div>
             <button onclick="window.print()" class="bg-amber-400 hover:bg-amber-500 text-slate-950 text-xs font-bold px-4 py-2.5 rounded-xl shadow transition flex items-center space-x-1.5 shrink-0">
                 <i class="fas fa-print"></i>
@@ -33,23 +33,31 @@
             </button>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
             <div>
-                <label class="block text-[10px] text-slate-400 mb-1 font-bold">የአስተዋዋቂው ባንክ / ድርጅት ስም</label>
+                <label class="block text-[10px] text-slate-400 mb-1 font-bold">አስተዋዋቂ ባንክ / ድርጅት</label>
                 <input type="text" id="input-sponsor-name" value="አቢሲንያ ባንክ አ.ማ (Bank of Abyssinia)" oninput="updateSponsorLetter()" 
                        class="w-full p-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-bold">
-            </div>
-
-            <div>
-                <label class="block text-[10px] text-slate-400 mb-1 font-bold">ተቀባይ የስራ ክፍል</label>
-                <input type="text" id="input-dept-name" value="ለማርኬቲንግ፣ ብራንዲንግ እና ኮሙዩኒኬሽን ዳይሬክቶሬት" oninput="updateSponsorLetter()" 
-                       class="w-full p-2 bg-slate-950 border border-slate-700 rounded-lg text-white">
             </div>
 
             <div>
                 <label class="block text-[10px] text-slate-400 mb-1 font-bold">የደብዳቤው ቀን</label>
                 <input type="text" id="input-sponsor-date" value="መስከረም 1 ቀን 2019 ዓ.ም" oninput="updateSponsorLetter()" 
                        class="w-full p-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-bold text-amber-300">
+            </div>
+
+            <!-- UPLOAD SIGNATURE -->
+            <div>
+                <label class="block text-[10px] text-amber-400 mb-1 font-bold">✍️ እውነተኛ ፊርማዎን ይጫኑ</label>
+                <input type="file" accept="image/*" onchange="uploadSponsorSignature(this)" 
+                       class="w-full text-[10px] text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white cursor-pointer bg-slate-950 border border-slate-700 rounded-lg">
+            </div>
+
+            <!-- UPLOAD STAMP -->
+            <div>
+                <label class="block text-[10px] text-amber-400 mb-1 font-bold">🔘 እውነተኛ ማህተምዎን ይጫኑ</label>
+                <input type="file" accept="image/*" onchange="uploadSponsorStamp(this)" 
+                       class="w-full text-[10px] text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-amber-500 file:text-slate-950 cursor-pointer bg-slate-950 border border-slate-700 rounded-lg">
             </div>
         </div>
     </div>
@@ -87,7 +95,7 @@
         <!-- ADDRESSEE -->
         <div class="text-xs text-slate-800 space-y-0.5">
             <p><b>ለ፡</b> <span id="doc-sponsor-name" class="font-bold text-indigo-950 text-sm">አቢሲንያ ባንክ አ.ማ (Bank of Abyssinia)</span></p>
-            <p><b id="doc-dept-name">ለማርኬቲንግ፣ ብራንዲንግ እና ኮሙዩኒኬሽን ዳይሬክቶሬት</b></p>
+            <p><b>ለማርኬቲንግ፣ ብራንዲንግ እና ኮሙዩኒኬሽን ዳይሬክቶሬት</b></p>
             <p class="underline">አዲስ አበባ፣ ኢትዮጵያ</p>
         </div>
 
@@ -113,7 +121,6 @@
                 በዚህ ፕላትፎርም ላይ በየቀኑ ከ <b>15,000 በላይ በቀጥታ የሚከታተሉ (Daily Active Users)</b> ከፍተኛ የመግዛት አቅም ያላቸው ወላጆች ልጆቻቸውን ለመከታተል የሚገቡበት በመሆኑ፤ ተቋማችሁ የሚሰጣቸውን የቁጠባ፣ የዲጂታል ባንኪንግና ሌሎች አገልግሎቶች በቀጥታ ለነዚህ ወላጆች በብቸኝነት ለማስተዋወቅ እጅግ ተመራጭ የገበያ መድረክ ነው።
             </p>
 
-            <!-- WHY SMARTDEBTER ADVERTISING WINS -->
             <div class="bg-slate-50 rounded-xl p-3.5 border space-y-1.5">
                 <h3 class="font-bold text-slate-900 text-xs flex items-center">
                     <i class="fas fa-bullseye text-indigo-600 mr-1.5"></i>
@@ -166,23 +173,31 @@
         </div>
 
         <!-- ================= OFFICIAL SIGNATURE & STAMP BLOCK ================= -->
-        <div class="pt-4 border-t flex items-center justify-between text-xs relative">
+        <div class="pt-4 border-t flex items-end justify-between text-xs relative">
+            
             <div>
                 <p class="text-slate-500 text-[10px]">ከከበረ ሰላምታ ጋር፤</p>
+                
+                <!-- Default or Uploaded Signature -->
                 <div class="my-1">
-                    <svg class="w-36 h-12 text-blue-900" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10 40 Q 30 10, 50 35 T 90 20 Q 120 50, 150 15 T 190 35" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round"/>
-                        <path d="M30 45 Q 70 55, 160 38" stroke="#1d4ed8" stroke-width="2" stroke-linecap="round"/>
-                        <path d="M45 25 Q 40 5, 60 15" stroke="#1d4ed8" stroke-width="2.2" stroke-linecap="round"/>
-                    </svg>
+                    <div id="sponsor-default-sign-box">
+                        <svg class="w-36 h-12 text-blue-900" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 40 Q 30 10, 50 35 T 90 20 Q 120 50, 150 15 T 190 35" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round"/>
+                            <path d="M30 45 Q 70 55, 160 38" stroke="#1d4ed8" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M45 25 Q 40 5, 60 15" stroke="#1d4ed8" stroke-width="2.2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <img id="sponsor-custom-sign-img" class="hidden h-14 object-contain">
                 </div>
+
                 <p class="font-bold text-slate-900 text-sm">መላ ሶሉሽን (Mela Solution)</p>
                 <p class="text-slate-600 text-[11px] font-semibold">የስራ አመራር / General Manager</p>
                 <p class="text-slate-500 text-[10px] mt-0.5">ስልክ፡ 0913064239 / 0703064239</p>
             </div>
 
             <div class="text-center relative">
-                <div class="stamp-rotate">
+                <!-- Default SVG Stamp -->
+                <div id="sponsor-default-stamp-box" class="stamp-rotate">
                     <div class="w-32 h-32 rounded-full border-4 border-dashed border-blue-800 p-1 flex items-center justify-center relative shadow-xs">
                         <div class="w-full h-full rounded-full border-2 border-blue-800 flex flex-col items-center justify-center text-blue-800 font-bold text-center p-2">
                             <span class="text-[8px] uppercase tracking-tighter leading-none">★ MELA SOLUTION ★</span>
@@ -192,8 +207,52 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Uploaded Custom Stamp Image -->
+                <img id="sponsor-custom-stamp-img" class="hidden w-32 h-32 object-contain stamp-rotate">
             </div>
+
         </div>
 
         <footer class="text-center text-[10px] text-slate-400 border-t pt-2">
-            SmartDebter-Ethiopia • Powered by Mela Solut
+            SmartDebter-Ethiopia • Powered by Mela Solution • Addis Ababa, Ethiopia
+        </footer>
+
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        function updateSponsorLetter() {
+            document.getElementById('doc-sponsor-name').innerText = document.getElementById('input-sponsor-name').value;
+            document.getElementById('doc-sponsor-date').innerText = document.getElementById('input-sponsor-date').value;
+        }
+
+        function uploadSponsorSignature(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('sponsor-default-sign-box').classList.add('hidden');
+                    const img = document.getElementById('sponsor-custom-sign-img');
+                    img.src = e.target.result;
+                    img.classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function uploadSponsorStamp(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('sponsor-default-stamp-box').classList.add('hidden');
+                    const img = document.getElementById('sponsor-custom-stamp-img');
+                    img.src = e.target.result;
+                    img.classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+
+</body>
+</html>
