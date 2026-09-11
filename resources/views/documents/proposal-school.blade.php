@@ -3,36 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mela Solution - School Proposal Generator</title>
+    <title>Mela Solution - Official School Proposal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; padding: 0 !important; }
-            .print-page { box-shadow: none !important; border: none !important; margin: 0 !important; width: 100% !important; max-width: 100% !important; padding: 20px !important; }
+            .print-page { box-shadow: none !important; border: none !important; margin: 0 !important; width: 100% !important; max-width: 100% !important; padding: 25px !important; }
+        }
+        /* ማህተሙ ልክ እንደ እውነተኛ ማህተም ትንሽ ዞር እንዲል */
+        .stamp-rotate {
+            transform: rotate(-8deg);
         }
     </style>
 </head>
 <body class="bg-slate-200 py-6 px-4 font-sans text-slate-900 min-h-screen flex flex-col items-center">
 
-    <!-- TOP CONTROL PANEL (የት/ቤት መረጃዎችን በፍጥነት መሙያ ሳጥን - ህትመት ላይ አይታይም) -->
+    <!-- TOP CONTROL PANEL (ህትመት ላይ አይታይም) -->
     <div class="no-print bg-slate-900 text-white w-full max-w-4xl p-5 rounded-2xl shadow-xl mb-6 border border-slate-800">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-800">
             <div>
                 <h2 class="text-sm font-bold text-white flex items-center">
-                    <i class="fas fa-magic text-amber-400 mr-2"></i>
-                    የትምህርት ቤቶች ይፋዊ ደብዳቤ ማመንጫ (Proposal Generator)
+                    <i class="fas fa-stamp text-amber-400 mr-2"></i>
+                    የትምህርት ቤቶች ይፋዊ ደብዳቤ ማመንጫ (ከነ ማህተም እና ፊርማ ጋር)
                 </h2>
-                <p class="text-[11px] text-slate-400">የትምህርት ቤቱን መረጃ እዚህ ሲሞሉ ከታች ያለው ደብዳቤ በራሱ ይስተካከላል፡</p>
+                <p class="text-[11px] text-slate-400">መረጃዎችን ሲሞሉ ከታች ያለው ደብዳቤ በራሱ ይስተካከላል፡</p>
             </div>
-            <button onclick="window.print()" class="bg-amber-400 hover:bg-amber-500 text-slate-950 text-xs font-bold px-4 py-2 rounded-xl shadow transition flex items-center space-x-1.5 shrink-0">
+            <button onclick="window.print()" class="bg-amber-400 hover:bg-amber-500 text-slate-950 text-xs font-bold px-4 py-2.5 rounded-xl shadow transition flex items-center space-x-1.5 shrink-0">
                 <i class="fas fa-print"></i>
                 <span>በ PDF አውርድ / አትም (Print to PDF)</span>
             </button>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
             <div>
                 <label class="block text-[10px] text-slate-400 mb-1 font-bold">የትምህርት ቤቱ ስም</label>
                 <input type="text" id="input-school-name" value="ብስራተ ገብርኤል ትምህርት ቤት" oninput="updateLetter()" 
@@ -49,6 +53,12 @@
                 <label class="block text-[10px] text-slate-400 mb-1 font-bold">የደብዳቤው ቀን</label>
                 <input type="text" id="input-letter-date" value="መስከረም 1 ቀን 2019 ዓ.ም" oninput="updateLetter()" 
                        class="w-full p-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-bold text-amber-300">
+            </div>
+
+            <div>
+                <label class="block text-[10px] text-slate-400 mb-1 font-bold">የራስዎ ማህተም ካለዎት ይጫኑ</label>
+                <input type="file" accept="image/*" onchange="uploadCustomSeal(this)" 
+                       class="w-full text-[10px] text-slate-400 file:mr-2 file:py-1.5 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-indigo-600 file:text-white cursor-pointer">
             </div>
         </div>
     </div>
@@ -139,29 +149,56 @@
             </p>
         </div>
 
-        <!-- SIGNATURE & SEAL BLOCK -->
-        <div class="pt-4 border-t flex items-end justify-between text-xs">
+        <!-- ================= OFFICIAL SIGNATURE & STAMP BLOCK (ማህተም እና ፊርማ) ================= -->
+        <div class="pt-4 border-t flex items-center justify-between text-xs relative">
+            
+            <!-- Manager Name & Official Signature -->
             <div>
                 <p class="text-slate-500 text-[10px]">ከከበረ ሰላምታ ጋር፤</p>
-                <p class="font-bold text-slate-900 text-sm mt-2">መላ ሶሉሽን (Mela Solution)</p>
-                <p class="text-slate-600 text-[11px]">የሶፍትዌር እና የትምህርት ቴክኖሎጂ አበልጻጊ</p>
-                <p class="text-slate-500 text-[10px]">ስልክ፡ 0913064239 / 0703064239</p>
+                
+                <!-- DIGITAL SIGNATURE (እውነተኛ የሚመስል የሰማያዊ ቀለም ፊርማ) -->
+                <div class="my-1">
+                    <svg class="w-36 h-12 text-blue-900" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 40 Q 30 10, 50 35 T 90 20 Q 120 50, 150 15 T 190 35" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round"/>
+                        <path d="M30 45 Q 70 55, 160 38" stroke="#1d4ed8" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M45 25 Q 40 5, 60 15" stroke="#1d4ed8" stroke-width="2.2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+
+                <p class="font-bold text-slate-900 text-sm">መላ ሶሉሽን (Mela Solution)</p>
+                <p class="text-slate-600 text-[11px] font-semibold">የስራ አመራር / General Manager</p>
+                <p class="text-slate-500 text-[10px] mt-0.5">ስልክ፡ 0913064239 / 0703064239</p>
             </div>
 
-            <div class="text-center">
-                <div class="w-20 h-20 border-2 border-dashed border-slate-300 rounded-full flex items-center justify-center text-[9px] text-slate-400">
-                    የድርጅቱ ማህተም
+            <!-- OFFICIAL CORPORATE SEAL / STAMP (እውነተኛ ሰማያዊ ክብ ማህተም) -->
+            <div class="text-center relative">
+                <div id="seal-container" class="stamp-rotate">
+                    <!-- SVG REALISTIC INK STAMP -->
+                    <div class="w-32 h-32 rounded-full border-4 border-dashed border-blue-800 p-1 flex items-center justify-center relative shadow-xs">
+                        <div class="w-full h-full rounded-full border-2 border-blue-800 flex flex-col items-center justify-center text-blue-800 font-bold text-center p-2">
+                            <span class="text-[8px] uppercase tracking-tighter leading-none">★ MELA SOLUTION ★</span>
+                            <div class="my-0.5 text-xs font-black tracking-widest border-y border-blue-800 py-0.5 w-full">
+                                መላ ሶሉሽን
+                            </div>
+                            <span class="text-[7px] uppercase tracking-tight">ADDIS ABABA • ETHIOPIA</span>
+                            <span class="text-[8px] font-mono mt-0.5">★ OFFICIAL ★</span>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Custom Uploaded Stamp (ይህ ተመርጦ ከሆነ ይታያል) -->
+                <img id="custom-seal-img" class="hidden w-32 h-32 object-contain stamp-rotate">
             </div>
+
         </div>
 
-        <footer class="text-center text-[10px] text-slate-400 border-t pt-1.5">
+        <footer class="text-center text-[10px] text-slate-400 border-t pt-2">
             SmartDebter-Ethiopia • Powered by Mela Solution • Addis Ababa, Ethiopia
         </footer>
 
     </div>
 
-    <!-- Live Update Script -->
+    <!-- Scripts -->
     <script>
         function updateLetter() {
             const schoolName = document.getElementById('input-school-name').value;
@@ -171,6 +208,20 @@
             document.getElementById('doc-school-name').innerText = schoolName;
             document.getElementById('doc-student-count').innerText = studentCount;
             document.getElementById('doc-date').innerText = letterDate;
+        }
+
+        // የራስዎን ማህተም ከስልክ ወይም ኮምፒውተር መርጠው ለመተካት
+        function uploadCustomSeal(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const customImg = document.getElementById('custom-seal-img');
+                    customImg.src = e.target.result;
+                    customImg.classList.remove('hidden');
+                    document.getElementById('seal-container').classList.add('hidden');
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
         }
     </script>
 
