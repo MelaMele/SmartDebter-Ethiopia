@@ -10,13 +10,13 @@
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; padding: 0 !important; }
-            .print-page { box-shadow: none !important; border: none !important; margin: 0 !important; width: 100% !important; max-width: 100% !important; }
+            .print-page { box-shadow: none !important; border: none !important; margin: 0 !important; width: 100% !important; max-width: 100% !important; padding: 20px !important; }
         }
     </style>
 </head>
 <body class="bg-slate-200 py-8 px-4 font-sans text-slate-900 min-h-screen flex flex-col items-center">
 
-    <!-- FLOATING ACTION BUTTON (ለማውረድ ወይም ለማተም) -->
+    <!-- FLOATING PRINT BUTTON -->
     <div class="no-print fixed top-4 right-4 z-50 flex items-center space-x-2">
         <a href="/" class="bg-white border text-slate-700 hover:bg-slate-50 text-xs font-bold px-3 py-2 rounded-xl shadow-md transition">
             <i class="fas fa-arrow-left mr-1"></i>ተመለስ
@@ -30,7 +30,7 @@
     <!-- A4 PRINTABLE DOCUMENT -->
     <div class="print-page bg-white w-full max-w-4xl p-8 sm:p-12 rounded-2xl shadow-xl border border-slate-300 space-y-6">
 
-        <!-- ================= MELA SOLUTION OFFICIAL LETTERHEAD (ይፋዊ ራስጌ) ================= -->
+        <!-- ================= MELA SOLUTION OFFICIAL LETTERHEAD ================= -->
         <header class="border-b-2 border-indigo-900 pb-4">
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div class="flex items-center space-x-3">
@@ -113,20 +113,78 @@
             </p>
         </div>
 
-        <!-- SIGNATURE & SEAL BLOCK -->
-        <div class="pt-6 border-t flex items-end justify-between text-xs">
-            <div>
+        <!-- ================= SIGNATURE & OFFICIAL COMPANY STAMP (ፊርማ እና ማህተም) ================= -->
+        <div class="pt-6 border-t flex items-center justify-between text-xs relative">
+            
+            <!-- Signature Block -->
+            <div class="space-y-1 relative z-10">
                 <p class="text-slate-500 text-[10px]">ከከበረ ሰላምታ ጋር፤</p>
-                <p class="font-bold text-slate-900 text-sm mt-3">መላ ሶሉሽን (Mela Solution)</p>
-                <p class="text-slate-600 text-[11px]">የሶፍትዌር እና የትምህርት ቴክኖሎጂ አበልጻጊ</p>
-                <p class="text-slate-500 text-[10px] mt-1">ስልክ፡ 0913064239 / 0703064239</p>
+                
+                <!-- YOUR ACTUAL HANDWRITTEN SIGNATURE (ቬክተር የተደረገው ፊርማህ) -->
+                <div class="py-1">
+                    <svg viewBox="0 0 200 110" class="w-44 h-20 text-blue-800 stroke-current fill-none">
+                        <!-- Top loop -->
+                        <path d="M 55 42 C 45 28, 65 15, 78 18 C 88 22, 82 45, 92 40 C 102 35, 112 35, 122 45" stroke-width="3" stroke-linecap="round"/>
+                        <!-- Vertical stem -->
+                        <path d="M 72 38 L 68 95" stroke-width="3.2" stroke-linecap="round"/>
+                        <!-- Double horizontal bars -->
+                        <path d="M 45 62 L 138 48" stroke-width="2.6" stroke-linecap="round"/>
+                        <path d="M 42 75 L 135 60" stroke-width="2.6" stroke-linecap="round"/>
+                        <!-- Vertical cross-hatches -->
+                        <path d="M 60 55 L 56 82" stroke-width="2.6" stroke-linecap="round"/>
+                        <path d="M 72 53 L 68 80" stroke-width="2.6" stroke-linecap="round"/>
+                        <path d="M 84 51 L 80 78" stroke-width="2.6" stroke-linecap="round"/>
+                        <path d="M 96 49 L 92 76" stroke-width="2.6" stroke-linecap="round"/>
+                        <path d="M 108 47 L 104 74" stroke-width="2.6" stroke-linecap="round"/>
+                        <path d="M 120 45 L 116 72" stroke-width="2.6" stroke-linecap="round"/>
+                        <!-- Right flourish loop -->
+                        <path d="M 122 45 C 132 36, 142 40, 138 55 C 132 68, 142 76, 136 90" stroke-width="3" stroke-linecap="round"/>
+                    </svg>
+                </div>
+
+                <p class="font-bold text-slate-900 text-sm">መላ ሶሉሽን (Mela Solution)</p>
+                <p class="text-slate-600 text-[11px]">ዋና ስራ አስኪያጅ (General Manager)</p>
+                <p class="text-slate-500 text-[10px]">ስልክ፡ 0913064239 / 0703064239</p>
             </div>
 
-            <div class="text-center">
-                <div class="w-24 h-24 border-2 border-dashed border-slate-300 rounded-full flex items-center justify-center text-[10px] text-slate-400">
-                    የድርጅቱ ማህተም (Seal)
+            <!-- OFFICIAL CIRCULAR MELA SOLUTION STAMP (የተቀረጸው ይፋዊ ማህተም) -->
+            <div class="relative z-10 pr-6">
+                <div class="w-36 h-36 relative select-none" style="transform: rotate(-8deg);">
+                    <svg viewBox="0 0 200 200" class="w-full h-full text-blue-800 stroke-current fill-none">
+                        <!-- Outer double ring -->
+                        <circle cx="100" cy="100" r="92" stroke-width="3.5" stroke-dasharray="1 0"/>
+                        <circle cx="100" cy="100" r="84" stroke-width="1.5"/>
+                        <!-- Inner ring -->
+                        <circle cx="100" cy="100" r="56" stroke-width="1.8"/>
+
+                        <!-- Text along circular path (Top) -->
+                        <path id="top-curve" d="M 22 100 A 78 78 0 0 1 178 100" fill="none"/>
+                        <text class="fill-current text-blue-800 text-[11px] font-black tracking-[0.22em]">
+                            <textPath href="#top-curve" startOffset="50%" text-anchor="middle">
+                                ★ MELA SOLUTION ★
+                            </textPath>
+                        </text>
+
+                        <!-- Text along circular path (Bottom) -->
+                        <path id="bottom-curve" d="M 178 100 A 78 78 0 0 1 22 100" fill="none"/>
+                        <text class="fill-current text-blue-800 text-[9.5px] font-bold tracking-[0.16em]">
+                            <textPath href="#bottom-curve" startOffset="50%" text-anchor="middle">
+                                • ADDIS ABABA • ETHIOPIA •
+                            </textPath>
+                        </text>
+
+                        <!-- Center Stamp Core -->
+                        <g class="text-center font-sans">
+                            <text x="100" y="86" text-anchor="middle" class="fill-current text-blue-800 text-[9px] font-black tracking-wider">SOFTWARE & IT</text>
+                            <path d="M 75 92 L 125 92" stroke-width="1.2"/>
+                            <text x="100" y="105" text-anchor="middle" class="fill-current text-blue-800 text-[11px] font-black">መላ ሶሉሽን</text>
+                            <path d="M 75 111 L 125 111" stroke-width="1.2"/>
+                            <text x="100" y="123" text-anchor="middle" class="fill-current text-blue-800 text-[8px] font-bold tracking-widest">★ 2019 ★</text>
+                        </g>
+                    </svg>
                 </div>
             </div>
+
         </div>
 
         <!-- FOOTER -->
