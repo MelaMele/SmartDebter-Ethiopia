@@ -27,7 +27,7 @@
                         <h2 class="text-sm font-bold text-white tracking-wide">Mela Solution</h2>
                         <span class="text-[10px] bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded-full font-bold">SUPER ADMIN</span>
                     </div>
-                    <p class="text-[11px] text-slate-400">ማዕከላዊ የትምህርት ቤቶች፣ ካምፓሶች እና ማስታወቂያዎች መቆጣጠሪያ</p>
+                    <p class="text-[11px] text-slate-400">Clever Cloud MySQL Live ዳታቤዝ የተገናኘበት ማዕከል</p>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
@@ -160,7 +160,7 @@
                             <tr>
                                 <td colspan="6" class="p-8 text-center text-slate-500">
                                     <i class="fas fa-upload text-3xl mb-2 text-slate-700 block"></i>
-                                    እስካሁን የተሰቀለ ማስታወቂያ የለም። "አዲስ ፖስተር ጫን" የሚለውን ነክተው የመጀመሪያውን ማስታወቂያ ይስቀሉ።
+                                    እስካሁን የተሰቀለ ማስታወቂያ የለም።
                                 </td>
                             </tr>
                         @endforelse
@@ -169,15 +169,15 @@
             </div>
         </div>
 
-        <!-- 4. PARTNER SCHOOLS, CAMPUSES & DIVISIONS -->
+        <!-- 4. PARTNER SCHOOLS MANAGEMENT (ከነ EDIT እና DELETE ጋር) -->
         <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-800">
                 <div>
                     <h3 class="text-base font-bold text-white flex items-center">
                         <i class="fas fa-school text-indigo-400 mr-2"></i>
-                        አጋር ትምህርት ቤቶች (የካምፓስ 1 እና 2 ሊንክ ማመንጫ)
+                        አጋር ትምህርት ቤቶች (Schools Management)
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">ለትምህርት ቤቱ ዋና ዳይሬክተር፣ ለካምፓስ 1 እና ለካምፓስ 2 ተጠሪዎች የተከፋፈሉ ሊንኮችን ያመንጩ</p>
+                    <p class="text-xs text-slate-400 mt-0.5">ትምህርት ቤቶችን ያርትዑ (Edit)፣ ይሰርዙ (Delete) ወይም የካምፓስ ሊንኮቻቸውን ያመንጩ</p>
                 </div>
                 <button onclick="openModal('school-modal')" class="text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-1.5">
                     <i class="fas fa-plus"></i>
@@ -193,8 +193,8 @@
                             <th class="p-3">የመለያ ኮድ</th>
                             <th class="p-3">የአድሚን ስልክ</th>
                             <th class="p-3">ሁኔታ</th>
-                            <th class="p-3">ማዕከላዊ ቁጥጥር</th>
-                            <th class="p-3 text-right">የካምፓስ እና ዲቪዥን ሊንኮች</th>
+                            <th class="p-3">ቁጥጥር</th>
+                            <th class="p-3 text-right">የካምፓስ ሊንኮች እና እርምጃዎች</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-800 text-slate-300">
@@ -222,19 +222,34 @@
                                         </button>
                                     </form>
                                 </td>
-                                <td class="p-3 text-right">
+                                <td class="p-3 text-right space-x-1.5">
+                                    <!-- View Campus Links -->
                                     <button onclick="openCampusDivisionModal('{{ $school->name }}', '{{ $school->code }}')" 
-                                            class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-xs flex items-center space-x-1 ml-auto">
-                                        <i class="fas fa-sitemap mr-1"></i>
-                                        <span>የካምፓስ ሊንኮች እይ</span>
+                                            class="text-[11px] bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-2.5 py-1 rounded-lg transition">
+                                        <i class="fas fa-sitemap mr-0.5"></i>ሊንኮች
                                     </button>
+
+                                    <!-- EDIT SCHOOL BUTTON -->
+                                    <button onclick="openEditSchoolModal('{{ $school->id }}', '{{ $school->name }}', '{{ $school->code }}', '{{ $school->city }}', '{{ $school->phone }}')" 
+                                            class="text-[11px] bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold px-2.5 py-1 rounded-lg border border-slate-700 transition">
+                                        <i class="fas fa-edit mr-0.5"></i>አስተካክል
+                                    </button>
+
+                                    <!-- DELETE SCHOOL BUTTON -->
+                                    <form action="/super-admin/schools/delete" method="POST" onsubmit="return confirm('እርግጠኛ ነዎት ይህ ትምህርት ቤት ({{ $school->name }}) ከነ መረጃው ሙሉ በሙሉ ከዳታቤዝ ይሰረዝ?');" class="inline">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $school->id }}">
+                                        <button type="submit" class="text-[11px] bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-bold px-2 py-1 rounded-lg border border-rose-500/30 transition">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         @empty
                             <tr>
                                 <td colspan="6" class="p-8 text-center text-slate-500">
                                     <i class="fas fa-school text-3xl mb-2 text-slate-700 block"></i>
-                                    እስካሁን በዳታቤዙ ውስጥ የተመዘገበ ትምህርት ቤት የለም። "አዲስ ት/ቤት መዝግብ" የሚለውን ነክተው የመጀመሪያውን ት/ቤት ያስገቡ።
+                                    እስካሁን የተመዘገበ ትምህርት ቤት የለም።
                                 </td>
                             </tr>
                         @endforelse
@@ -247,7 +262,82 @@
 
     <!-- ==================== MODALS ==================== -->
 
-    <!-- MULTI-CAMPUS & DIVISION LINKS MODAL (የካምፓስ 1 እና 2 ሊንክ ማመንጫ ፖፕ-አፕ) -->
+    <!-- 1. EDIT SCHOOL MODAL (የት/ቤት መረጃ ማስተካከያ ፖፕ-አፕ) -->
+    <div id="edit-school-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-slate-900 rounded-2xl max-w-md w-full p-6 border border-slate-800 shadow-2xl text-slate-100">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <h3 class="font-bold text-sm text-white flex items-center">
+                    <i class="fas fa-edit text-amber-400 mr-2"></i>
+                    የትምህርት ቤቱን መረጃ አስተካክል (Edit School)
+                </h3>
+                <button onclick="closeModal('edit-school-modal')" class="text-slate-400 hover:text-white">✕</button>
+            </div>
+            <form action="/super-admin/schools/update" method="POST" class="my-4 space-y-3">
+                @csrf
+                <input type="hidden" name="id" id="edit-school-id">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">የትምህርት ቤቱ ሙሉ ስም</label>
+                    <input type="text" name="name" id="edit-school-name" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">የመለያ ኮድ (Code)</label>
+                        <input type="text" name="code" id="edit-school-code" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-indigo-400 uppercase">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">ከተማ / አድራሻ</label>
+                        <input type="text" name="city" id="edit-school-city" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">የት/ቤቱ ዋና አድሚን ስልክ ቁጥር</label>
+                    <input type="text" name="phone" id="edit-school-phone" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                </div>
+                <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-500 shadow mt-2">
+                    ለውጦችን መዝግብ (Save Changes)
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. ADD SCHOOL MODAL -->
+    <div id="school-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-slate-900 rounded-2xl max-w-md w-full p-6 border border-slate-800 shadow-2xl text-slate-100">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <h3 class="font-bold text-sm text-white flex items-center">
+                    <i class="fas fa-school text-indigo-400 mr-2"></i>
+                    አዲስ ት/ቤት መመዝገቢያ (MySQL)
+                </h3>
+                <button onclick="closeModal('school-modal')" class="text-slate-400 hover:text-white">✕</button>
+            </div>
+            <form action="/super-admin/schools/store" method="POST" class="my-4 space-y-3">
+                @csrf
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">የትምህርት ቤቱ ሙሉ ስም</label>
+                    <input type="text" name="name" placeholder="ምሳሌ፡ Neway Challenge Academy" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">የመለያ ኮድ (Code)</label>
+                        <input type="text" name="code" placeholder="NCA-001" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-indigo-400 uppercase">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">ከተማ / አድራሻ</label>
+                        <input type="text" name="city" placeholder="አዲስ አበባ" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">የት/ቤቱ ዋና አድሚን ስልክ ቁጥር</label>
+                    <input type="text" name="phone" placeholder="09xxxxxxxx" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                </div>
+                <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow mt-2">
+                    ት/ቤቱን ዳታቤዝ ላይ መዝግብ እና ሊንክ አመንጭ
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. MULTI-CAMPUS & DIVISION LINKS MODAL -->
     <div id="campus-division-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-slate-900 rounded-2xl max-w-xl w-full p-6 border border-slate-800 shadow-2xl text-slate-100 max-h-[92vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
@@ -262,8 +352,7 @@
             </div>
 
             <div class="my-4 space-y-4">
-                
-                <!-- 👑 GENERAL PRINCIPAL (ሁሉንም ካምፓስ የሚቆጣጠር) -->
+                <!-- 👑 GENERAL PRINCIPAL -->
                 <div class="p-3 bg-purple-950/40 rounded-xl border border-purple-800/60">
                     <div class="flex items-center justify-between mb-1">
                         <span class="text-xs font-bold text-white flex items-center">
@@ -279,7 +368,7 @@
                     </div>
                 </div>
 
-                <!-- 📍 ካምፓስ 1 (ቅርንጫፍ 1) -->
+                <!-- 📍 ካምፓስ 1 -->
                 <div class="p-3.5 bg-slate-950 rounded-xl border border-blue-900/60 space-y-2.5">
                     <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
                         <span class="text-xs font-black text-blue-400 flex items-center">
@@ -323,7 +412,7 @@
                     </div>
                 </div>
 
-                <!-- 📍 ካምፓስ 2 (ቅርንጫፍ 2) -->
+                <!-- 📍 ካምፓስ 2 -->
                 <div class="p-3.5 bg-slate-950 rounded-xl border border-emerald-900/60 space-y-2.5">
                     <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
                         <span class="text-xs font-black text-emerald-400 flex items-center">
@@ -366,55 +455,15 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <div class="pt-2 text-right">
-                <button onclick="closeModal('campus-division-modal')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold">
-                    ዝጋ
-                </button>
+                <button onclick="closeModal('campus-division-modal')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold">ዝጋ</button>
             </div>
         </div>
     </div>
 
-    <!-- ADD SCHOOL MODAL -->
-    <div id="school-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-slate-900 rounded-2xl max-w-md w-full p-6 border border-slate-800 shadow-2xl text-slate-100">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-                <h3 class="font-bold text-sm text-white flex items-center">
-                    <i class="fas fa-school text-indigo-400 mr-2"></i>
-                    አዲስ ት/ቤት መመዝገቢያ (MySQL)
-                </h3>
-                <button onclick="closeModal('school-modal')" class="text-slate-400 hover:text-white">✕</button>
-            </div>
-            <form action="/super-admin/schools/store" method="POST" class="my-4 space-y-3">
-                @csrf
-                <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1">የትምህርት ቤቱ ሙሉ ስም</label>
-                    <input type="text" name="name" placeholder="ምሳሌ፡ Neway Challenge Academy" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">የመለያ ኮድ (Code)</label>
-                        <input type="text" name="code" placeholder="NCA-001" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-indigo-400 uppercase">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">ከተማ / አድራሻ</label>
-                        <input type="text" name="city" placeholder="አዲስ አበባ" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1">የት/ቤቱ ዋና አድሚን ስልክ ቁጥር</label>
-                    <input type="text" name="phone" placeholder="09xxxxxxxx" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
-                </div>
-                <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow mt-2">
-                    ት/ቤቱን ዳታቤዝ ላይ መዝግብ እና ሊንክ አመንጭ
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- DIRECT FILE UPLOAD AD MODAL -->
+    <!-- 4. DIRECT FILE UPLOAD AD MODAL -->
     <div id="ad-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-slate-900 rounded-2xl max-w-md w-full p-6 border border-slate-800 shadow-2xl text-slate-100 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
@@ -491,6 +540,16 @@
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
+        // OPEN EDIT SCHOOL MODAL
+        function openEditSchoolModal(id, name, code, city, phone) {
+            document.getElementById('edit-school-id').value = id;
+            document.getElementById('edit-school-name').value = name;
+            document.getElementById('edit-school-code').value = code;
+            document.getElementById('edit-school-city').value = city;
+            document.getElementById('edit-school-phone').value = phone;
+            openModal('edit-school-modal');
+        }
+
         // OPEN CAMPUS DIVISION MODAL
         function openCampusDivisionModal(schoolName, code) {
             document.getElementById('campus-modal-title').innerHTML = `
@@ -501,16 +560,15 @@
             const base = 'https://smart-debter-ethiopia.vercel.app/dashboard/admin';
             const sName = encodeURIComponent(schoolName);
 
-            // General Principal
             document.getElementById('link-main-principal').value = `${base}?school=${code}&campus=all&division=all&school_name=${sName}`;
 
-            // Campus 1 Links
+            // Campus 1
             document.getElementById('c1-kg').value = `${base}?school=${code}&campus=1&division=kg&school_name=${sName}`;
             document.getElementById('c1-1-4').value = `${base}?school=${code}&campus=1&division=1-4&school_name=${sName}`;
             document.getElementById('c1-5-8').value = `${base}?school=${code}&campus=1&division=5-8&school_name=${sName}`;
             document.getElementById('c1-9-12').value = `${base}?school=${code}&campus=1&division=9-12&school_name=${sName}`;
 
-            // Campus 2 Links
+            // Campus 2
             document.getElementById('c2-kg').value = `${base}?school=${code}&campus=2&division=kg&school_name=${sName}`;
             document.getElementById('c2-1-4').value = `${base}?school=${code}&campus=2&division=1-4&school_name=${sName}`;
             document.getElementById('c2-5-8').value = `${base}?school=${code}&campus=2&division=5-8&school_name=${sName}`;
@@ -525,7 +583,6 @@
             alert('ሊንኩ ተገልብጧል (Copied)!');
         }
 
-        // Image Compressor
         function previewSelectedAd(input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
