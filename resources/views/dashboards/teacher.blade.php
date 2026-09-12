@@ -19,7 +19,7 @@
 <body class="bg-slate-100 font-sans min-h-screen pb-12">
 
     @php
-        $tName = request('name', $teacherName ?? 'መምህር አለሙ ተሾመ');
+        $tName = request('name', $teacherName ?? 'የክፍል ኃላፊ መምህር');
         $cCode = request('class', $classCode ?? 'ክፍል 7-B');
     @endphp
 
@@ -35,16 +35,16 @@
                     <h2 class="text-sm font-bold text-slate-900 leading-tight" id="ui-teacher-name">{{ $tName }}</h2>
                     <p class="text-[11px] text-slate-500">
                         <span data-am="የተመደቡበት ክፍል፡" data-en="Assigned Class:">የተመደቡበት ክፍል፡</span> 
-                        <b class="text-emerald-700 font-bold" id="ui-class-code">{{ $cCode }}</b>
+                        <b class="text-emerald-700 font-bold" id="ui-class-code">{{ $cCode }}</b> • 2019 ዓ.ም
                     </p>
                 </div>
             </div>
 
             <div class="flex items-center space-x-2.5 w-full sm:w-auto justify-between sm:justify-end">
-                <!-- Date Badge -->
-                <div class="bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-xl text-xs flex items-center space-x-1.5">
+                <!-- 2019 ዓ.ም Badge -->
+                <div class="bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-xl text-xs flex items-center space-x-1.5">
                     <i class="far fa-calendar-alt text-emerald-600 text-xs"></i>
-                    <span id="header-eth-date" class="text-emerald-900 font-bold text-[11px]">በመጫን ላይ...</span>
+                    <span class="text-emerald-900 font-bold text-[11px]">🇪🇹 2019 ዓ.ም (መስከረም)</span>
                 </div>
 
                 <!-- Language Switcher Button -->
@@ -71,62 +71,100 @@
             </div>
 
             <div class="bg-white p-4 rounded-2xl border shadow-xs">
+                <p class="text-[11px] font-bold text-slate-500 uppercase" data-am="የክፍሉ ተማሪዎች" data-en="Students">የክፍሉ ተማሪዎች</p>
+                <h3 class="text-2xl font-black text-blue-600 mt-1">{{ count($students ?? []) }}</h3>
+                <span class="text-[10px] text-slate-400" data-am="የተመዘገቡ ተማሪዎች" data-en="Registered Students">የተመዘገቡ ተማሪዎች</span>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border shadow-xs">
                 <p class="text-[11px] font-bold text-slate-500 uppercase" data-am="የዛሬ የተላኩ" data-en="Sent Today">የዛሬ የተላኩ</p>
                 <h3 id="teacher-sent-count" class="text-2xl font-black text-slate-900 mt-1">0</h3>
                 <span class="text-[10px] text-slate-400" data-am="የቤት ስራ / ማስታወሻ" data-en="Homework / Note">የቤት ስራ / ማስታወሻ</span>
             </div>
 
             <div class="bg-white p-4 rounded-2xl border shadow-xs">
-                <p class="text-[11px] font-bold text-slate-500 uppercase" data-am="የወላጅ ፊርማ ምጣኔ" data-en="Parent Sign Rate">የወላጅ ፊርማ ምጣኔ</p>
-                <h3 id="teacher-sign-rate" class="text-2xl font-black text-slate-400 mt-1">0%</h3>
-                <span class="text-[10px] text-slate-400" data-am="የወላጆች ምላሽ" data-en="Parent Feedback">የወላጆች ምላሽ</span>
-            </div>
-
-            <div class="bg-white p-4 rounded-2xl border shadow-xs">
-                <p class="text-[11px] font-bold text-slate-500 uppercase" data-am="ያልፈረሙ ወላጆች" data-en="Pending Parents">ያልፈረሙ ወላጆች</p>
-                <h3 id="teacher-pending-count" class="text-2xl font-black text-slate-400 mt-1">0</h3>
-                <span class="text-[10px] text-slate-400" data-am="ክትትል የሚሹ" data-en="Follow-up needed">ክትትል የሚሹ</span>
+                <p class="text-[11px] font-bold text-slate-500 uppercase" data-am="የትምህርት ዘመን" data-en="Academic Year">የትምህርት ዘመን</p>
+                <h3 class="text-2xl font-black text-purple-700 mt-1">2019</h3>
+                <span class="text-[10px] text-purple-500 font-bold">ዓ.ም (Active)</span>
             </div>
         </div>
 
         <!-- 2. Dynamic Moving Ad Carousel -->
         @include('partials.ad-slider', ['sliderId' => 'teacher-slider'])
 
-        <!-- 3. INCOMING PARENT MESSAGES INBOX (ከወላጆች የተላኩ መልእክቶች ሳጥን) -->
+        <!-- ================= 3. INCOMING PARENT MESSAGES INBOX (የወላጆች መልእክት መቀበያ ሳጥን) ================= -->
         <div class="bg-white rounded-2xl border shadow-sm p-5 sm:p-6 border-l-4 border-l-blue-600">
             <div class="flex items-center justify-between mb-3 pb-2 border-b">
                 <div>
                     <h3 class="text-base font-bold text-slate-900 flex items-center">
                         <i class="fas fa-inbox text-blue-600 mr-2"></i>
-                        <span data-am="የወላጆች መልእክት ሳጥን" data-en="Parent Messages Inbox">የወላጆች መልእክት ሳጥን</span>
+                        <span data-am="የወላጆች መልእክት ሳጥን" data-en="Parent Messages Inbox">የወላጆች መልእክት መቀበያ ሳጥን</span>
                     </h3>
-                    <p class="text-xs text-slate-500 mt-0.5" data-am="ከክፍልዎ ወላጆች የተላኩ የፈቃድ ማስታወሻዎች እና ጥያቄዎች፡" data-en="Sick leaves and notes sent by parents:">ከክፍልዎ ወላጆች የተላኩ የፈቃድ ማስታወሻዎች እና ጥያቄዎች፡</p>
+                    <p class="text-xs text-slate-500 mt-0.5" data-am="ከክፍልዎ ወላጆች የተላኩ የፈቃድ ማስታወሻዎች እና ጥያቄዎች እዚህ ይደርሳሉ፡" data-en="Sick leaves and notes sent by parents appear here:">ከክፍልዎ ወላጆች የተላኩ የፈቃድ ማስታወሻዎች እና ጥያቄዎች እዚህ ይደርሳሉ፡</p>
                 </div>
-                <span class="text-xs bg-blue-100 text-blue-800 font-bold px-2.5 py-1 rounded-full">
-                    1 አዲስ መልእክት
+                <span class="text-xs bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-full">
+                    መልእክት መቀበያ ዝግጁ
                 </span>
             </div>
 
-            <!-- Messages List -->
-            <div class="space-y-2.5">
-                <div class="p-3.5 bg-blue-50/50 rounded-xl border border-blue-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div class="space-y-1">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xs font-black text-slate-900">አቶ ዳዊት በቀለ (የተማሪ ዮናስ ዳዊት ወላጅ)</span>
-                            <span class="text-[10px] bg-rose-100 text-rose-700 font-bold px-2 py-0.5 rounded">🤒 የህመም ፈቃድ ማስታወሻ</span>
-                        </div>
-                        <p class="text-xs text-slate-600">"ሰላም መምህር! ዮናስ ዛሬ ጠዋት ትኩሳት ስለተሰማው ወደ ት/ቤት መምጣት አልቻለም፤ ፈቃድ እንዲሰጠው በትህትና እጠይቃለሁ።"</p>
-                        <span class="text-[10px] text-slate-400">ዛሬ ጠዋት 1:40 ላይ የተላከ</span>
-                    </div>
-                    <button onclick="this.innerText='ተረጋግጧል'; this.className='text-xs bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-lg'; alert('የወላጁ መልእክት መታየቱ ተረጋግጧል!');" 
-                            class="whitespace-nowrap text-xs bg-white border border-blue-200 text-blue-700 hover:bg-blue-100 font-bold px-3 py-1.5 rounded-lg shadow-xs transition">
-                        <i class="fas fa-check mr-1"></i>አይቻለሁ
-                    </button>
-                </div>
+            <!-- Clean Empty State for Messages (ምንም የውሸት መልእክት የለም) -->
+            <div id="parent-messages-container" class="text-center py-8 text-slate-400">
+                <i class="fas fa-envelope-open text-3xl mb-2 text-slate-300"></i>
+                <p class="text-xs font-medium">እስካሁን ከወላጆች የተላከ አዲስ መልእክት ወይም የህመም ፈቃድ የለም።</p>
+                <p class="text-[10px] text-slate-400 mt-0.5">ወላጆች በስልካቸው ማስታወሻ ሲጽፉ እዚህ ሳጥን ውስጥ በቅጽበት ይደርሶዎታል።</p>
             </div>
         </div>
 
-        <!-- 4. POST TO DEBTER FORM -->
+        <!-- ================= 4. CLASS STUDENT ROSTER (የክፍሌ ተማሪዎች ዝርዝር) ================= -->
+        <div class="bg-white rounded-2xl border shadow-sm p-5 sm:p-6">
+            <div class="flex items-center justify-between mb-3 pb-2 border-b">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900 flex items-center">
+                        <i class="fas fa-user-graduate text-emerald-600 mr-2"></i>
+                        <span data-am="የክፍሌ ተማሪዎች ዝርዝር" data-en="My Class Students">የክፍሌ ተማሪዎች ዝርዝር</span> ({{ $cCode }})
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">በዚህ ክፍል ስር የተመዘገቡ ተማሪዎች እና የወላጆቻቸው ስልክ</p>
+                </div>
+                <span class="text-xs bg-emerald-50 text-emerald-700 font-bold px-2.5 py-1 rounded-lg border border-emerald-200">
+                    {{ count($students ?? []) }} ተማሪዎች
+                </span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="text-slate-500 border-b bg-slate-50">
+                            <th class="p-2.5">የተማሪ ስም</th>
+                            <th class="p-2.5">የተማሪ መለያ (ID/Password)</th>
+                            <th class="p-2.5">የወላጅ ስልክ (Username)</th>
+                            <th class="p-2.5">ሁኔታ</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y text-slate-700">
+                        @forelse($students as $st)
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="p-2.5 font-bold text-slate-900">
+                                    <i class="fas fa-user-circle text-slate-400 mr-1"></i>
+                                    {{ $st->first_name }} {{ $st->last_name }}
+                                </td>
+                                <td class="p-2.5 font-mono font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded w-fit">{{ $st->student_id_number }}</td>
+                                <td class="p-2.5 font-mono font-bold text-blue-700">{{ $st->parent_phone ?? 'ስልክ የለም' }}</td>
+                                <td class="p-2.5"><span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">ንቁ</span></td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="p-6 text-center text-slate-400">
+                                    <p class="text-xs font-medium">በዚህ ክፍል ስር እስካሁን የተመዘገበ ተማሪ የለም።</p>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">አድሚኑ ወይም የዲቪዥን ተጠሪው ተማሪ ሲመዘግብ እዚህ ዝርዝሩ ይወጣል።</p>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 5. POST TO DEBTER FORM -->
         <div class="bg-white rounded-2xl border shadow-sm p-5 sm:p-6">
             <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center">
                 <i class="fas fa-edit text-emerald-600 mr-2"></i>
@@ -166,18 +204,17 @@
                               class="w-full p-2.5 bg-slate-50 border rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
                 </div>
 
-                <!-- ETHIOPIAN DATE PICKER BOX -->
+                <!-- 2019 ዓ.ም ETHIOPIAN DATE PICKER BOX -->
                 <div class="p-4 bg-emerald-50/60 border border-emerald-200 rounded-2xl space-y-3">
                     <div class="flex items-center justify-between">
                         <label class="text-xs font-bold text-emerald-950 flex items-center">
                             <i class="far fa-calendar-check text-emerald-600 mr-1.5 text-sm"></i>
-                            <span data-am="የማስረከቢያ ቀን (የኢትዮጵያ ካሌንደር)" data-en="Due Date (Ethiopian Calendar)">የማስረከቢያ ቀን (የኢትዮጵያ ካሌንደር)</span>
+                            <span data-am="የማስረከቢያ ቀን (የኢትዮጵያ ካሌንደር)" data-en="Due Date (Ethiopian Calendar)">የማስረከቢያ ቀን (2019 ዓ.ም)</span>
                         </label>
-                        <span class="text-[10px] bg-emerald-200/60 text-emerald-800 font-bold px-2 py-0.5 rounded" data-am="ከስልክዎ ጋር የተመሳሰለ" data-en="Synced with phone">ከስልክዎ ጋር የተመሳሰለ</span>
+                        <span class="text-[10px] bg-emerald-200/60 text-emerald-800 font-bold px-2 py-0.5 rounded" data-am="2019 የትምህርት ዘመን" data-en="2019 Academic Year">2019 የትምህርት ዘመን</span>
                     </div>
 
                     <div class="grid grid-cols-3 gap-2">
-                        <!-- Day (ቀን 1 - 30) -->
                         <div>
                             <label class="block text-[10px] font-bold text-slate-600 mb-0.5" data-am="ቀን" data-en="Day">ቀን</label>
                             <select id="eth-day" class="w-full p-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800">
@@ -187,11 +224,10 @@
                             </select>
                         </div>
 
-                        <!-- Month (መስከረም እስከ ጳጉሜ) -->
                         <div>
                             <label class="block text-[10px] font-bold text-slate-600 mb-0.5" data-am="ወር" data-en="Month">ወር</label>
                             <select id="eth-month" class="w-full p-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800">
-                                <option value="መስከረም">መስከረም</option>
+                                <option value="መስከረም" selected>መስከረም</option>
                                 <option value="ጥቅምት">ጥቅምት</option>
                                 <option value="ህዳር">ህዳር</option>
                                 <option value="ታህሳስ">ታህሳስ</option>
@@ -207,18 +243,11 @@
                             </select>
                         </div>
 
-                        <!-- Year (ዓ.ም ከ 2015 እስከ 2022) -->
                         <div>
                             <label class="block text-[10px] font-bold text-slate-600 mb-0.5" data-am="ዓ.ም" data-en="Year">ዓ.ም</label>
                             <select id="eth-year" class="w-full p-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800">
-                                <option value="2015">2015 ዓ.ም</option>
-                                <option value="2016">2016 ዓ.ም</option>
-                                <option value="2017" selected>2017 ዓ.ም</option>
-                                <option value="2018">2018 ዓ.ም</option>
-                                <option value="2019">2019 ዓ.ም</option>
+                                <option value="2019" selected>2019 ዓ.ም</option>
                                 <option value="2020">2020 ዓ.ም</option>
-                                <option value="2021">2021 ዓ.ም</option>
-                                <option value="2022">2022 ዓ.ም</option>
                             </select>
                         </div>
                     </div>
@@ -233,7 +262,7 @@
             </form>
         </div>
 
-        <!-- 5. MONTHLY ARCHIVE SYSTEM -->
+        <!-- 6. MONTHLY ARCHIVE SYSTEM (2019 ዓ.ም) -->
         <div class="bg-white rounded-2xl border shadow-sm overflow-hidden">
             <div class="p-4 border-b bg-slate-50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div>
@@ -241,9 +270,9 @@
                         <i class="fas fa-folder-open text-amber-500 mr-2"></i>
                         <span data-am="የመልእክቶች እና የቤት ስራዎች የወራት ማህደር" data-en="Monthly Archive Folders">የመልእክቶች እና የቤት ስራዎች የወራት ማህደር</span>
                     </h3>
-                    <p class="text-[11px] text-slate-500" data-am="መልእክቶችን በየወሩ ተከፋፍለው በቀላሉ ያግኙ" data-en="Access messages organized by month">መልእክቶችን በየወሩ ተከፋፍለው በቀላሉ ያግኙ</p>
+                    <p class="text-[11px] text-slate-500">መልእክቶችን በየወሩ ተከፋፍለው በቀላሉ ያግኙ</p>
                 </div>
-                <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">2017 የትምህርት ዘመን</span>
+                <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">2019 የትምህርት ዘመን</span>
             </div>
 
             <!-- Month Tabs -->
@@ -253,17 +282,18 @@
                 @endphp
                 @foreach($ethMonths as $m)
                     <button onclick="filterByMonth('{{ $m }}')" 
-                            class="month-tab whitespace-nowrap px-3 py-1.5 rounded-xl text-xs font-bold transition {{ $m == 'የካቲት' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white border text-slate-600 hover:bg-slate-100' }}">
+                            class="month-tab whitespace-nowrap px-3 py-1.5 rounded-xl text-xs font-bold transition {{ $m == 'መስከረም' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white border text-slate-600 hover:bg-slate-100' }}">
                         {{ $m }}
                     </button>
                 @endforeach
             </div>
 
+            <!-- Sent List with Clean Zero State (ምንም የውሸት የቤት ስራ የለም) -->
             <div id="teacher-sent-list" class="divide-y text-sm">
                 <div id="teacher-empty-state" class="text-center py-10 text-slate-400">
-                    <i class="fas fa-folder text-3xl mb-2 text-slate-300"></i>
-                    <p class="text-xs font-medium" data-am="በተመረጠው ወር ውስጥ እስካሁን የተላከ የቤት ስራ የለም።" data-en="No homework sent in this selected month.">በተመረጠው ወር ውስጥ እስካሁን የተላከ የቤት ስራ የለም።</p>
-                    <p class="text-[10px] text-slate-400 mt-0.5" data-am="ከላይ ያለውን ቅጽ በመጠቀም የመጀመሪያውን መልእክት ይላኩ።" data-en="Use the form above to send your first note.">ከላይ ያለውን ቅጽ በመጠቀም የመጀመሪያውን መልእክት ይላኩ።</p>
+                    <i class="fas fa-book-open text-3xl mb-2 text-slate-300"></i>
+                    <p class="text-xs font-medium">እስካሁን የተላከ የቤት ስራ ወይም ማስታወሻ የለም።</p>
+                    <p class="text-[10px] text-slate-400 mt-0.5">ከላይ ያለውን ቅጽ በመጠቀም የመጀመሪያውን የቤት ስራ ወደ ወላጆች ይላኩ።</p>
                 </div>
             </div>
         </div>
@@ -275,7 +305,6 @@
 
     <!-- Interactive Scripts -->
     <script>
-        // 1. DUAL LANGUAGE TOGGLE (አማርኛ ⇄ English)
         let currentLang = 'am';
         function toggleTeacherLanguage(btn) {
             currentLang = (currentLang === 'am') ? 'en' : 'am';
@@ -286,36 +315,6 @@
             });
         }
 
-        // 2. AUTO-SYNC WITH PHONE DATE
-        function getEthiopianDate(date = new Date()) {
-            const gYear = date.getFullYear();
-            const gMonth = date.getMonth() + 1;
-            const gDay = date.getDate();
-            const months = ["መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ", "ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜ"];
-
-            const jdn = Math.floor((1461 * (gYear + 4800 + Math.floor((gMonth - 14) / 12))) / 4) +
-                        Math.floor((367 * (gMonth - 2 - 12 * Math.floor((gMonth - 14) / 12))) / 12) -
-                        Math.floor((3 * Math.floor((gYear + 4900 + Math.floor((gMonth - 14) / 12)) / 100)) / 4) +
-                        gDay - 32075;
-            const r = (jdn - 1723856) % 1461;
-            const n = (r % 365) + 365 * Math.floor(r / 1460);
-            const ethYear = 4 * Math.floor((jdn - 1723856) / 1461) + Math.floor(r / 365) - Math.floor(r / 1460);
-            const ethMonthIndex = Math.min(Math.floor(n / 30), 12);
-            const ethDay = (n % 30) + 1;
-
-            return { year: ethYear, monthName: months[ethMonthIndex], day: ethDay };
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const ethDate = getEthiopianDate();
-            document.getElementById('header-eth-date').innerText = `🇪🇹 ዛሬ፡ ${ethDate.monthName} ${ethDate.day} / ${ethDate.year} ዓ.ም`;
-            
-            document.getElementById('eth-day').value = ethDate.day;
-            document.getElementById('eth-month').value = ethDate.monthName;
-            document.getElementById('eth-year').value = ethDate.year;
-        });
-
-        // 3. MONTHLY FILTER
         function filterByMonth(monthName) {
             document.querySelectorAll('.month-tab').forEach(t => {
                 t.className = 'month-tab whitespace-nowrap px-3 py-1.5 rounded-xl text-xs font-bold transition bg-white border text-slate-600 hover:bg-slate-100';
@@ -338,7 +337,6 @@
             }
         }
 
-        // 4. SEND TEACHER NOTE
         function sendTeacherNote(form) {
             const cat = document.getElementById('note-category').value;
             const title = document.getElementById('note-title').value;
@@ -351,8 +349,6 @@
 
             const cur = parseInt(document.getElementById('teacher-sent-count').innerText) || 0;
             document.getElementById('teacher-sent-count').innerText = cur + 1;
-            document.getElementById('teacher-pending-count').innerText = 'በመጠበቅ ላይ';
-            document.getElementById('teacher-pending-count').classList.add('text-amber-600');
 
             const item = document.createElement('div');
             item.className = 'debter-entry-item p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:bg-slate-50 transition';
@@ -378,10 +374,9 @@
 
             document.getElementById('teacher-sent-list').prepend(item);
             form.reset();
-            alert(`🎉 መልእክቱ ወደ "${month} ወር" ማህደር ተመዝግቦ ለወላጆች ተልኳል!`);
+            alert(`🎉 መልእክቱ ወደ "${month} ወር 2019 ዓ.ም" ማህደር ተመዝግቦ ለወላጆች ተልኳል!`);
         }
 
-        // PWA Script
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js'); });
         }
