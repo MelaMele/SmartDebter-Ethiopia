@@ -16,7 +16,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-slate-100 font-sans min-h-screen pb-12">
+<body class="bg-slate-100 font-sans min-h-screen pb-16">
 
     <!-- PWA Install Banner -->
     <div id="pwa-install-banner" class="hidden bg-indigo-900 text-white px-4 py-2.5 shadow-md">
@@ -25,7 +25,7 @@
                 <img src="https://cdn-icons-png.flaticon.com/512/2997/2997295.png" alt="Logo" class="w-8 h-8 rounded-lg">
                 <div>
                     <p class="text-xs font-bold leading-tight" data-am="SmartDebter አፕሊኬሽን" data-en="SmartDebter App">SmartDebter አፕሊኬሽን</p>
-                    <p class="text-[10px] text-indigo-200" data-am="በቀላሉ ስልክዎ ላይ ጭነው ይጠቀሙ!" data-en="Install on your phone!">በቀላሉ ስልክዎ ላይ ጭነው ይጠቀሙ!</p>
+                    <p class="text-[10px] text-indigo-200" data-am="በቀላሉ ስልክዎ ላይ ጭነው ይጠቀሙ!" data-en="Install on your phone for quick access!">በቀላሉ ስልክዎ ላይ ጭነው ይጠቀሙ!</p>
                 </div>
             </div>
             <div class="flex items-center space-x-2">
@@ -47,18 +47,16 @@
                 </div>
                 <div>
                     <h2 class="text-sm font-bold text-slate-900 leading-tight">{{ $parent['name'] ?? 'የተማሪ ወላጅ' }}</h2>
-                    <p class="text-[11px] text-slate-500"><span data-am="የተመዘገበ ስልክ፡" data-en="Phone:">የተመዘገበ ስልክ፡</span> {{ $phone ?? '0911000000' }}</p>
+                    <p class="text-[11px] text-slate-500"><span data-am="የተመዘገበ ስልክ፡" data-en="Phone:">የተመዘገበ ስልክ፡</span> {{ $phone ?? '09xxxxxxxx' }}</p>
                 </div>
             </div>
 
             <div class="flex items-center space-x-2.5 w-full sm:w-auto justify-between sm:justify-end">
-                <!-- Auto-synced Date Badge -->
                 <div class="bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-xl text-xs flex items-center space-x-1.5">
                     <i class="far fa-calendar-alt text-blue-600 text-xs"></i>
                     <span id="parent-eth-date" class="text-blue-950 font-bold text-[11px]">በመጫን ላይ...</span>
                 </div>
 
-                <!-- Language Switcher Button -->
                 <button onclick="toggleParentLanguage(this)" class="text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 px-3 py-1.5 rounded-xl font-bold hover:bg-indigo-100 transition flex items-center space-x-1">
                     <i class="fas fa-globe text-xs"></i>
                     <span id="parent-lang-btn">English</span>
@@ -72,21 +70,23 @@
         </div>
     </header>
 
-    <!-- Child Profile Card & Action Bar -->
-    <div class="max-w-3xl mx-auto px-4 pt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        <div class="bg-white rounded-2xl p-3 border shadow-xs flex items-center space-x-3 flex-1">
-            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-am="የእርስዎ ተማሪ:" data-en="Your Student:">የእርስዎ ተማሪ:</span>
-            <span class="flex items-center space-x-2 bg-indigo-50 border-2 border-indigo-600 px-3 py-1 rounded-xl text-xs font-bold text-indigo-950 shadow-xs">
-                <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
-                <span>{{ $parent['children'][0]['name'] ?? 'ዮናስ ዳዊት' }} ({{ $parent['children'][0]['grade'] ?? 'ክፍል 7-B' }})</span>
-            </span>
-        </div>
+    <!-- Child Profile Card & Write Note Button -->
+    <div class="max-w-3xl mx-auto px-4 pt-4">
+        <div class="bg-white rounded-2xl p-3 border shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div class="flex items-center space-x-3">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-am="የእርስዎ ተማሪ:" data-en="Student:">የእርስዎ ተማሪ:</span>
+                <button class="flex items-center space-x-2 bg-indigo-50 border-2 border-indigo-600 px-3.5 py-1.5 rounded-xl text-xs font-bold text-indigo-950 shadow-xs">
+                    <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
+                    <span>{{ $parent['children'][0]['name'] ?? 'ተማሪ' }} ({{ $parent['children'][0]['grade'] ?? 'ክፍል 7-B' }})</span>
+                </button>
+            </div>
 
-        <!-- BUTTON TO OPEN MESSAGE TO TEACHER / UNIT LEADER -->
-        <button onclick="openParentMessageModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-sm transition flex items-center justify-center space-x-2 shrink-0">
-            <i class="fas fa-comment-dots text-sm"></i>
-            <span data-am="ለመምህሩ መልእክት ይጻፉ" data-en="Message Teacher / Leader">ለመምህሩ መልእክት ይጻፉ</span>
-        </button>
+            <!-- BUTTON: WRITE NOTE TO TEACHER OR UNIT LEADER -->
+            <button onclick="openModal('parent-write-modal')" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow flex items-center justify-center space-x-1.5">
+                <i class="fas fa-pen-alt text-xs"></i>
+                <span data-am="ለመምህሩ / ለተጠሪው መልእክት ይጻፉ" data-en="Write to Teacher/Leader">ለመምህሩ / ለተጠሪው መልእክት ይጻፉ</span>
+            </button>
+        </div>
     </div>
 
     <!-- Main Feed / Timeline -->
@@ -100,7 +100,7 @@
             <div class="p-3 bg-slate-50/70 border-b flex items-center justify-between">
                 <span class="text-xs font-bold text-slate-700 flex items-center">
                     <i class="fas fa-folder text-amber-500 mr-1.5"></i>
-                    <span data-am="የደብተሩ የወራት ማህደር (ወር ይምረጡ)" data-en="Monthly Debter Archives">የደብተሩ የወራት ማህደር (ወር ይምረጡ)</span>
+                    <span data-am="የደብተሩ የወራት ማህደር" data-en="Monthly Archives">የደብተሩ የወራት ማህደር</span>
                 </span>
                 <span class="text-[10px] text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md font-bold">2017 ዓ.ም</span>
             </div>
@@ -118,68 +118,71 @@
             </div>
         </div>
 
-        <!-- 3. DEBTER FEED CONTAINER (ሁለቱንም ያሳያል፡ ከመምህር የመጣ እና ወላጅ የላከው) -->
+        <!-- 3. SENT NOTES BY PARENT (ወላጅ የላካቸው መልእክቶች) -->
+        <div id="parent-sent-box" class="hidden space-y-3">
+            <h4 class="text-xs font-bold text-slate-700 flex items-center">
+                <i class="fas fa-paper-plane text-emerald-600 mr-1.5"></i>
+                <span>እርስዎ የላኳቸው ማስታወሻዎች</span>
+            </h4>
+            <div id="parent-sent-items" class="space-y-2"></div>
+        </div>
+
+        <!-- 4. DEBTER FEED CONTAINER -->
         <div id="parent-debter-feed" class="space-y-4">
-            
-            <!-- Clean Empty State -->
-            <div id="parent-empty-state" class="bg-white rounded-2xl border p-8 text-center shadow-sm">
+            <div class="bg-white rounded-2xl border p-8 text-center shadow-sm">
                 <div class="w-14 h-14 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl mx-auto mb-3">
                     <i class="fas fa-book-open"></i>
                 </div>
                 <h4 class="text-sm font-bold text-slate-800" data-am="የልጅዎ ደብተር ንጹህ ነው!" data-en="Debter is Clean & Ready!">የልጅዎ ደብተር ንጹህ ነው!</h4>
-                <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto leading-relaxed" data-am="እስካሁን ከመምህራን የተላከ አዲስ ማስታወሻ የለም። ጥያቄ ካለዎት ከላይ 'ለመምህሩ መልእክት ይጻፉ' የሚለውን ነክተው መላክ ይችላሉ።" data-en="No notes yet. Click 'Message Teacher' above if you have any questions or leave requests.">
-                    እስካሁን ከመምህራን የተላከ አዲስ ማስታወሻ የለም። ጥያቄ ካለዎት ከላይ <b>"ለመምህሩ መልእክት ይጻፉ"</b> የሚለውን ነክተው መላክ ይችላሉ።
+                <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto leading-relaxed" data-am="እስካሁን ከመምህራን የተላከ አዲስ የቤት ስራ የለም። መምህሩ መልእክት ሲልክ እዚህ ገጽ ላይ በቅጽበት ይደርሶዎታል።" data-en="No new homework yet. It will appear here in real-time.">
+                    እስካሁን ከመምህራን የተላከ አዲስ የቤት ስራ የለም። መምህሩ መልእክት ሲልክ እዚህ ገጽ ላይ በቅጽበት ይደርሶዎታል።
                 </p>
             </div>
-
         </div>
 
     </main>
 
-    <!-- ================= MODAL: PARENT MESSAGE TO TEACHER / UNIT LEADER ================= -->
-    <div id="parent-message-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border">
+    <!-- ==================== PARENT WRITE MESSAGE MODAL ==================== -->
+    <div id="parent-write-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border">
             <div class="flex items-center justify-between pb-3 border-b">
                 <h3 class="font-bold text-sm text-slate-900 flex items-center">
-                    <i class="fas fa-paper-plane text-emerald-600 mr-2"></i>
-                    <span data-am="ለትምህርት ቤቱ መልእክት ይጻፉ" data-en="Send Message to School">ለትምህርት ቤቱ መልእክት ይጻፉ</span>
+                    <i class="fas fa-envelope-open-text text-emerald-600 mr-2"></i>
+                    ወደ ትምህርት ቤቱ መልእክት ይጻፉ
                 </h3>
-                <button onclick="closeParentMessageModal()" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+                <button onclick="closeModal('parent-write-modal')" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
             </div>
 
-            <form action="#" onsubmit="event.preventDefault(); submitParentMessage(this);" class="my-4 space-y-3.5">
-                <!-- 1. Select Recipient (ተቀባይ ይምረጡ) -->
+            <form action="#" onsubmit="event.preventDefault(); sendParentMessage();" class="my-4 space-y-3.5">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1" data-am="መልእክቱ ለማን ይድረስ?" data-en="Send Message To:">መልእክቱ ለማን ይድረስ?</label>
-                    <select id="p-recipient" class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-emerald-500">
-                        <option value="የክፍል ኃላፊ መምህር">👨‍🏫 ለክፍል ኃላፊው መምህር (Homeroom Teacher)</option>
-                        <option value="የዲቪዥን ተጠሪ / ዩኒት ሊደር">🏢 ለዲቪዥኑ ተጠሪ / ዩኒት ሊደር (Division Unit Leader)</option>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">ተቀባይ ይምረጡ (Recipient)</label>
+                    <select id="msg-recipient" class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold">
+                        <option value="መምህር">ለክፍል ኃላፊ መምህር (Homeroom Teacher)</option>
+                        <option value="ተጠሪ">ለዲቪዥን ተጠሪ (Unit Leader / Administration)</option>
                     </select>
                 </div>
 
-                <!-- 2. Message Category -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1" data-am="የመልእክቱ አይነት" data-en="Message Topic">የመልእክቱ አይነት</label>
-                    <select id="p-category" class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs focus:ring-2 focus:ring-emerald-500">
-                        <option value="የመቅረት ፈቃድ">🤒 የመቅረት ፈቃድ / የህመም ማስታወሻ (Absence Request)</option>
-                        <option value="የቤት ስራ ጥያቄ">❓ ስለ ትምህርት / የቤት ስራ ጥያቄ (Homework Inquiry)</option>
-                        <option value="ስነ-ምግባርና ባህሪ">⚠️ ስለ ባህሪ / አጠቃላይ አስተያየት (Behavior / Concern)</option>
-                        <option value="አጠቃላይ ጥያቄ">💬 አጠቃላይ ጥያቄ (General Inquiry)</option>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">የመልእክቱ አይነት (Topic)</label>
+                    <select id="msg-topic" class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold">
+                        <option value="የህመም ፈቃድ ማስታወሻ">🤒 የህመም / የፈቃድ ማስታወሻ (Sick Leave)</option>
+                        <option value="የቤት ስራ ጥያቄ">📝 የቤት ስራ ጥያቄ / አስተያየት</option>
+                        <option value="የስነ-ምግባር ማስታወሻ">🌟 የባህሪ / የስነ-ምግባር ጉዳይ</option>
+                        <option value="አጠቃላይ ጥያቄ">💬 አጠቃላይ ጥያቄ / አስተያየት</option>
                     </select>
                 </div>
 
-                <!-- 3. Message Body -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1" data-am="የመልእክቱ ዝርዝር" data-en="Message Details">የመልእክቱ ዝርዝር</label>
-                    <textarea rows="4" id="p-body" placeholder="ለልጅዎ መምህር ወይም ዩኒት ሊደር የሚተላለፈውን መልእክት እዚህ ይጻፉ..." required
-                              class="w-full p-3 bg-slate-50 border rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">መልእክትዎን እዚህ ይጻፉ</label>
+                    <textarea id="msg-text" rows="4" placeholder="ምሳሌ፡ ልጄ ዛሬ ህመም ስለተሰማው ወደ ት/ቤት መምጣት አይችልም..." required
+                              class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
                 </div>
 
                 <div class="flex items-center justify-end space-x-2 pt-2 border-t">
-                    <button type="button" onclick="closeParentMessageModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 bg-slate-100" data-am="ይቅር" data-en="Cancel">ይቅር</button>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow flex items-center space-x-1.5">
+                    <button type="button" onclick="closeModal('parent-write-modal')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 bg-slate-100">ይቅር</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow flex items-center space-x-1.5">
                         <i class="fas fa-paper-plane text-xs"></i>
-                        <span data-am="መልእክቱን ላክ" data-en="Send Message">መልእክቱን ላክ</span>
+                        <span>ላክ (Send Message)</span>
                     </button>
                 </div>
             </form>
@@ -191,24 +194,20 @@
 
     <!-- Interactive Scripts -->
     <script>
-        // 1. LANGUAGE SWITCHER
-        let parentLang = 'am';
-        function toggleParentLanguage(btn) {
-            parentLang = (parentLang === 'am') ? 'en' : 'am';
-            document.getElementById('parent-lang-btn').innerText = (parentLang === 'am') ? 'English' : 'አማርኛ';
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-            document.querySelectorAll('[data-am]').forEach(el => {
-                el.innerText = (parentLang === 'am') ? el.getAttribute('data-am') : el.getAttribute('data-en');
-            });
+        function toggleParentLanguage(btn) {
+            const label = document.getElementById('parent-lang-btn');
+            label.innerText = (label.innerText === 'English') ? 'አማርኛ' : 'English';
         }
 
-        // 2. AUTO-SYNC WITH PHONE DATE TO ETHIOPIAN CALENDAR
+        // AUTO-SYNC ETHIOPIAN DATE
         function getEthiopianDate(date = new Date()) {
             const gYear = date.getFullYear();
             const gMonth = date.getMonth() + 1;
             const gDay = date.getDate();
             const months = ["መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ", "ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜ"];
-
             const jdn = Math.floor((1461 * (gYear + 4800 + Math.floor((gMonth - 14) / 12))) / 4) +
                         Math.floor((367 * (gMonth - 2 - 12 * Math.floor((gMonth - 14) / 12))) / 12) -
                         Math.floor((3 * Math.floor((gYear + 4900 + Math.floor((gMonth - 14) / 12)) / 100)) / 4) +
@@ -218,7 +217,6 @@
             const ethYear = 4 * Math.floor((jdn - 1723856) / 1461) + Math.floor(r / 365) - Math.floor(r / 1460);
             const ethMonthIndex = Math.min(Math.floor(n / 30), 12);
             const ethDay = (n % 30) + 1;
-
             return { year: ethYear, monthName: months[ethMonthIndex], day: ethDay };
         }
 
@@ -227,71 +225,33 @@
             document.getElementById('parent-eth-date').innerText = `🇪🇹 ዛሬ፡ ${ethDate.monthName} ${ethDate.day} / ${ethDate.year} ዓ.ም`;
         });
 
-        function openParentMessageModal() {
-            document.getElementById('parent-message-modal').classList.remove('hidden');
-        }
-        function closeParentMessageModal() {
-            document.getElementById('parent-message-modal').classList.add('hidden');
-        }
+        // PARENT SENDS MESSAGE TO TEACHER / LEADER
+        function sendParentMessage() {
+            const rec = document.getElementById('msg-recipient').value;
+            const top = document.getElementById('msg-topic').value;
+            const txt = document.getElementById('msg-text').value;
 
-        // 3. SUBMIT PARENT MESSAGE (ወላጁ ሲልክ በደብተሩ ላይ ወዲያውኑ ይቀመጣል)
-        function submitParentMessage(form) {
-            const recipient = document.getElementById('p-recipient').value;
-            const category = document.getElementById('p-category').value;
-            const body = document.getElementById('p-body').value;
-            const ethDate = getEthiopianDate();
+            document.getElementById('parent-sent-box').classList.remove('hidden');
 
-            document.getElementById('parent-empty-state')?.remove();
-
-            const card = document.createElement('div');
-            card.className = 'bg-white rounded-2xl border border-emerald-200 shadow-sm p-4 space-y-2';
-            card.innerHTML = `
-                <div class="flex items-center justify-between border-b pb-2">
-                    <div class="flex items-center space-x-2">
-                        <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">
-                            <i class="fas fa-paper-plane"></i>
-                        </span>
-                        <div>
-                            <span class="text-[11px] font-bold text-slate-800">ከእርስዎ የተላከ መልእክት</span>
-                            <p class="text-[9px] text-slate-400">${ethDate.monthName} ${ethDate.day} ቀን ${ethDate.year} ዓ.ም</p>
-                        </div>
-                    </div>
-                    <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
-                        ተቀባይ፡ ${recipient}
-                    </span>
+            const item = document.createElement('div');
+            item.className = 'p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-xs text-slate-800 space-y-1';
+            item.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-emerald-900">${top} (${rec})</span>
+                    <span class="text-[10px] bg-white px-2 py-0.5 rounded border border-emerald-300 font-bold text-emerald-700">ተልኳል</span>
                 </div>
-
-                <div class="text-xs text-slate-700 leading-relaxed pt-1">
-                    <span class="font-bold text-slate-900 block mb-0.5">[${category}]</span>
-                    ${body}
-                </div>
-
-                <div class="pt-2 border-t flex items-center justify-between text-[10px] text-slate-400">
-                    <span class="text-amber-600 font-bold flex items-center">
-                        <i class="fas fa-clock mr-1"></i>መልእክቱ ደርሷል (መምህሩ/ተጠሪው ሲያዩት እዚህ ማሳወቂያ ይደርሶዎታል)
-                    </span>
-                </div>
+                <p class="text-slate-600">${txt}</p>
             `;
 
-            document.getElementById('parent-debter-feed').prepend(card);
-            closeParentMessageModal();
-            form.reset();
-            alert(`🎉 መልእክትዎ ለ${recipient} በተሳካ ሁኔታ ደርሷል!`);
+            document.getElementById('parent-sent-items').prepend(item);
+            document.getElementById('msg-text').value = '';
+            closeModal('parent-write-modal');
+
+            alert(`🎉 መልእክትዎ ለ${rec}ው በተሳካ ሁኔታ ተልኳል! ወደ ት/ቤቱ ገጽ ደርሷል።`);
         }
 
-        function parentFilterMonth(monthName) {
-            document.querySelectorAll('.parent-month-tab').forEach(t => {
-                t.className = 'parent-month-tab whitespace-nowrap px-3 py-1.5 rounded-xl text-xs font-bold transition bg-slate-50 border text-slate-600 hover:bg-slate-100';
-            });
-            event.target.className = 'parent-month-tab whitespace-nowrap px-3 py-1.5 rounded-xl text-xs font-bold transition bg-indigo-600 text-white shadow-xs';
-            alert(`የ ${monthName} ወር የደብተር ማህደር ተመርጧል።`);
-        }
-
-        function toggleSign(btn) {
-            btn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
-            btn.classList.add('bg-emerald-600', 'cursor-default');
-            btn.innerHTML = '<i class="fas fa-check-double mr-1"></i> ተረጋግጧል (ተፈርሟል)';
-            btn.disabled = true;
+        function parentFilterMonth(m) {
+            alert(`የ ${m} ወር የደብተር ማህደር ተመርጧል።`);
         }
 
         // PWA Script
