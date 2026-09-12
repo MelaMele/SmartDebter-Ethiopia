@@ -29,14 +29,19 @@ Route::get('/login', function () {
     return view('login');
 });
 
-// 3. Parent Login & Verification
+// 3. Parent Login & Verification (ከ Clever Cloud MySQL ብቻ ያረጋግጣል - ምንም የውሸት መረጃ የለም)
 Route::match(['get', 'post'], '/parent/verify', function (Request $request) {
     ensureCommunicationColumnsExist();
 
-    $phone = trim($request->input('phone', $request->query('phone', '0911000000')));
-    $studentCode = trim($request->input('student_code', $request->query('student_code', '1001')));
-    $schoolCode = $request->input('school_code', $request->query('school', 'BG-001'));
+    $phone = trim($request->input('phone', $request->query('phone', '')));
+    $studentCode = trim($request->input('student_code', $request->query('student_code', '')));
+    $schoolCode = $request->input('school_code', $request->query('school', ''));
 
+    if (empty($phone) || empty($studentCode)) {
+        return redirect('/login')->with('error', 'እባክዎ ስልክ ቁጥርዎን እና የተማሪውን መለያ ቁጥር (ID) ያስገቡ።');
+    }
+
+    // ከ Clever Cloud MySQL ዳታቤዝ እውነተኛውን ተማሪ እና ወላጅ መፈለግ
     $student = DB::table('students')
         ->join('parent_student', 'students.id', '=', 'parent_student.student_id')
         ->join('users', 'users.id', '=', 'parent_student.parent_id')
@@ -45,6 +50,7 @@ Route::match(['get', 'post'], '/parent/verify', function (Request $request) {
         ->select('students.*', 'users.name as parent_name')
         ->first();
 
+    // በ Student ID ብቻ መፈለግ
     if (!$student) {
         $student = DB::table('students')
             ->join('parent_student', 'students.id', '=', 'parent_student.student_id')
@@ -54,17 +60,9 @@ Route::match(['get', 'post'], '/parent/verify', function (Request $request) {
             ->first();
     }
 
-    if (!$student && ($phone === '0911000000' && ($studentCode === '1001' || $studentCode === 'BG-1001'))) {
-        $student = (object)[
-            'first_name' => 'ዮናስ',
-            'last_name' => 'ዳዊት',
-            'classroom_id' => 'ክፍል 7-B',
-            'parent_name' => 'አቶ ዳዊት በቀለ'
-        ];
-    }
-
+    // በዳታቤዙ ውስጥ ካልተገኘ መግቢያውን ይከለክላል
     if (!$student) {
-        return redirect('/login')->with('error', 'የተሳሳተ ስልክ ቁጥር ወይም የተማሪ መለያ ኮድ (Student ID)!');
+        return redirect('/login')->with('error', 'ይህ ስልክ ቁጥር ወይም የተማሪ መለያ ኮድ (Student ID) በትምህርት ቤቱ ዳታቤዝ አልተገኘም! እባክዎ ለት/ቤቱ ያስመዘገቡትን በትክክል ያስገቡ።');
     }
 
     $childClass = $student->classroom_id;
@@ -97,28 +95,10 @@ Route::match(['get', 'post'], '/parent/verify', function (Request $request) {
 });
 
 Route::get('/dashboard/parent', function () {
-    ensureCommunicationColumnsExist();
-
-    $parent = [
-        'name' => 'አቶ ዳዊት በቀለ',
-        'children' => [['name' => 'ዮናስ ዳዊት', 'grade' => 'ክፍል 7-B']]
-    ];
-    $phone = '0911000000';
-    $childClass = 'ክፍል 7-B';
-
-    try {
-        $teacherNotes = DB::table('communications')->where('classroom_id', $childClass)->where('sender_type', 'teacher')->orderBy('id', 'desc')->get();
-        $parentSentNotes = DB::table('communications')->where('sender_phone', $phone)->where('sender_type', 'parent')->orderBy('id', 'desc')->get();
-    } catch (\Exception $e) {
-        $teacherNotes = collect();
-        $parentSentNotes = collect();
-    }
-
-    $activeAds = DB::table('advertisements')->where('is_active', true)->get();
-    return view('dashboards.parent', compact('parent', 'phone', 'childClass', 'activeAds', 'teacherNotes', 'parentSentNotes'));
+    return redirect('/login');
 });
 
-// 4. Teacher Dashboard (ለመምህር ብቻ የተላኩ መልእክቶች ተለይተው ይወጣሉ)
+// 4. Teacher Dashboard
 Route::get('/teacher/entry', function (Request $request) {
     ensureCommunicationColumnsExist();
 
@@ -140,7 +120,6 @@ Route::get('/teacher/entry', function (Request $request) {
             ->orderBy('id', 'desc')
             ->get();
 
-        // ለመምህሩ ብቻ የተላኩ መልእክቶች (ለተጠሪው የተላከው እዚህ አይመጣም!)
         $parentMessages = DB::table('communications')
             ->where('classroom_id', $classCode)
             ->where('sender_type', 'parent')
@@ -161,11 +140,11 @@ Route::get('/dashboard/teacher', function () {
     return redirect('/teacher/entry');
 });
 
-// 5. School Admin / Unit Leader Dashboard (ለዲቪዥን ተጠሪው የተላኩ ጥያቄዎች ተለይተው ይወጣሉ)
+// 5. School Admin / Unit Leader Dashboard
 Route::get('/dashboard/admin', function (Request $request) {
     ensureCommunicationColumnsExist();
 
-    $schoolCode = $request->query('school', 'BG-001');
+    $schoolCode = $request->query('school', 'NCA-001');
     $division = $request->query('division', 'all');
     $school = DB::table('schools')->where('code', $schoolCode)->first();
 
@@ -187,7 +166,6 @@ Route::get('/dashboard/admin', function (Request $request) {
         ->orderBy('students.id', 'desc')
         ->get();
 
-    // [ዋናው ማስተካከያ] ከወላጆች ለዲቪዥን ተጠሪው የተላኩ መልእክቶች ከ MySQL ይወጣሉ
     try {
         $parentInquiries = DB::table('communications')
             ->where('sender_type', 'parent')
@@ -226,7 +204,7 @@ Route::post('/communications/teacher-send', function (Request $request) {
 Route::post('/communications/parent-send', function (Request $request) {
     ensureCommunicationColumnsExist();
 
-    $rec = $request->input('recipient', 'መምህር'); // 'መምህር' ወይም 'ዲቪዥን ተጠሪ'
+    $rec = $request->input('recipient', 'መምህር');
     $topic = $request->input('topic');
     $msg = $request->input('message');
     $phone = $request->input('parent_phone');
@@ -249,9 +227,8 @@ Route::post('/communications/parent-send', function (Request $request) {
     return back()->with('success', "ማስታወሻዎ በዳታቤዝ ተመዝግቦ ለ{$rec}ው ደርሷል!");
 });
 
-// ====================================================================
+// ==================== [የተማሪዎች ምዝገባ] ====================
 
-// Student Actions
 Route::post('/students/store', function (Request $request) {
     try {
         $parentPhone = trim($request->input('phone'));
@@ -294,7 +271,7 @@ Route::post('/students/store', function (Request $request) {
             'updated_at' => now(),
         ]);
 
-        return back()->with('success', "🎉 ተማሪ {$firstName} {$lastName} እና የወላጅ ስልክ ({$parentPhone}) ተመዝግቧል!");
+        return back()->with('success', "🎉 ተማሪ {$firstName} {$lastName} በዳታቤዝ ተመዝግቧል! ወላጅ በስልክ ({$parentPhone}) እና በኮድ ({$studentIdNumber}) መግባት ይችላል።");
     } catch (\Exception $e) {
         return back()->with('error', 'ስህተት፡ ' . $e->getMessage());
     }
