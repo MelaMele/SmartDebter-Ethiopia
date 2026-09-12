@@ -17,12 +17,13 @@ Route::get('/login', function () {
     return view('login');
 });
 
-// 3. Parent Login Verification
+// 3. Parent Login Verification (በስልክ ቁጥር እና በ Student ID ከ Clever Cloud ያረጋግጣል)
 Route::post('/parent/verify', function (Request $request) {
     $phone = trim($request->input('phone'));
     $studentCode = trim($request->input('student_code'));
     $schoolCode = $request->input('school_code');
 
+    // 1. ከዳታቤዝ በስልክና በ Student ID መፈለግ
     $student = DB::table('students')
         ->join('parent_student', 'students.id', '=', 'parent_student.student_id')
         ->join('users', 'users.id', '=', 'parent_student.parent_id')
@@ -31,6 +32,17 @@ Route::post('/parent/verify', function (Request $request) {
         ->select('students.*', 'users.name as parent_name')
         ->first();
 
+    // 2. በስልኩ ወይም በ Student ID ብቻ መፈለግ (ለተለዋዋጭ አጠቃቀም)
+    if (!$student) {
+        $student = DB::table('students')
+            ->join('parent_student', 'students.id', '=', 'parent_student.student_id')
+            ->join('users', 'users.id', '=', 'parent_student.parent_id')
+            ->where('students.student_id_number', $studentCode)
+            ->select('students.*', 'users.name as parent_name')
+            ->first();
+    }
+
+    // 3. ምንም ተማሪ ካልተመዘገበ ለጊዜያዊ ማሳያ
     if (!$student && ($phone === '0911000000' && ($studentCode === '1001' || $studentCode === 'BG-1001' || $studentCode === '123456'))) {
         $student = (object)[
             'first_name' => 'ዮናስ',
@@ -41,7 +53,7 @@ Route::post('/parent/verify', function (Request $request) {
     }
 
     if (!$student) {
-        return back()->with('error', 'የተሳሳተ ስልክ ቁጥር ወይም የተማሪ መለያ ኮድ (Student ID)!');
+        return back()->with('error', 'የተሳሳተ ስልክ ቁጥር ወይም የተማሪ መለያ ኮድ (Student ID)! እባክዎ በትክክል ያስገቡ።');
     }
 
     $parent = [
@@ -65,27 +77,37 @@ Route::get('/dashboard/parent', function () {
     return view('dashboards.parent', compact('parent', 'phone', 'activeAds'));
 });
 
-// 4. Teacher Dashboard
+// 4. Teacher Dashboard (የክፍሉን ተማሪዎች ከዳታቤዝ አውጥቶ ለመምህሩ ያሳያል)
 Route::get('/teacher/entry', function (Request $request) {
     $classCode = $request->query('class', 'ክፍል 7-B');
     $teacherName = $request->query('name', 'የክፍል ኃላፊ መምህር');
     $activeAds = DB::table('advertisements')->where('is_active', true)->get();
-    return view('dashboards.teacher', compact('classCode', 'teacherName', 'activeAds'));
+
+    // ለመምህሩ የክፍሉን ተማሪዎች ዝርዝር ያወጣል
+    $students = DB::table('students')
+        ->leftJoin('parent_student', 'students.id', '=', 'parent_student.student_id')
+        ->leftJoin('users', 'users.id', '=', 'parent_student.parent_id')
+        ->where('students.classroom_id', $classCode)
+        ->select('students.*', 'users.name as parent_name', 'users.phone as parent_phone')
+        ->get();
+
+    return view('dashboards.teacher', compact('classCode', 'teacherName', 'activeAds', 'students'));
 });
 
 Route::get('/dashboard/teacher', function () {
     $classCode = 'ክፍል 7-B';
     $teacherName = 'የክፍል ኃላፊ መምህር';
     $activeAds = DB::table('advertisements')->where('is_active', true)->get();
-    return view('dashboards.teacher', compact('classCode', 'teacherName', 'activeAds'));
+    $students = collect();
+    return view('dashboards.teacher', compact('classCode', 'teacherName', 'activeAds', 'students'));
 });
 
-// 5. School Admin Dashboard (የታገደ ት/ቤት ከሆነ መግቢያውን ይዘጋበታል!)
+// 5. School Admin Dashboard (የተማሪዎች ዝርዝር ለተጠሪዎች እንዲታይ ተጨምሯል)
 Route::get('/dashboard/admin', function (Request $request) {
     $schoolCode = $request->query('school', 'BG-001');
     $school = DB::table('schools')->where('code', $schoolCode)->first();
 
-    // የታገደ መሆኑን ማጣራት
+    // የታገደ ት/ቤት ከሆነ መግቢያውን ይዘጋበታል
     if ($school && ($school->status === 'suspended' || $school->status === 'inactive')) {
         return "<div style='font-family:sans-serif; text-align:center; padding:60px 20px; background:#fef2f2; min-height:100vh;'>
             <div style='max-width:500px; margin:auto; background:white; padding:40px; border-radius:20px; box-shadow:0 10px 25px rgba(0,0,0,0.1); border:1px solid #fecaca;'>
@@ -101,8 +123,104 @@ Route::get('/dashboard/admin', function (Request $request) {
     }
 
     $activeAds = DB::table('advertisements')->where('is_active', true)->get();
-    return view('dashboards.admin', compact('school', 'activeAds'));
+
+    // ለዲቪዥን ተጠሪዎችና ለዋና ዳይሬክተር የሚታዩ እውነተኛ ተማሪዎች ከ MySQL
+    $students = DB::table('students')
+        ->leftJoin('parent_student', 'students.id', '=', 'parent_student.student_id')
+        ->leftJoin('users', 'users.id', '=', 'parent_student.parent_id')
+        ->select('students.*', 'users.name as parent_name', 'users.phone as parent_phone')
+        ->orderBy('students.id', 'desc')
+        ->get();
+
+    return view('dashboards.admin', compact('school', 'activeAds', 'students'));
 });
+
+// ==================== [አዲስ የተጨመሩ] የተማሪዎች ምዝገባ፣ ማስተካከያና ማጥፊያ ====================
+
+// ተማሪን በ MySQL መመዝገቢያ (ከነ ወላጅ ስልክ እና Student ID)
+Route::post('/students/store', function (Request $request) {
+    try {
+        $parentPhone = trim($request->input('phone'));
+        $parentName = trim($request->input('parent_name', 'የተማሪ ወላጅ'));
+        $studentIdNumber = trim($request->input('student_id_number'));
+        $firstName = trim($request->input('first_name'));
+        $lastName = trim($request->input('last_name'));
+        $className = trim($request->input('class_name'));
+
+        // 1. ወላጁን users ሰንጠረዥ ላይ መመዝገብ ወይም መፈለግ
+        $parent = DB::table('users')->where('phone', $parentPhone)->first();
+        if (!$parent) {
+            $parentId = DB::table('users')->insertGetId([
+                'name' => $parentName,
+                'phone' => $parentPhone,
+                'role' => 'parent',
+                'password' => bcrypt($studentIdNumber),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        } else {
+            $parentId = $parent->id;
+        }
+
+        // 2. ተማሪውን students ሰንጠረዥ ላይ ማስገባት
+        $studentId = DB::table('students')->insertGetId([
+            'school_id' => 1,
+            'classroom_id' => $className,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'gender' => $request->input('gender', 'male'),
+            'student_id_number' => $studentIdNumber,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // 3. ወላጅና ተማሪን ማገናኘት
+        DB::table('parent_student')->insert([
+            'parent_id' => $parentId,
+            'student_id' => $studentId,
+            'relationship' => 'Parent',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return back()->with('success', "🎉 ተማሪ {$firstName} {$lastName} እና የወላጅ ስልክ ({$parentPhone}) በዳታቤዝ ተመዝግቧል! ወላጁ በስልኩና በኮድ ({$studentIdNumber}) መግባት ይችላል።");
+    } catch (\Exception $e) {
+        return back()->with('error', 'ስህተት ተፈጥሯል፡ ' . $e->getMessage());
+    }
+});
+
+// ተማሪን ማስተካከያ (Update Student)
+Route::post('/students/update', function (Request $request) {
+    $studentId = $request->input('id');
+    
+    DB::table('students')->where('id', $studentId)->update([
+        'first_name' => $request->input('first_name'),
+        'last_name' => $request->input('last_name'),
+        'classroom_id' => $request->input('class_name'),
+        'student_id_number' => $request->input('student_id_number'),
+        'updated_at' => now(),
+    ]);
+
+    $parentPhone = trim($request->input('phone'));
+    if ($parentPhone) {
+        $link = DB::table('parent_student')->where('student_id', $studentId)->first();
+        if ($link) {
+            DB::table('users')->where('id', $link->parent_id)->update(['phone' => $parentPhone]);
+        }
+    }
+
+    return back()->with('success', 'የተማሪው መረጃ ተስተካክሏል!');
+});
+
+// ተማሪን ማጥፊያ (Delete Student)
+Route::post('/students/delete', function (Request $request) {
+    $studentId = $request->input('id');
+    DB::table('parent_student')->where('student_id', $studentId)->delete();
+    DB::table('students')->where('id', $studentId)->delete();
+    return back()->with('success', 'ተማሪው ከዳታቤዝ ተሰርዟል!');
+});
+
+// =========================================================================================
 
 // 6. Super Admin Dashboard
 Route::get('/dashboard/super-admin', function () {
@@ -138,18 +256,17 @@ Route::post('/super-admin/schools/store', function (Request $request) {
     return back()->with('success', 'ትምህርት ቤቱ በ Clever Cloud ዳታቤዝ ላይ ተመዝግቧል!');
 });
 
-// 8. TOGGLE SCHOOL STATUS (ማገድ እና ማንቃት - 100% FIXED)
+// 8. TOGGLE SCHOOL STATUS (ማገድ እና ማንቃት)
 Route::post('/super-admin/schools/toggle-status', function (Request $request) {
     $schoolId = $request->input('id');
 
-    // MySQL ENUM ገደብ እንዳይጥል ወደ VARCHAR እንቀይረዋለን
     try {
         DB::statement("ALTER TABLE schools MODIFY status VARCHAR(50) DEFAULT 'active'");
     } catch (\Exception $e) {}
 
     $current = DB::table('schools')->where('id', $schoolId)->first();
     if ($current) {
-        $newStatus = ($current->status === 'active') ? 'suspended' : 'active';
+        $newStatus = ($current->status == 'active') ? 'suspended' : 'active';
         
         DB::table('schools')->where('id', $schoolId)->update([
             'status' => $newStatus,
@@ -216,9 +333,3 @@ Route::post('/super-admin/ads/delete', function (Request $request) {
 Route::get('/proposal/school', function () { return view('documents.proposal-school'); });
 Route::get('/proposal/sponsorship', function () { return view('documents.proposal-sponsorship'); });
 Route::get('/proposal/neway-challenge', function () { return view('documents.proposal-neway'); });
-
-// 14. Dynamic School Proposal Generator (ለሁሉም ት/ቤቶች)
-Route::get('/proposal/school', function () {
-    return view('documents.proposal-school');
-});
-
