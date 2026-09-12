@@ -83,7 +83,6 @@
                 </div>
             </div>
 
-            <!-- 2019 ዓ.ም Date Badge & Controls -->
             <div class="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-end">
                 <div class="flex items-center space-x-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl text-xs">
                     <span class="text-emerald-700 font-bold flex items-center">
@@ -113,13 +112,6 @@
             <div class="p-3.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 rounded-xl text-xs font-bold flex items-center space-x-2">
                 <i class="fas fa-check-circle text-base text-emerald-600"></i>
                 <span>{{ session('success') }}</span>
-            </div>
-        @endif
-
-        @if(session('error'))
-            <div class="p-3.5 bg-rose-500/10 border border-rose-500/30 text-rose-800 rounded-xl text-xs font-bold flex items-center space-x-2">
-                <i class="fas fa-exclamation-circle text-base text-rose-600"></i>
-                <span>{{ session('error') }}</span>
             </div>
         @endif
 
@@ -168,7 +160,7 @@
 
             <div class="mt-4 p-3.5 bg-black/40 rounded-xl border border-blue-900/60 text-xs text-slate-300 font-sans space-y-1.5 leading-relaxed">
                 <p class="font-bold text-white">📢 ክቡራን የ{{ $schoolName }} ወላጆች፡</p>
-                <p>የልጅዎን የዕለት ውሎ፣ የቤት ስራ እና ማስታወሻዎች በስልክዎ ለመከታተል የትምህርት ቤታችንን የዲጂታል ግንኙነት ደብተር ይጠቀሙ።</p>
+                <p>የልጅዎን የዕለት ውሎ፣ የቤት ስራ እና ማስታወሻዎች በስልክዎ በቀጥታ ለመከታተል የትምህርት ቤታችንን የዲጂታል ግንኙነት ደብተር ይጠቀሙ።</p>
                 <p class="text-blue-300 font-mono font-bold">👉 የመግቢያ ሊንክ፡ https://smart-debter-ethiopia.vercel.app/login?role=parent&school={{ $schoolCode }}&school_name={{ urlencode($schoolName) }}</p>
                 <p>👤 <b>ተጠቃሚ ስም (Username)፡</b> በት/ቤቱ ያስመዘገቡት ስልክ ቁጥር</p>
                 <p>🔑 <b>የይለፍ ቃል (Password)፡</b> የልጅዎ የተማሪ መለያ ቁጥር (Student ID)</p>
@@ -279,26 +271,47 @@
             </button>
         </div>
 
-        <!-- [መልእክት መቀበያ ሳጥን] INCOMING PARENT INQUIRIES TO UNIT LEADER -->
+        <!-- ================= [ዋናው ማስተካከያ] ለዲቪዥን ተጠሪው ከወላጆች የተላኩ መልእክቶች ሳጥን ================= -->
         <div class="bg-white rounded-2xl border shadow-sm p-5 sm:p-6 border-l-4 border-l-emerald-600">
             <div class="flex items-center justify-between mb-3 pb-2 border-b">
                 <div>
                     <h3 class="text-base font-bold text-slate-900 flex items-center">
                         <i class="fas fa-inbox text-emerald-600 mr-2"></i>
-                        የወላጆች ጥያቄዎች እና ፈቃዶች መቀበያ ሳጥን (Parent Inbox)
+                        የወላጆች ጥያቄዎች እና ፈቃዶች መቀበያ ሳጥን (Unit Leader Inbox)
                     </h3>
-                    <p class="text-xs text-slate-500 mt-0.5">ከ{{ $currentDiv['title'] }} ወላጆች በቀጥታ ለእርስዎ የሚላኩ ማስታወሻዎች እዚህ ይደርሳሉ፡</p>
+                    <p class="text-xs text-slate-500 mt-0.5">ከወላጆች በቀጥታ ለዲቪዥን ተጠሪው የተላኩ ማስታወሻዎች እዚህ ይወጣሉ፡</p>
                 </div>
-                <span class="text-xs bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-full">
-                    መልእክት መቀበያ ዝግጁ
+                <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full">
+                    {{ count($parentInquiries ?? []) }} መልእክቶች
                 </span>
             </div>
 
-            <!-- Clean Empty State for Unit Leader Inbox (ምንም የውሸት መልእክት የለም) -->
-            <div class="text-center py-6 text-slate-400">
-                <i class="fas fa-envelope-open text-2xl mb-1 text-slate-300"></i>
-                <p class="text-xs font-medium">እስካሁን ከወላጆች የተላከ አዲስ ጥያቄ ወይም የፈቃድ ማስታወሻ የለም።</p>
-                <p class="text-[10px] text-slate-400 mt-0.5">ወላጆች በስልካቸው ሲጽፉ እዚህ በቅጽበት ይደርሶዎታል።</p>
+            <!-- Parent Inquiries from MySQL -->
+            <div class="space-y-2.5">
+                @forelse($parentInquiries ?? [] as $inq)
+                    <div class="p-3.5 bg-emerald-50/40 rounded-xl border border-emerald-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                        <div class="space-y-1">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs font-black text-slate-900">{{ $inq->title }}</span>
+                                <span class="text-[10px] bg-emerald-100 text-emerald-800 font-mono font-bold px-2 py-0.5 rounded">{{ $inq->sender_phone }}</span>
+                                <span class="text-[10px] bg-white border border-emerald-300 text-emerald-700 px-1.5 py-0.5 rounded font-bold">{{ $inq->classroom_id }}</span>
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed">{{ $inq->message }}</p>
+                            <span class="text-[10px] text-slate-400">የተላከው፡ {{ $inq->created_at }}</span>
+                        </div>
+                        <button onclick="this.innerText='ተረጋግጧል'; this.className='text-xs bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-lg'; alert('የወላጁ መልእክት መታየቱ ተረጋግጧል!');" 
+                                class="whitespace-nowrap text-xs bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-100 font-bold px-3 py-1.5 rounded-lg shadow-xs transition">
+                            <i class="fas fa-check mr-1"></i>አይቻለሁ
+                        </button>
+                    </div>
+                @empty
+                    <!-- Clean Empty State -->
+                    <div class="text-center py-6 text-slate-400">
+                        <i class="fas fa-envelope-open text-2xl mb-1 text-slate-300"></i>
+                        <p class="text-xs font-medium">እስካሁን ከወላጆች ለዲቪዥን ተጠሪው የተላከ አዲስ ጥያቄ ወይም የፈቃድ ማስታወሻ የለም።</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5">ወላጆች "ለዲቪዥን ተጠሪ" ብለው ሲጽፉ እዚህ ሳጥን ውስጥ በቅጽበት ይደርሶዎታል።</p>
+                    </div>
+                @endforelse
             </div>
         </div>
 
@@ -348,11 +361,11 @@
 
             <div class="bg-white p-5 rounded-2xl border shadow-xs">
                 <div class="flex items-center justify-between text-slate-400 mb-2">
-                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500">መምህራን / Teachers</span>
-                    <i class="fas fa-chalkboard-teacher text-emerald-600"></i>
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500">የተጠሪው ሳጥን</span>
+                    <i class="fas fa-inbox text-emerald-600"></i>
                 </div>
-                <h3 id="teacher-count" class="text-2xl font-black text-slate-900">0</h3>
-                <span class="text-[10px] text-slate-400">የተመደቡ መምህራን</span>
+                <h3 class="text-2xl font-black text-emerald-600">{{ count($parentInquiries ?? []) }}</h3>
+                <span class="text-[10px] text-slate-400">ከወላጅ የመጡ ማስታወሻዎች</span>
             </div>
 
             <div class="bg-white p-5 rounded-2xl border shadow-xs">
@@ -368,7 +381,7 @@
         <!-- Dynamic Moving Ad Carousel -->
         @include('partials.ad-slider', ['sliderId' => 'admin-slider'])
 
-        <!-- ================= [አዲሱ ክፍል] የተማሪዎች ስም ዝርዝር እና አስተዳደር (Roster with Edit & Delete) ================= -->
+        <!-- STUDENTS ROSTER TABLE -->
         <div class="bg-white rounded-2xl border shadow-sm p-6">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 pb-3 border-b">
                 <div>
@@ -381,7 +394,7 @@
                 <div class="flex items-center space-x-2">
                     <button onclick="openModal('student-modal')" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow flex items-center space-x-1.5">
                         <i class="fas fa-user-plus"></i>
-                        <span>አዲስ ተማሪ መዝግብ (Add Student)</span>
+                        <span>አዲስ ተማሪ መዝግብ</span>
                     </button>
                     <button onclick="openModal('excel-modal')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow flex items-center space-x-1.5">
                         <i class="fas fa-file-excel"></i>
@@ -390,7 +403,6 @@
                 </div>
             </div>
 
-            <!-- Real Database Students Table -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs">
                     <thead>
@@ -410,17 +422,14 @@
                                     {{ $s->first_name }} {{ $s->last_name }}
                                 </td>
                                 <td class="p-3"><span class="bg-purple-100 text-purple-800 font-bold px-2 py-0.5 rounded">{{ $s->classroom_id }}</span></td>
-                                <td class="p-3 font-mono text-blue-700 font-bold">{{ $s->parent_phone ?? 'ስልክ አልተመዘገበም' }}</td>
+                                <td class="p-3 font-mono text-blue-700 font-bold">{{ $s->parent_phone ?? 'ስልክ የለም' }}</td>
                                 <td class="p-3 font-mono text-emerald-700 font-black bg-emerald-50 px-2 py-1 rounded w-fit">{{ $s->student_id_number }}</td>
                                 <td class="p-3 text-right space-x-1.5">
-                                    <!-- Edit Student -->
                                     <button onclick="openEditStudentModal('{{ $s->id }}', '{{ $s->first_name }}', '{{ $s->last_name }}', '{{ $s->classroom_id }}', '{{ $s->student_id_number }}', '{{ $s->parent_phone }}')" 
                                             class="text-amber-600 hover:text-amber-700 font-bold bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">
                                         <i class="fas fa-edit mr-0.5"></i>አስተካክል
                                     </button>
-
-                                    <!-- Delete Student -->
-                                    <form action="/students/delete" method="POST" onsubmit="return confirm('እርግጠኛ ነዎት ተማሪ {{ $s->first_name }} ከዳታቤዝ ይሰረዝ?');" class="inline">
+                                    <form action="/students/delete" method="POST" onsubmit="return confirm('ተማሪ {{ $s->first_name }} ይሰረዝ?');" class="inline">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $s->id }}">
                                         <button type="submit" class="text-rose-600 hover:text-rose-700 font-bold bg-rose-50 px-2 py-1 rounded-lg border border-rose-200">
@@ -433,7 +442,7 @@
                             <tr>
                                 <td colspan="5" class="p-8 text-center text-slate-400">
                                     <i class="fas fa-user-friends text-3xl mb-2 text-slate-300 block"></i>
-                                    እስካሁን የተመዘገበ ተማሪ የለም። "አዲስ ተማሪ መዝግብ" የሚለውን ነክተው የመጀመሪያውን ተማሪ ያስገቡ።
+                                    እስካሁን የተመዘገበ ተማሪ የለም።
                                 </td>
                             </tr>
                         @endforelse
@@ -446,7 +455,7 @@
 
     <!-- ==================== MODALS ==================== -->
 
-    <!-- 1. REAL STUDENT REGISTRATION MODAL (Direct to Clever Cloud MySQL) -->
+    <!-- STUDENT MODAL -->
     <div id="student-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3 border-b">
@@ -476,7 +485,7 @@
                         <input type="text" name="class_name" placeholder="ምሳሌ፡ ክፍል 7-B ወይም KG 2-A" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-purple-700">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-600 mb-1">የወላጅ ስም (አማራጭ)</label>
+                        <label class="block text-[11px] font-bold text-slate-600 mb-1">የወላጅ ስም</label>
                         <input type="text" name="parent_name" placeholder="ምሳሌ፡ አቶ ዳዊት በቀለ" class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs">
                     </div>
                 </div>
@@ -489,7 +498,7 @@
                             <input type="text" name="phone" placeholder="09xxxxxxxx" required class="w-full p-2 bg-white border rounded-lg text-xs font-mono font-bold">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-600 mb-0.5">የተማሪ መለያ ቁጥር (Password/ID)</label>
+                            <label class="block text-[10px] font-bold text-slate-600 mb-0.5">የተማሪ መለያ ቁጥር (ID/Password)</label>
                             <input type="text" name="student_id_number" placeholder="ምሳሌ፡ 1001" required class="w-full p-2 bg-white border rounded-lg text-xs font-mono font-black text-emerald-800 uppercase">
                         </div>
                     </div>
@@ -502,7 +511,7 @@
         </div>
     </div>
 
-    <!-- 2. EDIT STUDENT MODAL -->
+    <!-- EDIT STUDENT MODAL -->
     <div id="edit-student-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border">
             <div class="flex items-center justify-between pb-3 border-b">
@@ -537,7 +546,7 @@
         </div>
     </div>
 
-    <!-- 3. EXCEL MODAL -->
+    <!-- EXCEL MODAL -->
     <div id="excel-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border">
             <div class="flex items-center justify-between pb-3 border-b">
@@ -557,7 +566,7 @@
                 </div>
                 <div class="border-2 border-dashed border-emerald-300 bg-emerald-50/40 rounded-2xl p-6 text-center hover:bg-emerald-50/70 transition cursor-pointer" onclick="document.getElementById('excel-file-input').click()">
                     <i class="fas fa-cloud-upload-alt text-3xl text-emerald-600 mb-2"></i>
-                    <p class="text-xs font-bold text-slate-800">የ Excel ወይም CSV ፋይል ይምረጡ</p>
+                    <p class="text-xs font-bold text-slate-800">የ Excel ፋይሉን እዚህ ይጎትቱ ወይም ይምረጡ</p>
                     <input type="file" id="excel-file-input" class="hidden" accept=".xlsx, .xls, .csv" onchange="fileSelected(this)">
                 </div>
                 <p id="file-name-display" class="text-xs text-emerald-700 font-bold text-center hidden"></p>
@@ -569,7 +578,7 @@
         </div>
     </div>
 
-    <!-- 4. TEACHER ASSIGN MODAL -->
+    <!-- TEACHER ASSIGN MODAL -->
     <div id="teacher-assign-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border">
             <div class="flex items-center justify-between pb-3 border-b">
@@ -611,7 +620,7 @@
             const link = `https://smart-debter-ethiopia.vercel.app/login?role=parent&school=${schoolCode}&school_name=${encodeURIComponent(schoolName)}`;
             const message = `📢 ክቡራን የ${schoolName} ወላጆች (2019 ዓ.ም)፡\n\nየልጅዎን የዕለት ውሎ፣ የቤት ስራ እና ማስታወሻዎች በስልክዎ ለመከታተል የትምህርት ቤታችንን የዲጂታል ግንኙነት ደብተር ይጠቀሙ።\n\n👉 የመግቢያ ሊንክ፡\n${link}\n\n👤 ተጠቃሚ ስም (Username)፡ በት/ቤቱ ያስመዘገቡት ስልክ ቁጥር\n🔑 የይለፍ ቃል (Password)፡ የልጅዎ የተማሪ መለያ ቁጥር (Student ID)\n\n-${schoolName} አስተዳደር-`;
             navigator.clipboard.writeText(message);
-            alert('🎉 የ 2019 ዓ.ም የቴሌግራም መልእክት ተገልብጧል!');
+            alert('🎉 የቴሌግራም መልእክቱ ተገልብጧል!');
         }
 
         function copyParentLink(schoolCode, schoolName) {
@@ -652,9 +661,6 @@
         function addTeacher() {
             const name = document.getElementById('assign-teacher-name').value;
             const cls = document.getElementById('assign-teacher-class').value;
-            const cur = parseInt(document.getElementById('teacher-count').innerText) || 0;
-            document.getElementById('teacher-count').innerText = cur + 1;
-
             const card = document.createElement('div');
             card.className = 'p-4 bg-slate-50 rounded-xl border flex flex-col justify-between space-y-3';
             const link = `https://smart-debter-ethiopia.vercel.app/teacher/entry?class=${encodeURIComponent(cls)}&name=${encodeURIComponent(name)}`;
