@@ -6,6 +6,17 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
+// ዳታቤዙን በራስ-ሰር የሚያስተካክል ፈንክሽን (Auto-Migrate Columns)
+function ensureCommunicationColumnsExist() {
+    try {
+        if (!Schema::hasColumn('communications', 'sender_type')) {
+            DB::statement("ALTER TABLE communications ADD COLUMN sender_type VARCHAR(30) DEFAULT 'teacher'");
+            DB::statement("ALTER TABLE communications ADD COLUMN sender_phone VARCHAR(30) NULL");
+            DB::statement("ALTER TABLE communications ADD COLUMN recipient VARCHAR(30) DEFAULT 'parent'");
+        }
+    } catch (\Exception $e) {}
+}
+
 // 1. Landing Page
 Route::get('/', function () {
     $activeAds = DB::table('advertisements')->where('is_active', true)->get();
@@ -19,6 +30,8 @@ Route::get('/login', function () {
 
 // 3. Parent Login & Verification
 Route::post('/parent/verify', function (Request $request) {
+    ensureCommunicationColumnsExist();
+
     $phone = trim($request->input('phone'));
     $studentCode = trim($request->input('student_code'));
     $schoolCode = $request->input('school_code');
@@ -61,25 +74,30 @@ Route::post('/parent/verify', function (Request $request) {
         ]
     ];
 
-    // ከመምህሩ ለዚህ ክፍል የተላኩ እውነተኛ የቤት ስራዎች ከ MySQL
-    $teacherNotes = DB::table('communications')
-        ->where('classroom_id', $childClass)
-        ->where('sender_type', 'teacher')
-        ->orderBy('id', 'desc')
-        ->get();
+    try {
+        $teacherNotes = DB::table('communications')
+            ->where('classroom_id', $childClass)
+            ->where('sender_type', 'teacher')
+            ->orderBy('id', 'desc')
+            ->get();
 
-    // ወላጁ የላካቸው የፈቃድ ማስታወሻዎች ከ MySQL
-    $parentSentNotes = DB::table('communications')
-        ->where('sender_phone', $phone)
-        ->where('sender_type', 'parent')
-        ->orderBy('id', 'desc')
-        ->get();
+        $parentSentNotes = DB::table('communications')
+            ->where('sender_phone', $phone)
+            ->where('sender_type', 'parent')
+            ->orderBy('id', 'desc')
+            ->get();
+    } catch (\Exception $e) {
+        $teacherNotes = collect();
+        $parentSentNotes = collect();
+    }
 
     $activeAds = DB::table('advertisements')->where('is_active', true)->get();
     return view('dashboards.parent', compact('parent', 'phone', 'childClass', 'activeAds', 'teacherNotes', 'parentSentNotes'));
 });
 
 Route::get('/dashboard/parent', function () {
+    ensureCommunicationColumnsExist();
+
     $parent = [
         'name' => 'አቶ ዳዊት በቀለ',
         'children' => [['name' => 'ዮናስ ዳዊት', 'grade' => 'ክፍል 7-B']]
@@ -87,19 +105,26 @@ Route::get('/dashboard/parent', function () {
     $phone = '0911000000';
     $childClass = 'ክፍል 7-B';
 
-    $teacherNotes = DB::table('communications')->where('classroom_id', $childClass)->where('sender_type', 'teacher')->orderBy('id', 'desc')->get();
-    $parentSentNotes = DB::table('communications')->where('sender_phone', $phone)->where('sender_type', 'parent')->orderBy('id', 'desc')->get();
+    try {
+        $teacherNotes = DB::table('communications')->where('classroom_id', $childClass)->where('sender_type', 'teacher')->orderBy('id', 'desc')->get();
+        $parentSentNotes = DB::table('communications')->where('sender_phone', $phone)->where('sender_type', 'parent')->orderBy('id', 'desc')->get();
+    } catch (\Exception $e) {
+        $teacherNotes = collect();
+        $parentSentNotes = collect();
+    }
+
     $activeAds = DB::table('advertisements')->where('is_active', true)->get();
     return view('dashboards.parent', compact('parent', 'phone', 'childClass', 'activeAds', 'teacherNotes', 'parentSentNotes'));
 });
 
 // 4. Teacher Dashboard
 Route::get('/teacher/entry', function (Request $request) {
+    ensureCommunicationColumnsExist();
+
     $classCode = $request->query('class', 'ክፍል 7-B');
     $teacherName = $request->query('name', 'የክፍል ኃላፊ መምህር');
     $activeAds = DB::table('advertisements')->where('is_active', true)->get();
 
-    // ተማሪዎች
     $students = DB::table('students')
         ->leftJoin('parent_student', 'students.id', '=', 'parent_student.student_id')
         ->leftJoin('users', 'users.id', '=', 'parent_student.parent_id')
@@ -107,24 +132,29 @@ Route::get('/teacher/entry', function (Request $request) {
         ->select('students.*', 'users.name as parent_name', 'users.phone as parent_phone')
         ->get();
 
-    // መምህሩ የላካቸው የቤት ስራዎች
-    $sentNotes = DB::table('communications')
-        ->where('classroom_id', $classCode)
-        ->where('sender_type', 'teacher')
-        ->orderBy('id', 'desc')
-        ->get();
+    try {
+        $sentNotes = DB::table('communications')
+            ->where('classroom_id', $classCode)
+            ->where('sender_type', 'teacher')
+            ->orderBy('id', 'desc')
+            ->get();
 
-    // [ዋናው ሳጥን] ከወላጆች ለመምህሩ በቀጥታ የተላኩ የፈቃድ ማስታወሻዎች ከ MySQL
-    $parentMessages = DB::table('communications')
-        ->where('classroom_id', $classCode)
-        ->where('sender_type', 'parent')
-        ->orderBy('id', 'desc')
-        ->get();
+        $parentMessages = DB::table('communications')
+            ->where('classroom_id', $classCode)
+            ->where('sender_type', 'parent')
+            ->orderBy('id', 'desc')
+            ->get();
+    } catch (\Exception $e) {
+        $sentNotes = collect();
+        $parentMessages = collect();
+    }
 
     return view('dashboards.teacher', compact('classCode', 'teacherName', 'activeAds', 'students', 'sentNotes', 'parentMessages'));
 });
 
 Route::get('/dashboard/teacher', function () {
+    ensureCommunicationColumnsExist();
+
     $classCode = 'ክፍል 7-B';
     $teacherName = 'የክፍል ኃላፊ መምህር';
     $activeAds = DB::table('advertisements')->where('is_active', true)->get();
@@ -134,15 +164,10 @@ Route::get('/dashboard/teacher', function () {
     return view('dashboards.teacher', compact('classCode', 'teacherName', 'activeAds', 'students', 'sentNotes', 'parentMessages'));
 });
 
-// ==================== [የሁለትዮሽ መልእክት መቀባበያ መንገዶች] ====================
+// ==================== [የመልእክት መላኪያ መንገዶች] ====================
 
-// 1. መምህሩ የቤት ስራ ወደ MySQL የሚልክበት
 Route::post('/communications/teacher-send', function (Request $request) {
-    try {
-        DB::statement("ALTER TABLE communications ADD COLUMN sender_type VARCHAR(20) DEFAULT 'teacher'");
-        DB::statement("ALTER TABLE communications ADD COLUMN sender_phone VARCHAR(30) NULL");
-        DB::statement("ALTER TABLE communications ADD COLUMN recipient VARCHAR(30) DEFAULT 'parent'");
-    } catch (\Exception $e) {}
+    ensureCommunicationColumnsExist();
 
     DB::table('communications')->insert([
         'school_id' => 1,
@@ -158,16 +183,11 @@ Route::post('/communications/teacher-send', function (Request $request) {
         'updated_at' => now(),
     ]);
 
-    return back()->with('success', 'የቤት ስራው በዳታቤዝ ተመዝግቦ ለወላጆች በሙሉ ደርሷል!');
+    return back()->with('success', 'የቤት ስራው በዳታቤዝ ተመዝግቦ ለወላጆች ደርሷል!');
 });
 
-// 2. ወላጁ የህመም ፈቃድ/ማስታወሻ ወደ MySQL የሚልክበት
 Route::post('/communications/parent-send', function (Request $request) {
-    try {
-        DB::statement("ALTER TABLE communications ADD COLUMN sender_type VARCHAR(20) DEFAULT 'teacher'");
-        DB::statement("ALTER TABLE communications ADD COLUMN sender_phone VARCHAR(30) NULL");
-        DB::statement("ALTER TABLE communications ADD COLUMN recipient VARCHAR(30) DEFAULT 'teacher'");
-    } catch (\Exception $e) {}
+    ensureCommunicationColumnsExist();
 
     $rec = $request->input('recipient', 'መምህር');
     $topic = $request->input('topic');
@@ -189,13 +209,15 @@ Route::post('/communications/parent-send', function (Request $request) {
         'updated_at' => now(),
     ]);
 
-    return back()->with('success', 'ማስታወሻዎ በዳታቤዝ ተመዝግቦ ለመምህሩ ደርሷል!');
+    return back()->with('success', 'ማስታወሻዎ በዳታቤዝ ተመዝግቦ ደርሷል!');
 });
 
-// ==============================================================================
+// ====================================================================
 
 // 5. School Admin Dashboard
 Route::get('/dashboard/admin', function (Request $request) {
+    ensureCommunicationColumnsExist();
+
     $schoolCode = $request->query('school', 'BG-001');
     $school = DB::table('schools')->where('code', $schoolCode)->first();
 
@@ -288,7 +310,7 @@ Route::post('/students/delete', function (Request $request) {
     return back()->with('success', 'ተማሪው ተሰርዟል!');
 });
 
-// Super Admin Dashboard & Actions
+// Super Admin
 Route::get('/dashboard/super-admin', function () {
     $schools = DB::table('schools')->orderBy('id', 'desc')->get();
     $ads = DB::table('advertisements')->orderBy('id', 'desc')->get();
