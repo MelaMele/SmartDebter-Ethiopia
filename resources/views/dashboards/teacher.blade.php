@@ -92,7 +92,41 @@
         <!-- 2. Dynamic Moving Ad Carousel -->
         @include('partials.ad-slider', ['sliderId' => 'teacher-slider'])
 
-        <!-- 3. POST TO DEBTER FORM -->
+        <!-- 3. INCOMING PARENT MESSAGES INBOX (ከወላጆች የተላኩ መልእክቶች ሳጥን) -->
+        <div class="bg-white rounded-2xl border shadow-sm p-5 sm:p-6 border-l-4 border-l-blue-600">
+            <div class="flex items-center justify-between mb-3 pb-2 border-b">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900 flex items-center">
+                        <i class="fas fa-inbox text-blue-600 mr-2"></i>
+                        <span data-am="የወላጆች መልእክት ሳጥን" data-en="Parent Messages Inbox">የወላጆች መልእክት ሳጥን</span>
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5" data-am="ከክፍልዎ ወላጆች የተላኩ የፈቃድ ማስታወሻዎች እና ጥያቄዎች፡" data-en="Sick leaves and notes sent by parents:">ከክፍልዎ ወላጆች የተላኩ የፈቃድ ማስታወሻዎች እና ጥያቄዎች፡</p>
+                </div>
+                <span class="text-xs bg-blue-100 text-blue-800 font-bold px-2.5 py-1 rounded-full">
+                    1 አዲስ መልእክት
+                </span>
+            </div>
+
+            <!-- Messages List -->
+            <div class="space-y-2.5">
+                <div class="p-3.5 bg-blue-50/50 rounded-xl border border-blue-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs font-black text-slate-900">አቶ ዳዊት በቀለ (የተማሪ ዮናስ ዳዊት ወላጅ)</span>
+                            <span class="text-[10px] bg-rose-100 text-rose-700 font-bold px-2 py-0.5 rounded">🤒 የህመም ፈቃድ ማስታወሻ</span>
+                        </div>
+                        <p class="text-xs text-slate-600">"ሰላም መምህር! ዮናስ ዛሬ ጠዋት ትኩሳት ስለተሰማው ወደ ት/ቤት መምጣት አልቻለም፤ ፈቃድ እንዲሰጠው በትህትና እጠይቃለሁ።"</p>
+                        <span class="text-[10px] text-slate-400">ዛሬ ጠዋት 1:40 ላይ የተላከ</span>
+                    </div>
+                    <button onclick="this.innerText='ተረጋግጧል'; this.className='text-xs bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-lg'; alert('የወላጁ መልእክት መታየቱ ተረጋግጧል!');" 
+                            class="whitespace-nowrap text-xs bg-white border border-blue-200 text-blue-700 hover:bg-blue-100 font-bold px-3 py-1.5 rounded-lg shadow-xs transition">
+                        <i class="fas fa-check mr-1"></i>አይቻለሁ
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. POST TO DEBTER FORM -->
         <div class="bg-white rounded-2xl border shadow-sm p-5 sm:p-6">
             <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center">
                 <i class="fas fa-edit text-emerald-600 mr-2"></i>
@@ -132,7 +166,7 @@
                               class="w-full p-2.5 bg-slate-50 border rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
                 </div>
 
-                <!-- AUTO-SYNCED ETHIOPIAN DATE BOX WITH COMPLETE YEARS & PAGUME -->
+                <!-- ETHIOPIAN DATE PICKER BOX -->
                 <div class="p-4 bg-emerald-50/60 border border-emerald-200 rounded-2xl space-y-3">
                     <div class="flex items-center justify-between">
                         <label class="text-xs font-bold text-emerald-950 flex items-center">
@@ -177,14 +211,14 @@
                         <div>
                             <label class="block text-[10px] font-bold text-slate-600 mb-0.5" data-am="ዓ.ም" data-en="Year">ዓ.ም</label>
                             <select id="eth-year" class="w-full p-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800">
-                                <option value="2017">2017 ዓ.ም</option>
+                                <option value="2015">2015 ዓ.ም</option>
+                                <option value="2016">2016 ዓ.ም</option>
+                                <option value="2017" selected>2017 ዓ.ም</option>
                                 <option value="2018">2018 ዓ.ም</option>
-                                <option value="2019" selected>2019 ዓ.ም</option>
+                                <option value="2019">2019 ዓ.ም</option>
                                 <option value="2020">2020 ዓ.ም</option>
                                 <option value="2021">2021 ዓ.ም</option>
                                 <option value="2022">2022 ዓ.ም</option>
-                                <option value="2023">2023 ዓ.ም</option>
-                                <option value="2024">2024 ዓ.ም</option>
                             </select>
                         </div>
                     </div>
@@ -199,7 +233,7 @@
             </form>
         </div>
 
-        <!-- 4. MONTHLY ARCHIVE SYSTEM (ከመስከረም እስከ ጳጉሜ) -->
+        <!-- 5. MONTHLY ARCHIVE SYSTEM -->
         <div class="bg-white rounded-2xl border shadow-sm overflow-hidden">
             <div class="p-4 border-b bg-slate-50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div>
@@ -212,7 +246,7 @@
                 <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">2017 የትምህርት ዘመን</span>
             </div>
 
-            <!-- Month Tabs Including Pagume -->
+            <!-- Month Tabs -->
             <div class="p-3 bg-slate-50/60 border-b overflow-x-auto flex space-x-2">
                 @php
                     $ethMonths = ['መስከረም', 'ጥቅምት', 'ህዳር', 'ታህሳስ', 'ጥር', 'የካቲት', 'መጋቢት', 'ሚያዝያ', 'ግንቦት', 'ሰኔ', 'ሐምሌ', 'ነሐሴ', 'ጳጉሜ'];
