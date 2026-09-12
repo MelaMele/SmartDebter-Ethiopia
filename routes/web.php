@@ -6,7 +6,6 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
-// ዳታቤዙን በራስ-ሰር የሚያስተካክል ፈንክሽን
 if (!function_exists('ensureCommunicationColumnsExist')) {
     function ensureCommunicationColumnsExist() {
         try {
@@ -30,7 +29,7 @@ Route::get('/login', function () {
     return view('login');
 });
 
-// 3. Parent Login & Verification (GET እና POST ሁለቱንም ይቀበላል - አይበላሽም)
+// 3. Parent Login & Verification
 Route::match(['get', 'post'], '/parent/verify', function (Request $request) {
     ensureCommunicationColumnsExist();
 
@@ -38,7 +37,6 @@ Route::match(['get', 'post'], '/parent/verify', function (Request $request) {
     $studentCode = trim($request->input('student_code', $request->query('student_code', '1001')));
     $schoolCode = $request->input('school_code', $request->query('school', 'BG-001'));
 
-    // 1. ከዳታቤዝ ተማሪውን መፈለግ
     $student = DB::table('students')
         ->join('parent_student', 'students.id', '=', 'parent_student.student_id')
         ->join('users', 'users.id', '=', 'parent_student.parent_id')
@@ -120,7 +118,7 @@ Route::get('/dashboard/parent', function () {
     return view('dashboards.parent', compact('parent', 'phone', 'childClass', 'activeAds', 'teacherNotes', 'parentSentNotes'));
 });
 
-// 4. Teacher Dashboard
+// 4. Teacher Dashboard (ለመምህር ብቻ የተላኩ መልእክቶች ተለይተው ይወጣሉ)
 Route::get('/teacher/entry', function (Request $request) {
     ensureCommunicationColumnsExist();
 
@@ -142,9 +140,13 @@ Route::get('/teacher/entry', function (Request $request) {
             ->orderBy('id', 'desc')
             ->get();
 
+        // ለመምህሩ ብቻ የተላኩ መልእክቶች (ለተጠሪው የተላከው እዚህ አይመጣም!)
         $parentMessages = DB::table('communications')
             ->where('classroom_id', $classCode)
             ->where('sender_type', 'parent')
+            ->where(function($q) {
+                $q->where('recipient', 'መምህር')->orWhere('recipient', 'parent')->orWhereNull('recipient');
+            })
             ->orderBy('id', 'desc')
             ->get();
     } catch (\Exception $e) {
@@ -156,18 +158,50 @@ Route::get('/teacher/entry', function (Request $request) {
 });
 
 Route::get('/dashboard/teacher', function () {
-    ensureCommunicationColumnsExist();
-
-    $classCode = 'ክፍል 7-B';
-    $teacherName = 'የክፍል ኃላፊ መምህር';
-    $activeAds = DB::table('advertisements')->where('is_active', true)->get();
-    $students = collect();
-    $sentNotes = collect();
-    $parentMessages = collect();
-    return view('dashboards.teacher', compact('classCode', 'teacherName', 'activeAds', 'students', 'sentNotes', 'parentMessages'));
+    return redirect('/teacher/entry');
 });
 
-// ==================== [መልእክት መላኪያ መንገዶች] ====================
+// 5. School Admin / Unit Leader Dashboard (ለዲቪዥን ተጠሪው የተላኩ ጥያቄዎች ተለይተው ይወጣሉ)
+Route::get('/dashboard/admin', function (Request $request) {
+    ensureCommunicationColumnsExist();
+
+    $schoolCode = $request->query('school', 'BG-001');
+    $division = $request->query('division', 'all');
+    $school = DB::table('schools')->where('code', $schoolCode)->first();
+
+    if ($school && ($school->status === 'suspended' || $school->status === 'inactive')) {
+        return "<div style='font-family:sans-serif; text-align:center; padding:60px 20px; background:#fef2f2; min-height:100vh;'>
+            <div style='max-width:500px; margin:auto; background:white; padding:40px; border-radius:20px; box-shadow:0 10px 25px rgba(0,0,0,0.1); border:1px solid #fecaca;'>
+                <div style='font-size:50px; margin-bottom:15px;'>⛔</div>
+                <h1 style='color:#991b1b; font-size:20px;'>የትምህርት ቤቱ አገልግሎት ታግዷል!</h1>
+                <p style='color:#be123c; font-size:16px; font-weight:900;'>0913064239 / 0703064239</p>
+            </div>
+        </div>";
+    }
+
+    $activeAds = DB::table('advertisements')->where('is_active', true)->get();
+    $students = DB::table('students')
+        ->leftJoin('parent_student', 'students.id', '=', 'parent_student.student_id')
+        ->leftJoin('users', 'users.id', '=', 'parent_student.parent_id')
+        ->select('students.*', 'users.name as parent_name', 'users.phone as parent_phone')
+        ->orderBy('students.id', 'desc')
+        ->get();
+
+    // [ዋናው ማስተካከያ] ከወላጆች ለዲቪዥን ተጠሪው የተላኩ መልእክቶች ከ MySQL ይወጣሉ
+    try {
+        $parentInquiries = DB::table('communications')
+            ->where('sender_type', 'parent')
+            ->where('recipient', 'ዲቪዥን ተጠሪ')
+            ->orderBy('id', 'desc')
+            ->get();
+    } catch (\Exception $e) {
+        $parentInquiries = collect();
+    }
+
+    return view('dashboards.admin', compact('school', 'activeAds', 'students', 'parentInquiries'));
+});
+
+// ==================== [የመልእክት መላኪያ መንገዶች] ====================
 
 Route::post('/communications/teacher-send', function (Request $request) {
     ensureCommunicationColumnsExist();
@@ -192,7 +226,7 @@ Route::post('/communications/teacher-send', function (Request $request) {
 Route::post('/communications/parent-send', function (Request $request) {
     ensureCommunicationColumnsExist();
 
-    $rec = $request->input('recipient', 'መምህር');
+    $rec = $request->input('recipient', 'መምህር'); // 'መምህር' ወይም 'ዲቪዥን ተጠሪ'
     $topic = $request->input('topic');
     $msg = $request->input('message');
     $phone = $request->input('parent_phone');
@@ -212,38 +246,10 @@ Route::post('/communications/parent-send', function (Request $request) {
         'updated_at' => now(),
     ]);
 
-    return back()->with('success', 'ማስታወሻዎ በዳታቤዝ ተመዝግቦ ደርሷል!');
+    return back()->with('success', "ማስታወሻዎ በዳታቤዝ ተመዝግቦ ለ{$rec}ው ደርሷል!");
 });
 
 // ====================================================================
-
-// 5. School Admin Dashboard
-Route::get('/dashboard/admin', function (Request $request) {
-    ensureCommunicationColumnsExist();
-
-    $schoolCode = $request->query('school', 'BG-001');
-    $school = DB::table('schools')->where('code', $schoolCode)->first();
-
-    if ($school && ($school->status === 'suspended' || $school->status === 'inactive')) {
-        return "<div style='font-family:sans-serif; text-align:center; padding:60px 20px; background:#fef2f2; min-height:100vh;'>
-            <div style='max-width:500px; margin:auto; background:white; padding:40px; border-radius:20px; box-shadow:0 10px 25px rgba(0,0,0,0.1); border:1px solid #fecaca;'>
-                <div style='font-size:50px; margin-bottom:15px;'>⛔</div>
-                <h1 style='color:#991b1b; font-size:20px;'>የትምህርት ቤቱ አገልግሎት ታግዷል!</h1>
-                <p style='color:#be123c; font-size:16px; font-weight:900;'>0913064239 / 0703064239</p>
-            </div>
-        </div>";
-    }
-
-    $activeAds = DB::table('advertisements')->where('is_active', true)->get();
-    $students = DB::table('students')
-        ->leftJoin('parent_student', 'students.id', '=', 'parent_student.student_id')
-        ->leftJoin('users', 'users.id', '=', 'parent_student.parent_id')
-        ->select('students.*', 'users.name as parent_name', 'users.phone as parent_phone')
-        ->orderBy('students.id', 'desc')
-        ->get();
-
-    return view('dashboards.admin', compact('school', 'activeAds', 'students'));
-});
 
 // Student Actions
 Route::post('/students/store', function (Request $request) {
