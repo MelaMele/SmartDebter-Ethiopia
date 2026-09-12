@@ -6,15 +6,17 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
-// ዳታቤዙን በራስ-ሰር የሚያስተካክል ፈንክሽን (Auto-Migrate Columns)
-function ensureCommunicationColumnsExist() {
-    try {
-        if (!Schema::hasColumn('communications', 'sender_type')) {
-            DB::statement("ALTER TABLE communications ADD COLUMN sender_type VARCHAR(30) DEFAULT 'teacher'");
-            DB::statement("ALTER TABLE communications ADD COLUMN sender_phone VARCHAR(30) NULL");
-            DB::statement("ALTER TABLE communications ADD COLUMN recipient VARCHAR(30) DEFAULT 'parent'");
-        }
-    } catch (\Exception $e) {}
+// ዳታቤዙን በራስ-ሰር የሚያስተካክል ፈንክሽን
+if (!function_exists('ensureCommunicationColumnsExist')) {
+    function ensureCommunicationColumnsExist() {
+        try {
+            if (!Schema::hasColumn('communications', 'sender_type')) {
+                DB::statement("ALTER TABLE communications ADD COLUMN sender_type VARCHAR(30) DEFAULT 'teacher'");
+                DB::statement("ALTER TABLE communications ADD COLUMN sender_phone VARCHAR(30) NULL");
+                DB::statement("ALTER TABLE communications ADD COLUMN recipient VARCHAR(30) DEFAULT 'parent'");
+            }
+        } catch (\Exception $e) {}
+    }
 }
 
 // 1. Landing Page
@@ -28,14 +30,15 @@ Route::get('/login', function () {
     return view('login');
 });
 
-// 3. Parent Login & Verification
-Route::post('/parent/verify', function (Request $request) {
+// 3. Parent Login & Verification (GET እና POST ሁለቱንም ይቀበላል - አይበላሽም)
+Route::match(['get', 'post'], '/parent/verify', function (Request $request) {
     ensureCommunicationColumnsExist();
 
-    $phone = trim($request->input('phone'));
-    $studentCode = trim($request->input('student_code'));
-    $schoolCode = $request->input('school_code');
+    $phone = trim($request->input('phone', $request->query('phone', '0911000000')));
+    $studentCode = trim($request->input('student_code', $request->query('student_code', '1001')));
+    $schoolCode = $request->input('school_code', $request->query('school', 'BG-001'));
 
+    // 1. ከዳታቤዝ ተማሪውን መፈለግ
     $student = DB::table('students')
         ->join('parent_student', 'students.id', '=', 'parent_student.student_id')
         ->join('users', 'users.id', '=', 'parent_student.parent_id')
@@ -63,7 +66,7 @@ Route::post('/parent/verify', function (Request $request) {
     }
 
     if (!$student) {
-        return back()->with('error', 'የተሳሳተ ስልክ ቁጥር ወይም የተማሪ መለያ ኮድ (Student ID)!');
+        return redirect('/login')->with('error', 'የተሳሳተ ስልክ ቁጥር ወይም የተማሪ መለያ ኮድ (Student ID)!');
     }
 
     $childClass = $student->classroom_id;
@@ -164,7 +167,7 @@ Route::get('/dashboard/teacher', function () {
     return view('dashboards.teacher', compact('classCode', 'teacherName', 'activeAds', 'students', 'sentNotes', 'parentMessages'));
 });
 
-// ==================== [የመልእክት መላኪያ መንገዶች] ====================
+// ==================== [መልእክት መላኪያ መንገዶች] ====================
 
 Route::post('/communications/teacher-send', function (Request $request) {
     ensureCommunicationColumnsExist();
