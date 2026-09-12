@@ -27,7 +27,6 @@
             <span class="text-xs font-semibold">ወደ መነሻ ገጽ ተመለስ</span>
         </a>
 
-        <!-- Dynamic School Name Branding -->
         @if($schoolName)
             <div class="bg-white p-3 rounded-2xl border shadow-xs mb-3 flex items-center justify-center space-x-2">
                 <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center text-sm font-bold">
@@ -56,7 +55,7 @@
         @endif
 
         @if($role == 'parent')
-            <!-- ================= PARENT LOGIN (PHONE + STUDENT ID) ================= -->
+            <!-- PARENT LOGIN (ምንም የውሸት ስልክ ቁጥር የለም) -->
             <div class="flex items-center justify-center mb-4">
                 <div class="flex items-center space-x-2 bg-blue-50 text-blue-700 border border-blue-200 px-4 py-1.5 rounded-full text-xs font-bold">
                     <i class="fas fa-user-shield"></i>
@@ -72,7 +71,7 @@
                 @csrf
                 <input type="hidden" name="school_code" value="{{ $schoolCode }}">
 
-                <!-- 1. Phone Number (Username) -->
+                <!-- 1. Phone Number -->
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">
                         የወላጅ ስልክ ቁጥር (Username)
@@ -81,23 +80,21 @@
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
                             <i class="fas fa-phone text-xs"></i>
                         </span>
-                        <input type="text" name="phone" placeholder="09xxxxxxxx" required value="0911000000"
+                        <input type="text" name="phone" placeholder="09xxxxxxxx" required
                                class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
                     </div>
                 </div>
 
-                <!-- 2. Student ID Code (Password) -->
+                <!-- 2. Student ID Code -->
                 <div>
-                    <div class="flex items-center justify-between mb-1">
-                        <label class="block text-xs font-bold text-slate-700 uppercase">
-                            የተማሪው መለያ ቁጥር (Student ID / Password)
-                        </label>
-                    </div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">
+                        የተማሪው መለያ ቁጥር (Student ID / Password)
+                    </label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
                             <i class="fas fa-id-card text-xs"></i>
                         </span>
-                        <input type="text" name="student_code" placeholder="ምሳሌ፡ 1001 ወይም BG-1001" required value="1001"
+                        <input type="text" name="student_code" placeholder="ምሳሌ፡ 1001" required
                                class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold text-blue-900 uppercase">
                     </div>
                     <p class="text-[10px] text-slate-400 mt-1">
@@ -121,10 +118,10 @@
             </div>
             <div class="p-4 bg-emerald-50/60 rounded-xl border border-emerald-200 text-center text-xs text-emerald-900 mb-4 leading-relaxed">
                 <i class="fas fa-info-circle text-emerald-600 text-base mb-1 block"></i>
-                መምህራን ወደ ተመደቡበት ክፍል የሚገቡት በዲቪዥን ተጠሪያቸው (Unit Leader) በሚሰጣቸው **ልዩ ሊንክ** ብቻ ነው።
+                መምህራን ወደ ተመደቡበት ክፍል የሚገቡት በዲቪዥን ተጠሪያቸው በሚሰጣቸው **ልዩ ሊንክ** ብቻ ነው።
             </div>
-            <a href="/teacher/entry?class=7-B&name=መምህር አለሙ ተሾመ" class="block text-center w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition">
-                በተሰጠኝ ክፍል (7-B) ሊንክ ግባ
+            <a href="/teacher/entry?class=ክፍል+7-B&name=የክፍል+ኃላፊ+መምህር" class="block text-center w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition">
+                በክፍል ሊንክ ግባ
             </a>
 
         @else
@@ -140,11 +137,11 @@
                 <input type="hidden" name="school_name" value="{{ $schoolName }}">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">የአድሚን ስልክ</label>
-                    <input type="text" value="0900000000" class="w-full p-2.5 bg-slate-50 border rounded-xl text-sm">
+                    <input type="text" placeholder="09xxxxxxxx" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-sm">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">የይለፍ ቃል</label>
-                    <input type="password" value="••••••••" class="w-full p-2.5 bg-slate-50 border rounded-xl text-sm">
+                    <input type="password" placeholder="••••••••" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-sm">
                 </div>
                 <button type="submit" class="w-full py-2.5 rounded-xl text-white font-bold text-xs bg-purple-600 hover:bg-purple-700 shadow transition">
                     እንደ አድሚን ግባ
@@ -170,7 +167,7 @@
                 <div class="p-2 bg-white/20 rounded-lg"><i class="fas fa-graduation-cap"></i></div>
                 <div>
                     <p class="text-[11px] font-bold">የውጭ ሀገር የትምህርት እድል (Scholarships)</p>
-                    <p class="text-[9px] text-blue-100">ለ 2025/26 ነፃ ምዝገባ ጀምሯል።</p>
+                    <p class="text-[9px] text-blue-100">ለ 2019 ዓ.ም ነፃ ምዝገባ ጀምሯል።</p>
                 </div>
             </div>
             <a href="tel:0913064239" class="text-[10px] font-bold bg-white text-blue-600 px-2.5 py-1 rounded shadow">ይጎብኙ</a>
