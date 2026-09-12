@@ -18,19 +18,23 @@
 </head>
 <body class="bg-slate-100 font-sans min-h-screen pb-16">
 
+    @php
+        $childGrade = $parent['children'][0]['grade'] ?? ($childClass ?? 'ክፍል 7-B');
+    @endphp
+
     <!-- PWA Install Banner -->
     <div id="pwa-install-banner" class="hidden bg-indigo-900 text-white px-4 py-2.5 shadow-md">
         <div class="max-w-3xl mx-auto flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <img src="https://cdn-icons-png.flaticon.com/512/2997/2997295.png" alt="Logo" class="w-8 h-8 rounded-lg">
                 <div>
-                    <p class="text-xs font-bold leading-tight" data-am="SmartDebter አፕሊኬሽን" data-en="SmartDebter App">SmartDebter አፕሊኬሽን</p>
-                    <p class="text-[10px] text-indigo-200" data-am="በቀላሉ ስልክዎ ላይ ጭነው ይጠቀሙ!" data-en="Install on your phone for quick access!">በቀላሉ ስልክዎ ላይ ጭነው ይጠቀሙ!</p>
+                    <p class="text-xs font-bold leading-tight">SmartDebter አፕሊኬሽን</p>
+                    <p class="text-[10px] text-indigo-200">በቀላሉ ስልክዎ ላይ ጭነው ይጠቀሙ!</p>
                 </div>
             </div>
             <div class="flex items-center space-x-2">
                 <button id="install-btn" class="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold text-xs px-3 py-1.5 rounded-lg shadow transition">
-                    <i class="fas fa-download mr-1"></i><span data-am="ጫን" data-en="Install">ጫን</span>
+                    <i class="fas fa-download mr-1"></i>ጫን
                 </button>
                 <button onclick="document.getElementById('pwa-install-banner').classList.add('hidden')" class="text-indigo-300 hover:text-white text-sm px-1">✕</button>
             </div>
@@ -47,23 +51,18 @@
                 </div>
                 <div>
                     <h2 class="text-sm font-bold text-slate-900 leading-tight">{{ $parent['name'] ?? 'የተማሪ ወላጅ' }}</h2>
-                    <p class="text-[11px] text-slate-500"><span data-am="የተመዘገበ ስልክ፡" data-en="Phone:">የተመዘገበ ስልክ፡</span> {{ $phone ?? '09xxxxxxxx' }}</p>
+                    <p class="text-[11px] text-slate-500">የተመዘገበ ስልክ፡ {{ $phone ?? '09xxxxxxxx' }}</p>
                 </div>
             </div>
 
             <div class="flex items-center space-x-2.5 w-full sm:w-auto justify-between sm:justify-end">
                 <div class="bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-xl text-xs flex items-center space-x-1.5">
                     <i class="far fa-calendar-alt text-blue-600 text-xs"></i>
-                    <span id="parent-eth-date" class="text-blue-950 font-bold text-[11px]">በመጫን ላይ...</span>
+                    <span class="text-blue-950 font-bold text-[11px]">🇪🇹 2019 ዓ.ም</span>
                 </div>
 
-                <button onclick="toggleParentLanguage(this)" class="text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 px-3 py-1.5 rounded-xl font-bold hover:bg-indigo-100 transition flex items-center space-x-1">
-                    <i class="fas fa-globe text-xs"></i>
-                    <span id="parent-lang-btn">English</span>
-                </button>
-
                 <a href="/login" class="text-xs bg-rose-50 text-rose-600 border border-rose-200 px-3 py-1.5 rounded-lg font-semibold hover:bg-rose-100 transition">
-                    <i class="fas fa-sign-out-alt mr-1"></i><span data-am="ውጣ" data-en="Logout">ውጣ</span>
+                    <i class="fas fa-sign-out-alt mr-1"></i>ውጣ
                 </a>
             </div>
 
@@ -72,19 +71,27 @@
 
     <!-- Child Profile Card & Write Note Button -->
     <div class="max-w-3xl mx-auto px-4 pt-4">
+        <!-- Flash Message -->
+        @if(session('success'))
+            <div class="mb-3 p-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 rounded-xl text-xs font-bold flex items-center space-x-2">
+                <i class="fas fa-check-circle text-emerald-600"></i>
+                <span>{{ session('success') }}</span>
+            </div>
+        @endif
+
         <div class="bg-white rounded-2xl p-3 border shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div class="flex items-center space-x-3">
-                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-am="የእርስዎ ተማሪ:" data-en="Student:">የእርስዎ ተማሪ:</span>
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">የእርስዎ ተማሪ:</span>
                 <button class="flex items-center space-x-2 bg-indigo-50 border-2 border-indigo-600 px-3.5 py-1.5 rounded-xl text-xs font-bold text-indigo-950 shadow-xs">
                     <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
-                    <span>{{ $parent['children'][0]['name'] ?? 'ተማሪ' }} ({{ $parent['children'][0]['grade'] ?? 'ክፍል 7-B' }})</span>
+                    <span>{{ $parent['children'][0]['name'] ?? 'ተማሪ' }} ({{ $childGrade }})</span>
                 </button>
             </div>
 
-            <!-- BUTTON: WRITE NOTE TO TEACHER OR UNIT LEADER -->
+            <!-- BUTTON: WRITE REAL NOTE TO TEACHER -->
             <button onclick="openModal('parent-write-modal')" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow flex items-center justify-center space-x-1.5">
                 <i class="fas fa-pen-alt text-xs"></i>
-                <span data-am="ለመምህሩ / ለተጠሪው መልእክት ይጻፉ" data-en="Write to Teacher/Leader">ለመምህሩ / ለተጠሪው መልእክት ይጻፉ</span>
+                <span>ለመምህሩ / ለተጠሪው መልእክት ይጻፉ</span>
             </button>
         </div>
     </div>
@@ -95,54 +102,76 @@
         <!-- 1. DYNAMIC MOVING AD CAROUSEL -->
         @include('partials.ad-slider', ['sliderId' => 'parent-feed-slider'])
 
-        <!-- 2. MONTHLY ARCHIVE TABS -->
-        <div class="bg-white rounded-2xl border shadow-sm overflow-hidden">
-            <div class="p-3 bg-slate-50/70 border-b flex items-center justify-between">
-                <span class="text-xs font-bold text-slate-700 flex items-center">
-                    <i class="fas fa-folder text-amber-500 mr-1.5"></i>
-                    <span data-am="የደብተሩ የወራት ማህደር" data-en="Monthly Archives">የደብተሩ የወራት ማህደር</span>
-                </span>
-                <span class="text-[10px] text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md font-bold">2017 ዓ.ም</span>
-            </div>
-
-            <div class="p-3 bg-white overflow-x-auto flex space-x-2">
-                @php
-                    $ethMonths = ['መስከረም', 'ጥቅምት', 'ህዳር', 'ታህሳስ', 'ጥር', 'የካቲት', 'መጋቢት', 'ሚያዝያ', 'ግንቦት', 'ሰኔ', 'ሐምሌ', 'ነሐሴ', 'ጳጉሜ'];
-                @endphp
-                @foreach($ethMonths as $m)
-                    <button onclick="parentFilterMonth('{{ $m }}')" 
-                            class="parent-month-tab whitespace-nowrap px-3 py-1.5 rounded-xl text-xs font-bold transition {{ $m == 'የካቲት' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-slate-50 border text-slate-600 hover:bg-slate-100' }}">
-                        {{ $m }}
-                    </button>
+        <!-- 2. PARENT'S SENT NOTES (ወላጁ ወደ MySQL የላካቸው ማስታወሻዎች) -->
+        @if(isset($parentSentNotes) && $parentSentNotes->count() > 0)
+        <div class="space-y-2">
+            <h4 class="text-xs font-bold text-slate-700 flex items-center">
+                <i class="fas fa-paper-plane text-emerald-600 mr-1.5"></i>
+                <span>እርስዎ የላኳቸው ማስታወሻዎች (Sent Notes)</span>
+            </h4>
+            <div class="space-y-2">
+                @foreach($parentSentNotes as $sn)
+                    <div class="p-3 bg-white rounded-xl border border-slate-200 text-xs text-slate-800 space-y-1 shadow-xs">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-slate-900">{{ $sn->title }}</span>
+                            <span class="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded font-bold">ለመምህሩ ደርሷል</span>
+                        </div>
+                        <p class="text-slate-600">{{ $sn->message }}</p>
+                    </div>
                 @endforeach
             </div>
         </div>
+        @endif
 
-        <!-- 3. SENT NOTES BY PARENT (ወላጅ የላካቸው መልእክቶች) -->
-        <div id="parent-sent-box" class="hidden space-y-3">
-            <h4 class="text-xs font-bold text-slate-700 flex items-center">
-                <i class="fas fa-paper-plane text-emerald-600 mr-1.5"></i>
-                <span>እርስዎ የላኳቸው ማስታወሻዎች</span>
-            </h4>
-            <div id="parent-sent-items" class="space-y-2"></div>
-        </div>
-
-        <!-- 4. DEBTER FEED CONTAINER -->
+        <!-- 3. REAL DEBTER FEED FROM TEACHER (ከመምህሩ በ MySQL የተላኩ እውነተኛ የቤት ስራዎች) -->
         <div id="parent-debter-feed" class="space-y-4">
-            <div class="bg-white rounded-2xl border p-8 text-center shadow-sm">
-                <div class="w-14 h-14 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl mx-auto mb-3">
-                    <i class="fas fa-book-open"></i>
+            @forelse($teacherNotes ?? [] as $note)
+                <div class="bg-white rounded-2xl border shadow-sm overflow-hidden">
+                    <div class="p-4 border-b bg-slate-50/50 flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-sm">
+                                📝
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-900">{{ $note->title }}</h4>
+                                <p class="text-[11px] text-slate-500">መምህር • 2019 ዓ.ም</p>
+                            </div>
+                        </div>
+                        <span class="bg-purple-100 text-purple-800 font-bold px-2.5 py-1 rounded-full text-[10px] uppercase">
+                            {{ $note->category }}
+                        </span>
+                    </div>
+
+                    <div class="p-4 text-xs sm:text-sm text-slate-700 space-y-3">
+                        <p class="leading-relaxed">{{ $note->message }}</p>
+                    </div>
+
+                    <!-- SIGN BUTTON -->
+                    <div class="px-4 py-3 bg-slate-50 border-t flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <span class="text-xs text-slate-500">የወላጅ ፊርማ ማረጋገጫ:</span>
+                        <button onclick="toggleSign(this)" class="w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition flex items-center justify-center space-x-1.5">
+                            <i class="fas fa-check-circle"></i>
+                            <span>አይቻለሁ (ፈረምኩ)</span>
+                        </button>
+                    </div>
                 </div>
-                <h4 class="text-sm font-bold text-slate-800" data-am="የልጅዎ ደብተር ንጹህ ነው!" data-en="Debter is Clean & Ready!">የልጅዎ ደብተር ንጹህ ነው!</h4>
-                <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto leading-relaxed" data-am="እስካሁን ከመምህራን የተላከ አዲስ የቤት ስራ የለም። መምህሩ መልእክት ሲልክ እዚህ ገጽ ላይ በቅጽበት ይደርሶዎታል።" data-en="No new homework yet. It will appear here in real-time.">
-                    እስካሁን ከመምህራን የተላከ አዲስ የቤት ስራ የለም። መምህሩ መልእክት ሲልክ እዚህ ገጽ ላይ በቅጽበት ይደርሶዎታል።
-                </p>
-            </div>
+            @empty
+                <!-- Clean Empty State -->
+                <div class="bg-white rounded-2xl border p-8 text-center shadow-sm">
+                    <div class="w-14 h-14 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl mx-auto mb-3">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h4 class="text-sm font-bold text-slate-800">የልጅዎ ደብተር ንጹህ ነው!</h4>
+                    <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto leading-relaxed">
+                        እስካሁን ከመምህሩ የተላከ አዲስ የቤት ስራ የለም። መምህሩ መልእክት ሲልክ እዚህ ገጽ ላይ በቅጽበት ይደርሶዎታል።
+                    </p>
+                </div>
+            @endforelse
         </div>
 
     </main>
 
-    <!-- ==================== PARENT WRITE MESSAGE MODAL ==================== -->
+    <!-- ==================== PARENT WRITE MESSAGE MODAL (Direct to MySQL) ==================== -->
     <div id="parent-write-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border">
             <div class="flex items-center justify-between pb-3 border-b">
@@ -153,18 +182,22 @@
                 <button onclick="closeModal('parent-write-modal')" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
             </div>
 
-            <form action="#" onsubmit="event.preventDefault(); sendParentMessage();" class="my-4 space-y-3.5">
+            <form action="/communications/parent-send" method="POST" class="my-4 space-y-3.5">
+                @csrf
+                <input type="hidden" name="parent_phone" value="{{ $phone ?? '0911000000' }}">
+                <input type="hidden" name="class_code" value="{{ $childGrade }}">
+
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">ተቀባይ ይምረጡ (Recipient)</label>
-                    <select id="msg-recipient" class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold">
-                        <option value="መምህር">ለክፍል ኃላፊ መምህር (Homeroom Teacher)</option>
-                        <option value="ተጠሪ">ለዲቪዥን ተጠሪ (Unit Leader / Administration)</option>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">ተቀባይ ይምረጡ</label>
+                    <select name="recipient" class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold">
+                        <option value="መምህር">ለክፍል ኃላፊ መምህር</option>
+                        <option value="ዲቪዥን ተጠሪ">ለዲቪዥን ተጠሪ (Unit Leader)</option>
                     </select>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">የመልእክቱ አይነት (Topic)</label>
-                    <select id="msg-topic" class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">የመልእክቱ አይነት</label>
+                    <select name="topic" class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold">
                         <option value="የህመም ፈቃድ ማስታወሻ">🤒 የህመም / የፈቃድ ማስታወሻ (Sick Leave)</option>
                         <option value="የቤት ስራ ጥያቄ">📝 የቤት ስራ ጥያቄ / አስተያየት</option>
                         <option value="የስነ-ምግባር ማስታወሻ">🌟 የባህሪ / የስነ-ምግባር ጉዳይ</option>
@@ -174,7 +207,7 @@
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">መልእክትዎን እዚህ ይጻፉ</label>
-                    <textarea id="msg-text" rows="4" placeholder="ምሳሌ፡ ልጄ ዛሬ ህመም ስለተሰማው ወደ ት/ቤት መምጣት አይችልም..." required
+                    <textarea name="message" rows="4" placeholder="ምሳሌ፡ ልጄ ዛሬ ህመም ስለተሰማው ወደ ት/ቤት መምጣት አልቻለም..." required
                               class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
                 </div>
 
@@ -197,64 +230,13 @@
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-        function toggleParentLanguage(btn) {
-            const label = document.getElementById('parent-lang-btn');
-            label.innerText = (label.innerText === 'English') ? 'አማርኛ' : 'English';
+        function toggleSign(btn) {
+            btn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+            btn.classList.add('bg-emerald-600', 'cursor-default');
+            btn.innerHTML = '<i class="fas fa-check-double mr-1"></i> ተረጋግጧል (ተፈርሟል)';
+            btn.disabled = true;
         }
 
-        // AUTO-SYNC ETHIOPIAN DATE
-        function getEthiopianDate(date = new Date()) {
-            const gYear = date.getFullYear();
-            const gMonth = date.getMonth() + 1;
-            const gDay = date.getDate();
-            const months = ["መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ", "ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜ"];
-            const jdn = Math.floor((1461 * (gYear + 4800 + Math.floor((gMonth - 14) / 12))) / 4) +
-                        Math.floor((367 * (gMonth - 2 - 12 * Math.floor((gMonth - 14) / 12))) / 12) -
-                        Math.floor((3 * Math.floor((gYear + 4900 + Math.floor((gMonth - 14) / 12)) / 100)) / 4) +
-                        gDay - 32075;
-            const r = (jdn - 1723856) % 1461;
-            const n = (r % 365) + 365 * Math.floor(r / 1460);
-            const ethYear = 4 * Math.floor((jdn - 1723856) / 1461) + Math.floor(r / 365) - Math.floor(r / 1460);
-            const ethMonthIndex = Math.min(Math.floor(n / 30), 12);
-            const ethDay = (n % 30) + 1;
-            return { year: ethYear, monthName: months[ethMonthIndex], day: ethDay };
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const ethDate = getEthiopianDate();
-            document.getElementById('parent-eth-date').innerText = `🇪🇹 ዛሬ፡ ${ethDate.monthName} ${ethDate.day} / ${ethDate.year} ዓ.ም`;
-        });
-
-        // PARENT SENDS MESSAGE TO TEACHER / LEADER
-        function sendParentMessage() {
-            const rec = document.getElementById('msg-recipient').value;
-            const top = document.getElementById('msg-topic').value;
-            const txt = document.getElementById('msg-text').value;
-
-            document.getElementById('parent-sent-box').classList.remove('hidden');
-
-            const item = document.createElement('div');
-            item.className = 'p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-xs text-slate-800 space-y-1';
-            item.innerHTML = `
-                <div class="flex items-center justify-between">
-                    <span class="font-bold text-emerald-900">${top} (${rec})</span>
-                    <span class="text-[10px] bg-white px-2 py-0.5 rounded border border-emerald-300 font-bold text-emerald-700">ተልኳል</span>
-                </div>
-                <p class="text-slate-600">${txt}</p>
-            `;
-
-            document.getElementById('parent-sent-items').prepend(item);
-            document.getElementById('msg-text').value = '';
-            closeModal('parent-write-modal');
-
-            alert(`🎉 መልእክትዎ ለ${rec}ው በተሳካ ሁኔታ ተልኳል! ወደ ት/ቤቱ ገጽ ደርሷል።`);
-        }
-
-        function parentFilterMonth(m) {
-            alert(`የ ${m} ወር የደብተር ማህደር ተመርጧል።`);
-        }
-
-        // PWA Script
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js'); });
         }
