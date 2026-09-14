@@ -29,7 +29,7 @@ Route::get('/login', function () {
     return view('login');
 });
 
-// 3. Parent Login & Verification (ከ Clever Cloud MySQL ብቻ ያረጋግጣል - ምንም የውሸት መረጃ የለም)
+// 3. Parent Login & Verification
 Route::match(['get', 'post'], '/parent/verify', function (Request $request) {
     ensureCommunicationColumnsExist();
 
@@ -41,7 +41,6 @@ Route::match(['get', 'post'], '/parent/verify', function (Request $request) {
         return redirect('/login')->with('error', 'እባክዎ ስልክ ቁጥርዎን እና የተማሪውን መለያ ቁጥር (ID) ያስገቡ።');
     }
 
-    // ከ Clever Cloud MySQL ዳታቤዝ እውነተኛውን ተማሪ እና ወላጅ መፈለግ
     $student = DB::table('students')
         ->join('parent_student', 'students.id', '=', 'parent_student.student_id')
         ->join('users', 'users.id', '=', 'parent_student.parent_id')
@@ -50,7 +49,6 @@ Route::match(['get', 'post'], '/parent/verify', function (Request $request) {
         ->select('students.*', 'users.name as parent_name')
         ->first();
 
-    // በ Student ID ብቻ መፈለግ
     if (!$student) {
         $student = DB::table('students')
             ->join('parent_student', 'students.id', '=', 'parent_student.student_id')
@@ -60,9 +58,8 @@ Route::match(['get', 'post'], '/parent/verify', function (Request $request) {
             ->first();
     }
 
-    // በዳታቤዙ ውስጥ ካልተገኘ መግቢያውን ይከለክላል
     if (!$student) {
-        return redirect('/login')->with('error', 'ይህ ስልክ ቁጥር ወይም የተማሪ መለያ ኮድ (Student ID) በትምህርት ቤቱ ዳታቤዝ አልተገኘም! እባክዎ ለት/ቤቱ ያስመዘገቡትን በትክክል ያስገቡ።');
+        return redirect('/login')->with('error', 'ይህ ስልክ ቁጥር ወይም የተማሪ መለያ ኮድ በትምህርት ቤቱ ዳታቤዝ አልተገኘም!');
     }
 
     $childClass = $student->classroom_id;
@@ -179,8 +176,7 @@ Route::get('/dashboard/admin', function (Request $request) {
     return view('dashboards.admin', compact('school', 'activeAds', 'students', 'parentInquiries'));
 });
 
-// ==================== [የመልእክት መላኪያ መንገዶች] ====================
-
+// Communications
 Route::post('/communications/teacher-send', function (Request $request) {
     ensureCommunicationColumnsExist();
 
@@ -198,7 +194,7 @@ Route::post('/communications/teacher-send', function (Request $request) {
         'updated_at' => now(),
     ]);
 
-    return back()->with('success', 'የቤት ስራው በዳታቤዝ ተመዝግቦ ለወላጆች ደርሷል!');
+    return back()->with('success', 'የቤት ስራው በዳታቤዝ ተመዝግቧል!');
 });
 
 Route::post('/communications/parent-send', function (Request $request) {
@@ -224,11 +220,10 @@ Route::post('/communications/parent-send', function (Request $request) {
         'updated_at' => now(),
     ]);
 
-    return back()->with('success', "ማስታወሻዎ በዳታቤዝ ተመዝግቦ ለ{$rec}ው ደርሷል!");
+    return back()->with('success', "ማስታወሻዎ ተልኳል!");
 });
 
-// ==================== [የተማሪዎች ምዝገባ] ====================
-
+// Students CRUD
 Route::post('/students/store', function (Request $request) {
     try {
         $parentPhone = trim($request->input('phone'));
@@ -271,7 +266,7 @@ Route::post('/students/store', function (Request $request) {
             'updated_at' => now(),
         ]);
 
-        return back()->with('success', "🎉 ተማሪ {$firstName} {$lastName} በዳታቤዝ ተመዝግቧል! ወላጅ በስልክ ({$parentPhone}) እና በኮድ ({$studentIdNumber}) መግባት ይችላል።");
+        return back()->with('success', "🎉 ተማሪ {$firstName} {$lastName} ተመዝግቧል!");
     } catch (\Exception $e) {
         return back()->with('error', 'ስህተት፡ ' . $e->getMessage());
     }
@@ -373,6 +368,15 @@ Route::post('/super-admin/ads/delete', function (Request $request) {
     return back();
 });
 
+// ==================== [የትብብር ፕሮፖዛል መንገዶች] ====================
 Route::get('/proposal/neway-challenge', function () {
     return view('documents.proposal-neway');
+});
+
+Route::get('/proposal/school', function () {
+    return view('documents.proposal-school');
+});
+
+Route::get('/proposal/sponsorship', function () {
+    return view('documents.proposal-sponsorship');
 });
