@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mela Solution - ይፋዊ የትብብር ፕሮፖዛል</title>
+    <title>Mela Solution - ይፋዊ የዲጂታል ትብብር ፕሮፖዛል</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -17,23 +17,38 @@
 </head>
 <body class="bg-slate-200 py-6 px-4 font-sans text-slate-900 min-h-screen flex flex-col items-center">
 
-    <!-- ================= TOP CONTROLS BAR (በህትመት ጊዜ የማይታይ) ================= -->
+    <!-- ================= TOP DIGITAL CONTROLS BAR (ቴሌግራም/ዋትስአፕ መላኪያ) ================= -->
     <div class="no-print w-full max-w-4xl bg-slate-900 text-white p-4 rounded-2xl shadow-xl mb-6 flex flex-col sm:flex-row items-center justify-between gap-3 border border-slate-800">
         <div class="flex items-center space-x-2 text-xs">
-            <span class="p-1.5 bg-indigo-600 rounded-lg text-white"><i class="fas fa-magic"></i></span>
+            <span class="p-2 bg-indigo-600 rounded-xl text-white"><i class="fas fa-paper-plane"></i></span>
             <div>
-                <p class="font-bold">ቀጥታ መሙያ ሰሌዳ (Live PDF Builder)</p>
-                <p class="text-[10px] text-slate-400">የት/ቤቱን ስም፣ ቀን ይጻፉ፤ ማህተምና ፊርማ ከጋለሪ ይጫኑ</p>
+                <p class="font-bold">ዲጂታል ማጋሪያ ሰሌዳ (Digital Dispatch)</p>
+                <p class="text-[10px] text-slate-400">የት/ቤቱን ስም ይጻፉ፤ በቀጥታ በቴሌግራም ወይም ዋትስአፕ ይላኩላቸው</p>
             </div>
         </div>
 
-        <div class="flex items-center space-x-2">
-            <a href="/" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-3 py-2 rounded-xl transition">
-                <i class="fas fa-arrow-left mr-1"></i>ተመለስ
-            </a>
-            <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-lg transition flex items-center space-x-1.5">
-                <i class="fas fa-print"></i>
-                <span>በ PDF አውርድ / አትም (Print to PDF)</span>
+        <div class="flex items-center space-x-2 flex-wrap gap-y-2">
+            <!-- Share on Telegram -->
+            <button onclick="shareToTelegram()" class="bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold px-3 py-2 rounded-xl transition shadow flex items-center space-x-1.5">
+                <i class="fab fa-telegram-plane text-sm"></i>
+                <span>በቴሌግራም ላክ</span>
+            </button>
+
+            <!-- Share on WhatsApp -->
+            <button onclick="shareToWhatsApp()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-xl transition shadow flex items-center space-x-1.5">
+                <i class="fab fa-whatsapp text-sm"></i>
+                <span>በ WhatsApp ላክ</span>
+            </button>
+
+            <!-- Copy Link -->
+            <button onclick="copyCurrentProposalLink()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3 py-2 rounded-xl border border-slate-700 transition flex items-center space-x-1">
+                <i class="fas fa-link"></i>
+                <span>ሊንክ ቅዳ</span>
+            </button>
+
+            <!-- Print to PDF -->
+            <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow transition">
+                <i class="fas fa-print mr-1"></i>PDF
             </button>
         </div>
     </div>
@@ -41,7 +56,7 @@
     <!-- ================= A4 PRINTABLE DOCUMENT ================= -->
     <div class="print-page bg-white w-full max-w-4xl p-8 sm:p-12 rounded-2xl shadow-xl border border-slate-300 space-y-6">
 
-        <!-- ================= MELA SOLUTION LETTERHEAD ================= -->
+        <!-- MELA SOLUTION LETTERHEAD -->
         <header class="border-b-2 border-indigo-900 pb-4">
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div class="flex items-center space-x-3">
@@ -62,20 +77,20 @@
             </div>
         </header>
 
-        <!-- REFERENCE & DATE (የሚጻፍበት ሳጥን) -->
+        <!-- REFERENCE & DATE -->
         <div class="flex justify-between items-center text-xs font-bold text-slate-700 border-b pb-2">
             <div class="flex items-center space-x-1">
                 <span>የደብዳቤ ቁጥር፡</span>
-                <input type="text" value="MS/PROP/101/2019" class="editable-input font-mono text-indigo-900 font-bold bg-slate-50 border border-slate-300 rounded px-1.5 py-0.5 w-40 text-xs">
+                <input type="text" id="prop-ref" value="MS/PROP/101/2019" class="editable-input font-mono text-indigo-900 font-bold bg-slate-50 border border-slate-300 rounded px-1.5 py-0.5 w-40 text-xs">
             </div>
 
             <div class="flex items-center space-x-1">
                 <span>ቀን፡</span>
-                <input type="text" value="መስከረም 1 ቀን 2019 ዓ.ም" class="editable-input text-indigo-950 font-bold bg-slate-50 border border-slate-300 rounded px-1.5 py-0.5 w-48 text-xs text-right">
+                <input type="text" id="prop-date" value="መስከረም 1 ቀን 2019 ዓ.ም" class="editable-input text-indigo-950 font-bold bg-slate-50 border border-slate-300 rounded px-1.5 py-0.5 w-48 text-xs text-right">
             </div>
         </div>
 
-        <!-- ADDRESSEE (የት/ቤቱ ስም የሚጻፍበት ሳጥን) -->
+        <!-- ADDRESSEE -->
         <div class="text-xs text-slate-800 space-y-1">
             <div class="flex items-center space-x-1">
                 <b>ለ፡</b>
@@ -140,17 +155,20 @@
                 </p>
             </div>
 
-            <p>
-                ይህንን ዘመናዊ አሰራር በትምህርት ቤትዎ ለመጀመር አጭር የ 15 ደቂቃ የቀጥታ ማሳያ (Live Demo) በአካል ቀርበን ለማሳየት ዝግጁ መሆናችንን በአክብሮት እንገልጻለን።
-            </p>
+            <!-- LIVE INTERACTIVE LINK FOR THE DIRECTOR -->
+            <div class="p-3 bg-slate-100 rounded-xl text-center space-y-1">
+                <p class="text-[11px] font-bold text-slate-800">ሲስተሙን በቀጥታ በስልክዎ ለመመልከት ይጫኑት፡</p>
+                <a href="https://smart-debter-ethiopia.vercel.app" target="_blank" class="text-indigo-600 hover:underline font-bold text-xs">
+                    👉 https://smart-debter-ethiopia.vercel.app
+                </a>
+            </div>
         </div>
 
-        <!-- ================= SIGNATURE & STAMP UPLOADER BLOCK ================= -->
+        <!-- SIGNATURE BLOCK -->
         <div class="pt-6 border-t flex items-end justify-between text-xs">
             <div>
                 <p class="text-slate-500 text-[10px]">ከከበረ ሰላምታ ጋር፤</p>
                 
-                <!-- UPLOAD SIGNATURE FROM GALLERY -->
                 <div class="my-2">
                     <div id="sig-preview-box" class="hidden">
                         <img id="sig-img" src="#" class="h-12 object-contain">
@@ -166,23 +184,19 @@
                 <p class="text-slate-500 text-[10px] mt-1">ስልክ፡ 0913064239 / 0703064239</p>
             </div>
 
-            <!-- UPLOAD SEAL/STAMP FROM GALLERY -->
             <div class="text-center">
                 <div class="w-28 h-28 relative flex items-center justify-center">
                     <img id="stamp-img" src="#" class="hidden w-full h-full object-contain">
-                    
                     <div id="stamp-placeholder" onclick="document.getElementById('stamp-input').click()" 
                          class="w-24 h-24 border-2 border-dashed border-slate-300 rounded-full flex flex-col items-center justify-center text-center cursor-pointer hover:bg-slate-50 transition">
                         <i class="fas fa-stamp text-slate-400 text-lg mb-1"></i>
                         <span class="text-[9px] text-slate-400 font-bold leading-tight">ማህተም ከጋለሪ<br>ይምረጡ</span>
                     </div>
-
                     <input type="file" id="stamp-input" accept="image/*" class="hidden" onchange="uploadStamp(this)">
                 </div>
             </div>
         </div>
 
-        <!-- FOOTER -->
         <footer class="text-center text-[10px] text-slate-400 border-t pt-2">
             SmartDebter-Ethiopia • Powered by Mela Solution • Addis Ababa, Ethiopia
         </footer>
@@ -196,7 +210,32 @@
             targets.forEach(t => t.innerText = val ? val : '_____________________________');
         }
 
-        // Upload Signature from Gallery
+        function getShareableText() {
+            const schoolName = document.getElementById('input-school-name').value.trim() || 'የትምህርት ቤቱ አስተዳደር';
+            const proposalLink = `https://smart-debter-ethiopia.vercel.app/proposal/school?school_name=${encodeURIComponent(schoolName)}`;
+            
+            return `ሰላም ጤና ይስጥልኝ ለ ${schoolName} አመራሮች ✋\n\nየትምህርት ቤትዎን የግንኙነት ደብተር የወረቀት ህትመት ወጪዎችን በዘላቂነት ለማስቀረት እና ለግማሽ ሴሚስተር በነፃ ጎን ለጎን ለመጠቀም የቀረበ ይፋዊ የትብብር ፕሮፖዛላችንን በዚህ ዲጂታል ሊንክ ይመልከቱ፡\n\n📄 ይፋዊ ደብዳቤ፡ ${proposalLink}\n🚀 የቀጥታ ሲስተም ማሳያ፡ https://smart-debter-ethiopia.vercel.app\n\nስልክ፡ 0913064239 / 0703064239\nመላ ሶሉሽን (Mela Solution)`;
+        }
+
+        // SHARE TO TELEGRAM
+        function shareToTelegram() {
+            const text = encodeURIComponent(getShareableText());
+            window.open(`https://t.me/share/url?url=&text=${text}`, '_blank');
+        }
+
+        // SHARE TO WHATSAPP
+        function shareToWhatsApp() {
+            const text = encodeURIComponent(getShareableText());
+            window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+        }
+
+        function copyCurrentProposalLink() {
+            const schoolName = document.getElementById('input-school-name').value.trim();
+            const link = `https://smart-debter-ethiopia.vercel.app/proposal/school?school_name=${encodeURIComponent(schoolName)}`;
+            navigator.clipboard.writeText(link);
+            alert('የዲጂታል ፕሮፖዛሉ ሊንክ ተገልብጧል (Copied)!');
+        }
+
         function uploadSignature(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -208,7 +247,6 @@
             }
         }
 
-        // Upload Stamp from Gallery
         function uploadStamp(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
