@@ -10,28 +10,35 @@
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; padding: 0 !important; }
-            .print-page { box-shadow: none !important; border: none !important; margin: 0 !important; width: 100% !important; max-width: 100% !important; }
+            .print-page { box-shadow: none !important; border: none !important; margin: 0 !important; width: 100% !important; max-width: 100% !important; padding: 10px !important; }
+            .editable-input { border: none !important; background: transparent !important; padding: 0 !important; }
         }
     </style>
 </head>
-<body class="bg-slate-200 py-8 px-4 font-sans text-slate-900 min-h-screen flex flex-col items-center">
+<body class="bg-slate-200 py-6 px-4 font-sans text-slate-900 min-h-screen flex flex-col items-center">
 
-    @php
-        $targetSchool = request('school_name', '_____________________________');
-    @endphp
+    <!-- ================= TOP CONTROLS BAR (በህትመት ጊዜ የማይታይ) ================= -->
+    <div class="no-print w-full max-w-4xl bg-slate-900 text-white p-4 rounded-2xl shadow-xl mb-6 flex flex-col sm:flex-row items-center justify-between gap-3 border border-slate-800">
+        <div class="flex items-center space-x-2 text-xs">
+            <span class="p-1.5 bg-indigo-600 rounded-lg text-white"><i class="fas fa-magic"></i></span>
+            <div>
+                <p class="font-bold">ቀጥታ መሙያ ሰሌዳ (Live PDF Builder)</p>
+                <p class="text-[10px] text-slate-400">የት/ቤቱን ስም፣ ቀን ይጻፉ፤ ማህተምና ፊርማ ከጋለሪ ይጫኑ</p>
+            </div>
+        </div>
 
-    <!-- FLOATING ACTION BUTTON -->
-    <div class="no-print fixed top-4 right-4 z-50 flex items-center space-x-2">
-        <a href="/" class="bg-white border text-slate-700 hover:bg-slate-50 text-xs font-bold px-3 py-2 rounded-xl shadow-md transition">
-            <i class="fas fa-arrow-left mr-1"></i>ተመለስ
-        </a>
-        <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-lg transition flex items-center space-x-1.5">
-            <i class="fas fa-print"></i>
-            <span>በ PDF አውርድ / አትም (Print to PDF)</span>
-        </button>
+        <div class="flex items-center space-x-2">
+            <a href="/" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-3 py-2 rounded-xl transition">
+                <i class="fas fa-arrow-left mr-1"></i>ተመለስ
+            </a>
+            <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-lg transition flex items-center space-x-1.5">
+                <i class="fas fa-print"></i>
+                <span>በ PDF አውርድ / አትም (Print to PDF)</span>
+            </button>
+        </div>
     </div>
 
-    <!-- A4 PRINTABLE PROPOSAL DOCUMENT -->
+    <!-- ================= A4 PRINTABLE DOCUMENT ================= -->
     <div class="print-page bg-white w-full max-w-4xl p-8 sm:p-12 rounded-2xl shadow-xl border border-slate-300 space-y-6">
 
         <!-- ================= MELA SOLUTION LETTERHEAD ================= -->
@@ -55,15 +62,28 @@
             </div>
         </header>
 
-        <!-- REFERENCE & DATE -->
+        <!-- REFERENCE & DATE (የሚጻፍበት ሳጥን) -->
         <div class="flex justify-between items-center text-xs font-bold text-slate-700 border-b pb-2">
-            <span>የደብዳቤ ቁጥር፡ <b class="font-mono text-indigo-900">MS/PROP/{{ rand(100, 999) }}/2019</b></span>
-            <span>ቀን፡ <b class="text-indigo-950">መስከረም 1 ቀን 2019 ዓ.ም</b></span>
+            <div class="flex items-center space-x-1">
+                <span>የደብዳቤ ቁጥር፡</span>
+                <input type="text" value="MS/PROP/101/2019" class="editable-input font-mono text-indigo-900 font-bold bg-slate-50 border border-slate-300 rounded px-1.5 py-0.5 w-40 text-xs">
+            </div>
+
+            <div class="flex items-center space-x-1">
+                <span>ቀን፡</span>
+                <input type="text" value="መስከረም 1 ቀን 2019 ዓ.ም" class="editable-input text-indigo-950 font-bold bg-slate-50 border border-slate-300 rounded px-1.5 py-0.5 w-48 text-xs text-right">
+            </div>
         </div>
 
-        <!-- ADDRESSEE -->
+        <!-- ADDRESSEE (የት/ቤቱ ስም የሚጻፍበት ሳጥን) -->
         <div class="text-xs text-slate-800 space-y-1">
-            <p><b>ለ፡</b> <span class="text-indigo-950 font-bold underline">{{ $targetSchool }} ትምህርት ቤት</span></p>
+            <div class="flex items-center space-x-1">
+                <b>ለ፡</b>
+                <input type="text" id="input-school-name" placeholder="የትምህርት ቤቱን ስም እዚህ ይጻፉ (ምሳሌ፡ ነዋይ ቻሌንጅ አካዳሚ)" 
+                       value="ነዋይ ቻሌንጅ አካዳሚ" 
+                       oninput="updateSchoolName(this.value)"
+                       class="editable-input text-indigo-950 font-black text-sm bg-amber-50 border-b-2 border-indigo-600 rounded px-2 py-0.5 w-full max-w-md">
+            </div>
             <p><b>ለባለቤትና ማኔጅመንት ቦርድ / ዋና ርዕሰ-መምህር</b></p>
             <p class="underline">አዲስ አበባ፣ ኢትዮጵያ</p>
         </div>
@@ -84,10 +104,10 @@
                 እንደሚታወቀው በትምህርት ቤቶች ውስጥ የተማሪዎች የዕለት ተዕለት የቤት ስራ፣ የባህሪ ክትትል እና የት/ቤት ማስታወቂያዎች በባህላዊው የወረቀት ግንኙነት ደብተር አማካኝነት ሲከናወን ቆይቷል። ሆኖም የወረቀት ደብተር ለትምህርት ቤቱ <b>ከፍተኛ ዓመታዊ የህትመት ወጪ የሚያስከትል (ለአንድ ተማሪ በአማካይ ከ 150 - 250 ብር)</b> ከመሆኑም ባሻገር፤ ደብተሮች ከተማሪዎች ቦርሳ መጥፋት፣ መቅደድ እና ወላጆች በወቅቱ አይተው አለመፈረም የክትትል ክፍተቶችን ሲፈጥር ቆይቷል።
             </p>
             <p>
-                ድርጅታችን <b>መላ ሶሉሽን (Mela Solution)</b> ይህንን ችግር በዘመናዊ ቴክኖሎጂ ለመቅረፍ እና ትምህርት ቤትዎ ያሳተመውን የወረቀት ደብተር ሳያስተጓጉል <b>ጎን ለጎን በነፃ እንዲሞክረው</b> የሚያስችለውን <b>'SmartDebter-Ethiopia' የተሰኘውን የዲጂታል ግንኙነት ደብተር</b> በታላቅ ክብር ያቀርብልዎታል።
+                ድርጅታችን <b>መላ ሶሉሽን (Mela Solution)</b> ይህንን ችግር በዘመናዊ ቴክኖሎጂ ለመቅረፍ እና <span class="display-target-school font-bold text-slate-900">ነዋይ ቻሌንጅ አካዳሚ</span> ያሳተመውን የወረቀት ደብተር ሳያስተጓጉል <b>ጎን ለጎን በነፃ እንዲሞክረው</b> የሚያስችለውን <b>'SmartDebter-Ethiopia' የተሰኘውን የዲጂታል ግንኙነት ደብተር</b> በታላቅ ክብር ያቀርብልዎታል።
             </p>
 
-            <!-- STRATEGY: PARALLEL PILOT (ጎን ለጎን የማስኬድ ስልት) -->
+            <!-- STRATEGY: PARALLEL PILOT -->
             <div class="bg-indigo-50/60 rounded-xl p-4 border border-indigo-200 space-y-2">
                 <h3 class="font-bold text-indigo-950 text-xs flex items-center">
                     <i class="fas fa-sync-alt text-indigo-600 mr-1.5"></i>
@@ -106,10 +126,9 @@
                 </h3>
                 <ul class="list-disc list-inside space-y-1.5 text-[11px] text-slate-700 pl-2">
                     <li><b>የካምፓሶች እና የዲቪዥኖች የተሟላ መዋቅር፡</b> ካምፓስ 1 እና ካምፓስ 2 ሳይቀላቀሉ ለዋና ዳይሬክተር፣ ለኬጂ፣ ለ 1-4፣ ለ 5-8 እና ለ 9-12 ዩኒት ሊደሮች የተከፋፈለ ዘመናዊ የስልጣን ውክልና አለው።</li>
-                    <li><b>የሁለትዮሽ ግንኙነት (Two-Way Communication):</b> መምህራን የቤት ስራ ሲልኩ ወላጆች በስልካቸው ያረጋግጣሉ (ይፈርማሉ)፤ እንዲሁም ወላጆች የህመም ፈቃድና ማስታወሻዎችን በቀጥታ ለመምህሩ ወይም ለዲቪዥን ተጠሪው ይልካሉ።</li>
+                    <li><b>የሁለትዮሽ ግንኙነት (Two-Way Communication):</b> መምህራን የቤት ስራ ሲልኩ ወላጆች ያረጋግጣሉ፤ እንዲሁም ወላጆች የህመም ፈቃድና ማስታወሻዎችን በቀጥታ ለመምህሩ ወይም ለዲቪዥን ተጠሪው ይልካሉ።</li>
                     <li><b>ቀላልና ደህንነቱ የተጠበቀ አሰራር፡</b> ወላጆች አላስፈላጊ የይለፍ ቃል ማስታወስ አይጠበቅባቸውም፤ በት/ቤቱ ባስመዘገቡት <b>ስልክ ቁጥር + በተማሪው መለያ ቁጥር (Student ID)</b> ብቻ ይገባሉ።</li>
                     <li><b>የወራት ማህደር እና የኢትዮጵያ ካሌንደር፡</b> ከመስከረም እስከ ጳጉሜ (2019 ዓ.ም) በሀገራችን ዘመን አቆጣጠር በየወሩ ተከፋፍሎ የሚቀመጥ ዘመናዊ ሰነድ አያያዝ አለው።</li>
-                    <li><b>መተግበሪያውን በቀላሉ ስልክ ላይ መጫን (PWA):</b> ወላጆችና መምህራን ከ Play Store ሳያወርዱ በቀጥታ ስልካቸው ስክሪን ላይ እንደ አፕሊኬሽን ጭነው ይጠቀሙታል።</li>
                 </ul>
             </div>
 
@@ -126,18 +145,39 @@
             </p>
         </div>
 
-        <!-- SIGNATURE BLOCK -->
+        <!-- ================= SIGNATURE & STAMP UPLOADER BLOCK ================= -->
         <div class="pt-6 border-t flex items-end justify-between text-xs">
             <div>
                 <p class="text-slate-500 text-[10px]">ከከበረ ሰላምታ ጋር፤</p>
-                <p class="font-bold text-slate-900 text-sm mt-3">መላ ሶሉሽን (Mela Solution)</p>
+                
+                <!-- UPLOAD SIGNATURE FROM GALLERY -->
+                <div class="my-2">
+                    <div id="sig-preview-box" class="hidden">
+                        <img id="sig-img" src="#" class="h-12 object-contain">
+                    </div>
+                    <button type="button" onclick="document.getElementById('sig-input').click()" class="no-print text-[10px] text-indigo-600 bg-indigo-50 border border-indigo-200 px-2 py-1 rounded hover:bg-indigo-100 font-bold">
+                        <i class="fas fa-signature mr-1"></i>ፊርማ ከጋለሪ ስቀል
+                    </button>
+                    <input type="file" id="sig-input" accept="image/*" class="hidden" onchange="uploadSignature(this)">
+                </div>
+
+                <p class="font-bold text-slate-900 text-sm">መላ ሶሉሽን (Mela Solution)</p>
                 <p class="text-slate-600 text-[11px]">የሶፍትዌር እና የትምህርት ቴክኖሎጂ አበልጻጊ</p>
                 <p class="text-slate-500 text-[10px] mt-1">ስልክ፡ 0913064239 / 0703064239</p>
             </div>
 
+            <!-- UPLOAD SEAL/STAMP FROM GALLERY -->
             <div class="text-center">
-                <div class="w-24 h-24 border-2 border-dashed border-slate-300 rounded-full flex items-center justify-center text-[10px] text-slate-400">
-                    የድርጅቱ ማህተም
+                <div class="w-28 h-28 relative flex items-center justify-center">
+                    <img id="stamp-img" src="#" class="hidden w-full h-full object-contain">
+                    
+                    <div id="stamp-placeholder" onclick="document.getElementById('stamp-input').click()" 
+                         class="w-24 h-24 border-2 border-dashed border-slate-300 rounded-full flex flex-col items-center justify-center text-center cursor-pointer hover:bg-slate-50 transition">
+                        <i class="fas fa-stamp text-slate-400 text-lg mb-1"></i>
+                        <span class="text-[9px] text-slate-400 font-bold leading-tight">ማህተም ከጋለሪ<br>ይምረጡ</span>
+                    </div>
+
+                    <input type="file" id="stamp-input" accept="image/*" class="hidden" onchange="uploadStamp(this)">
                 </div>
             </div>
         </div>
@@ -148,6 +188,39 @@
         </footer>
 
     </div>
+
+    <!-- Scripts -->
+    <script>
+        function updateSchoolName(val) {
+            const targets = document.querySelectorAll('.display-target-school');
+            targets.forEach(t => t.innerText = val ? val : '_____________________________');
+        }
+
+        // Upload Signature from Gallery
+        function uploadSignature(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('sig-img').src = e.target.result;
+                    document.getElementById('sig-preview-box').classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Upload Stamp from Gallery
+        function uploadStamp(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('stamp-img').src = e.target.result;
+                    document.getElementById('stamp-img').classList.remove('hidden');
+                    document.getElementById('stamp-placeholder').classList.add('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
 
 </body>
 </html>
