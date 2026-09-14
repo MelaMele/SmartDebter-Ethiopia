@@ -14,6 +14,9 @@ if (!function_exists('ensureCommunicationColumnsExist')) {
                 DB::statement("ALTER TABLE communications ADD COLUMN sender_phone VARCHAR(30) NULL");
                 DB::statement("ALTER TABLE communications ADD COLUMN recipient VARCHAR(30) DEFAULT 'parent'");
             }
+            if (!Schema::hasColumn('students', 'age')) {
+                DB::statement("ALTER TABLE students ADD COLUMN age VARCHAR(10) NULL");
+            }
         } catch (\Exception $e) {}
     }
 }
@@ -137,7 +140,7 @@ Route::get('/dashboard/teacher', function () {
     return redirect('/teacher/entry');
 });
 
-// 5. School Admin / Unit Leader Dashboard
+// 5. School Admin Dashboard
 Route::get('/dashboard/admin', function (Request $request) {
     ensureCommunicationColumnsExist();
 
@@ -174,6 +177,104 @@ Route::get('/dashboard/admin', function (Request $request) {
     }
 
     return view('dashboards.admin', compact('school', 'activeAds', 'students', 'parentInquiries'));
+});
+
+// ==================== [የተማሪዎች ምዝገባ (ሙሉ ስም በአንድ ሴል + 7ቱ ዓምዶች)] ====================
+
+Route::post('/students/store', function (Request $request) {
+    ensureCommunicationColumnsExist();
+
+    try {
+        $fullName = trim($request->input('full_name'));
+        $parts = explode(' ', $fullName, 2);
+        $firstName = $parts[0] ?? $fullName;
+        $lastName = $parts[1] ?? '';
+
+        $gender = $request->input('gender', 'ወንድ');
+        $age = $request->input('age');
+        $studentIdNumber = trim($request->input('student_id_number'));
+        $parentPhone = trim($request->input('phone'));
+        $gradeLevel = trim($request->input('grade_level'));
+        $section = trim($request->input('section', 'A'));
+        $className = $gradeLevel . ' - ' . $section;
+
+        // 1. ወላጅ
+        $parent = DB::table('users')->where('phone', $parentPhone)->first();
+        if (!$parent) {
+            $parentId = DB::table('users')->insertGetId([
+                'name' => $lastName ? 'የ' . $fullName . ' ወላጅ' : 'የተማሪ ወላጅ',
+                'phone' => $parentPhone,
+                'role' => 'parent',
+                'password' => bcrypt($studentIdNumber),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        } else {
+            $parentId = $parent->id;
+        }
+
+        // 2. ተማሪ
+        $studentId = DB::table('students')->insertGetId([
+            'school_id' => 1,
+            'classroom_id' => $className,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'gender' => ($gender == 'ሴት' || $gender == 'female') ? 'female' : 'male',
+            'age' => $age,
+            'student_id_number' => $studentIdNumber,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // 3. ማገናኛ
+        DB::table('parent_student')->insert([
+            'parent_id' => $parentId,
+            'student_id' => $studentId,
+            'relationship' => 'Parent',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return back()->with('success', "🎉 ተማሪ {$fullName} (ክፍል: {$className}) በዳታቤዝ ተመዝግቧል! ወላጅ በስልክ ({$parentPhone}) እና በኮድ ({$studentIdNumber}) መግባት ይችላል።");
+    } catch (\Exception $e) {
+        return back()->with('error', 'ስህተት፡ ' . $e->getMessage());
+    }
+});
+
+Route::post('/students/update', function (Request $request) {
+    $studentId = $request->input('id');
+    $fullName = trim($request->input('full_name'));
+    $parts = explode(' ', $fullName, 2);
+    $firstName = $parts[0] ?? $fullName;
+    $lastName = $parts[1] ?? '';
+    $gender = $request->input('gender', 'ወንድ');
+    
+    DB::table('students')->where('id', $studentId)->update([
+        'first_name' => $firstName,
+        'last_name' => $lastName,
+        'gender' => ($gender == 'ሴት' || $gender == 'female') ? 'female' : 'male',
+        'age' => $request->input('age'),
+        'classroom_id' => $request->input('class_name'),
+        'student_id_number' => $request->input('student_id_number'),
+        'updated_at' => now(),
+    ]);
+
+    $parentPhone = trim($request->input('phone'));
+    if ($parentPhone) {
+        $link = DB::table('parent_student')->where('student_id', $studentId)->first();
+        if ($link) {
+            DB::table('users')->where('id', $link->parent_id)->update(['phone' => $parentPhone]);
+        }
+    }
+
+    return back()->with('success', 'የተማሪው መረጃ ተስተካክሏል!');
+});
+
+Route::post('/students/delete', function (Request $request) {
+    $studentId = $request->input('id');
+    DB::table('parent_student')->where('student_id', $studentId)->delete();
+    DB::table('students')->where('id', $studentId)->delete();
+    return back()->with('success', 'ተማሪው ከዳታቤዝ ተሰርዟል!');
 });
 
 // Communications
@@ -221,74 +322,6 @@ Route::post('/communications/parent-send', function (Request $request) {
     ]);
 
     return back()->with('success', "ማስታወሻዎ ተልኳል!");
-});
-
-// Students CRUD
-Route::post('/students/store', function (Request $request) {
-    try {
-        $parentPhone = trim($request->input('phone'));
-        $parentName = trim($request->input('parent_name', 'የተማሪ ወላጅ'));
-        $studentIdNumber = trim($request->input('student_id_number'));
-        $firstName = trim($request->input('first_name'));
-        $lastName = trim($request->input('last_name'));
-        $className = trim($request->input('class_name'));
-
-        $parent = DB::table('users')->where('phone', $parentPhone)->first();
-        if (!$parent) {
-            $parentId = DB::table('users')->insertGetId([
-                'name' => $parentName,
-                'phone' => $parentPhone,
-                'role' => 'parent',
-                'password' => bcrypt($studentIdNumber),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        } else {
-            $parentId = $parent->id;
-        }
-
-        $studentId = DB::table('students')->insertGetId([
-            'school_id' => 1,
-            'classroom_id' => $className,
-            'first_name' => $firstName,
-            'last_name' => $lastName,
-            'gender' => $request->input('gender', 'male'),
-            'student_id_number' => $studentIdNumber,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        DB::table('parent_student')->insert([
-            'parent_id' => $parentId,
-            'student_id' => $studentId,
-            'relationship' => 'Parent',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        return back()->with('success', "🎉 ተማሪ {$firstName} {$lastName} ተመዝግቧል!");
-    } catch (\Exception $e) {
-        return back()->with('error', 'ስህተት፡ ' . $e->getMessage());
-    }
-});
-
-Route::post('/students/update', function (Request $request) {
-    $studentId = $request->input('id');
-    DB::table('students')->where('id', $studentId)->update([
-        'first_name' => $request->input('first_name'),
-        'last_name' => $request->input('last_name'),
-        'classroom_id' => $request->input('class_name'),
-        'student_id_number' => $request->input('student_id_number'),
-        'updated_at' => now(),
-    ]);
-    return back()->with('success', 'የተማሪው መረጃ ተስተካክሏል!');
-});
-
-Route::post('/students/delete', function (Request $request) {
-    $studentId = $request->input('id');
-    DB::table('parent_student')->where('student_id', $studentId)->delete();
-    DB::table('students')->where('id', $studentId)->delete();
-    return back()->with('success', 'ተማሪው ተሰርዟል!');
 });
 
 // Super Admin
@@ -345,13 +378,10 @@ Route::post('/super-admin/schools/delete', function (Request $request) {
     return back()->with('success', 'ተሰርዟል!');
 });
 
-// ==================== [ማስታወቂያ 404 እንዳይል አስተካክሎ መመዝገቢያ] ====================
 Route::post('/super-admin/ads/store', function (Request $request) {
     try { DB::statement('ALTER TABLE advertisements MODIFY image_url LONGTEXT'); } catch (\Exception $e) {}
 
     $targetUrl = trim($request->input('target_url', 'tel:0913064239'));
-    
-    // ስልክ ከሆነ ወይም https:// ከሌለው ራሱ ያስተካክለዋል
     if (!empty($targetUrl)) {
         $clean = str_replace(' ', '', $targetUrl);
         if (preg_match('/^(09|07|\+251)[0-9]{8}$/', $clean)) {
