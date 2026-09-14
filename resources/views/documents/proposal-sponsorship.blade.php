@@ -10,31 +10,54 @@
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; padding: 0 !important; }
-            .print-page { box-shadow: none !important; border: none !important; margin: 0 !important; width: 100% !important; max-width: 100% !important; }
+            .print-page { box-shadow: none !important; border: none !important; margin: 0 !important; width: 100% !important; max-width: 100% !important; padding: 10px !important; }
+            .editable-input { border: none !important; background: transparent !important; padding: 0 !important; }
         }
     </style>
 </head>
-<body class="bg-slate-200 py-8 px-4 font-sans text-slate-900 min-h-screen flex flex-col items-center">
+<body class="bg-slate-200 py-6 px-4 font-sans text-slate-900 min-h-screen flex flex-col items-center">
 
-    @php
-        $targetCompany = request('company', '_____________________________');
-    @endphp
+    <!-- ================= TOP CONTROLS BAR ================= -->
+    <div class="no-print w-full max-w-4xl bg-slate-900 text-white p-4 rounded-2xl shadow-xl mb-6 flex flex-col sm:flex-row items-center justify-between gap-3 border border-slate-800">
+        <div class="flex items-center space-x-2 text-xs">
+            <span class="p-2 bg-amber-500 rounded-xl text-slate-950"><i class="fas fa-ad"></i></span>
+            <div>
+                <p class="font-bold">የስፖንሰርሺፕ ማጋሪያ ሰሌዳ (Corporate Ad Dispatch)</p>
+                <p class="text-[10px] text-slate-400">የድርጅቱን ስም ይጻፉ፤ በ PDF አውርደው ወይም በጽሁፍ ይላኩ</p>
+            </div>
+        </div>
 
-    <!-- FLOATING ACTION BUTTON -->
-    <div class="no-print fixed top-4 right-4 z-50 flex items-center space-x-2">
-        <a href="/" class="bg-white border text-slate-700 hover:bg-slate-50 text-xs font-bold px-3 py-2 rounded-xl shadow-md transition">
-            <i class="fas fa-arrow-left mr-1"></i>ተመለስ
-        </a>
-        <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-lg transition flex items-center space-x-1.5">
-            <i class="fas fa-print"></i>
-            <span>በ PDF አውርድ / አትም (Print to PDF)</span>
-        </button>
+        <div class="flex items-center space-x-2 flex-wrap gap-y-2">
+            <!-- 1. Download PDF to attach in Telegram/WhatsApp -->
+            <button onclick="window.print()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-3.5 py-2 rounded-xl shadow transition flex items-center space-x-1.5">
+                <i class="fas fa-file-pdf text-sm"></i>
+                <span>በ PDF አውርድ (Download PDF)</span>
+            </button>
+
+            <!-- 2. Copy Entire Letter as Clean Text -->
+            <button onclick="copyEntireSponsorshipText()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3 py-2 rounded-xl border border-slate-700 transition flex items-center space-x-1">
+                <i class="fas fa-copy"></i>
+                <span>ሙሉ ጽሁፉን ቅዳ</span>
+            </button>
+
+            <!-- 3. Send full letter as text to Telegram -->
+            <button onclick="shareSponsorshipToTelegram()" class="bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold px-3 py-2 rounded-xl transition shadow flex items-center space-x-1.5">
+                <i class="fab fa-telegram-plane"></i>
+                <span>በቴሌግራም በጽሁፍ ላክ</span>
+            </button>
+
+            <!-- 4. Send full letter as text to WhatsApp -->
+            <button onclick="shareSponsorshipToWhatsApp()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-xl transition shadow flex items-center space-x-1.5">
+                <i class="fab fa-whatsapp"></i>
+                <span>በ WhatsApp በጽሁፍ ላክ</span>
+            </button>
+        </div>
     </div>
 
-    <!-- A4 PRINTABLE DOCUMENT -->
+    <!-- ================= A4 PRINTABLE DOCUMENT ================= -->
     <div class="print-page bg-white w-full max-w-4xl p-8 sm:p-12 rounded-2xl shadow-xl border border-slate-300 space-y-6">
 
-        <!-- ================= MELA SOLUTION LETTERHEAD ================= -->
+        <!-- MELA SOLUTION LETTERHEAD -->
         <header class="border-b-2 border-indigo-900 pb-4">
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div class="flex items-center space-x-3">
@@ -57,19 +80,32 @@
 
         <!-- REFERENCE & DATE -->
         <div class="flex justify-between items-center text-xs font-bold text-slate-700 border-b pb-2">
-            <span>የደብዳቤ ቁጥር፡ <b class="font-mono text-indigo-900">MS/SPON/{{ rand(100, 999) }}/2019</b></span>
-            <span>ቀን፡ <b class="text-indigo-950">መስከረም 1 ቀን 2019 ዓ.ም</b></span>
+            <div class="flex items-center space-x-1">
+                <span>የደብዳቤ ቁጥር፡</span>
+                <input type="text" id="prop-ref" value="MS/SPON/101/2019" class="editable-input font-mono text-indigo-900 font-bold bg-slate-50 border border-slate-300 rounded px-1.5 py-0.5 w-40 text-xs">
+            </div>
+
+            <div class="flex items-center space-x-1">
+                <span>ቀን፡</span>
+                <input type="text" id="prop-date" value="መስከረም 1 ቀን 2019 ዓ.ም" class="editable-input text-indigo-950 font-bold bg-slate-50 border border-slate-300 rounded px-1.5 py-0.5 w-48 text-xs text-right">
+            </div>
         </div>
 
-        <!-- ADDRESSEE -->
+        <!-- ADDRESSEE (የድርጅቱ ስም የሚጻፍበት) -->
         <div class="text-xs text-slate-800 space-y-1">
-            <p><b>ለ፡</b> <span class="text-indigo-950 font-bold underline">{{ $targetCompany }}</span></p>
-            <p><b>ለማርኬቲንግ እና ኮሙኒኬሽን መምሪያ</b></p>
+            <div class="flex items-center space-x-1">
+                <b>ለ፡</b>
+                <input type="text" id="input-company-name" placeholder="የድርጅቱን ስም እዚህ ይጻፉ (ምሳሌ፡ አቢሲንያ ባንክ)" 
+                       value="አቢሲንያ ባንክ" 
+                       oninput="updateCompanyName(this.value)"
+                       class="editable-input text-indigo-950 font-black text-sm bg-amber-50 border-b-2 border-amber-500 rounded px-2 py-0.5 w-full max-w-md">
+            </div>
+            <p><b>ለማርኬቲንግ፣ ኮሙኒኬሽን እና ቢዝነስ ልማት መምሪያ</b></p>
             <p class="underline">አዲስ አበባ፣ ኢትዮጵያ</p>
         </div>
 
         <!-- SUBJECT -->
-        <div class="bg-slate-50 border-l-4 border-indigo-900 p-3 rounded-r-xl">
+        <div class="bg-slate-50 border-l-4 border-amber-500 p-3 rounded-r-xl">
             <h2 class="text-xs sm:text-sm font-black text-slate-900 leading-snug">
                 ጉዳዩ፡ <u>በስማርት ደብተር የትምህርት ቤት ኔትወርክ (SmartDebter Network) ላይ በቀጥታ ለወላጆች፣ ለመምህራን እና ለት/ቤት አመራሮች የሚደርስ ይፋዊ የማስታወቂያ ስፖንሰርሺፕ ፕሮፖዛል</u>
             </h2>
@@ -84,7 +120,7 @@
                 ድርጅታችን <b>መላ ሶሉሽን (Mela Solution)</b> በሀገራችን ባሉ በርካታ ትምህርት ቤቶች ውስጥ በሺዎች የሚቆጠሩ ወላጆች፣ መምህራን እና የትምህርት ቤት አመራሮች በየቀኑ የተማሪዎችን የቤት ስራ እና ውሎ የሚከታተሉበትን <b>'SmartDebter-Ethiopia' የተሰኘውን የዲጂታል ግንኙነት ደብተር ኔትወርክ</b> በስራ ላይ አውሏል።
             </p>
             <p>
-                ይህ ፕላትፎርም በተለይ ለባንኮች (የልጆች የቁጠባ ሒሳብ)፣ ለኢንሹራንስ፣ ለትምህርት ቁሳቁሶች፣ ለቴክኖሎጂ እና ለህፃናት አልባሳት አቅራቢዎች **እጅግ ከፍተኛ የመግዛት አቅም ያላቸውን ወላጆች በቀጥታ በስልካቸው ስክሪን ላይ (Direct-to-Parent Screen)** ለማግኘት ወደር የሌለው ተመራጭ የገበያ ቦታ ነው።
+                ይህ ፕላትፎርም በተለይ ለባንኮች (የልጆች የቁጠባ ሒሳብ)፣ ለኢንሹራንስ፣ ለትምህርት ቁሳቁሶች፣ ለቴክኖሎጂ እና ለህፃናት አልባሳት አቅራቢዎች <b>እጅግ ከፍተኛ የመግዛት አቅም ያላቸውን ወላጆች በቀጥታ በስልካቸው ስክሪን ላይ (Direct-to-Parent Screen)</b> ለማግኘት ወደር የሌለው ተመራጭ የገበያ ቦታ ነው።
             </p>
 
             <!-- AUDIENCE HIGHLIGHTS -->
@@ -98,8 +134,8 @@
                     <p class="text-[10px] text-slate-500 font-bold mt-0.5">ወርሃዊ የማስታወቂያ ዕይታ (Views)</p>
                 </div>
                 <div class="p-2 bg-white rounded-lg border shadow-xs">
-                    <p class="text-xl font-black text-purple-700">100%</p>
-                    <p class="text-[10px] text-slate-500 font-bold mt-0.5">ዒላማውን የጠበቀ ታዳሚ (High-Income)</p>
+                    <p class="text-xl font-black text-amber-600">100%</p>
+                    <p class="text-[10px] text-slate-500 font-bold mt-0.5">ዒላማውን የጠበቀ ታዳሚ (Targeted)</p>
                 </div>
             </div>
 
@@ -109,23 +145,23 @@
                     <i class="fas fa-check-circle text-emerald-600 mr-1.5"></i>
                     የማስታወቂያ አቀራረብ ቅርጾች (Ad Formats):
                 </h3>
-                <ul class="list-disc list-inside space-y-1 text-[11px] text-slate-700 pl-2">
-                    <li><b>ሙሉ ግራፊክስ ባነር (Full Graphic Banner):</b> ድርጅትዎ ያዘጋጀው ፖስተር ወይም ባነር ያለምንም ጽሑፍ መደራረብ በሙሉ ውበቱ በየ 4.5 ሰከንዱ እየተንሸራተተ የሚታይበት።</li>
+                <ul class="list-disc list-inside space-y-1.5 text-[11px] text-slate-700 pl-2">
+                    <li><b>ሙሉ ግራፊክስ ባነር/ፖስተር (Full Graphic Banner):</b> <span class="display-target-company font-bold text-slate-900">አቢሲንያ ባንክ</span> ያዘጋጀው ፖስተር ወይም ባነር ያለምንም ጽሑፍ መደራረብ በሙሉ ውበቱ በየ 4.5 ሰከንዱ እየተንሸራተተ የሚታይበት።</li>
                     <li><b>ቀጥታ መስተጋብር (Click-to-Action):</b> ወላጁ ወይም መምህሩ ማስታወቂያውን ሲነካው በቀጥታ ወደ ድርጅትዎ ቴሌግራም ቻናል፣ ዌብሳይት ወይም ቀጥታ ስልክ ጥሪ ይወስደዋል።</li>
                     <li><b>የዕይታ እና የክሊክ ሪፖርት (Analytics Report):</b> ማስታወቂያዎ በስንት ሺህ ወላጆች እንደታየ እና እንደተነካ የሚያሳይ ወርሃዊ ትንታኔ እንሰጣለን።</li>
                 </ul>
             </div>
 
             <!-- PRICING PACKAGES -->
-            <div class="bg-indigo-50/50 p-3.5 rounded-xl border border-indigo-200 space-y-2">
-                <h4 class="font-bold text-indigo-950 text-xs">💎 የስፖንሰርሺፕ ፓኬጆች፡</h4>
+            <div class="bg-amber-50/60 p-3.5 rounded-xl border border-amber-200 space-y-2">
+                <h4 class="font-bold text-amber-950 text-xs">💎 የስፖንሰርሺፕ ፓኬጆች፡</h4>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
-                    <div class="p-2 bg-white rounded-lg border">
-                        <span class="font-bold text-indigo-900">የ 1 ወር ብቸኛ ስፖንሰር (Monthly)፡</span>
+                    <div class="p-2.5 bg-white rounded-lg border">
+                        <span class="font-bold text-indigo-900">የ 1 ወር ብቸኛ ስፖንሰር (Monthly):</span>
                         <p class="text-slate-600 mt-0.5">በወላጆች፣ በመምህራን እና በት/ቤት አድሚኖች ሰሌዳ ላይ ያለ ገደብ የሚታይ።</p>
                     </div>
-                    <div class="p-2 bg-white rounded-lg border">
-                        <span class="font-bold text-indigo-900">የ 3 ወራት (ሴሚስተር) ስፖንሰር፡</span>
+                    <div class="p-2.5 bg-white rounded-lg border">
+                        <span class="font-bold text-indigo-900">የ 3 ወራት (ሴሚስተር) ስፖንሰር:</span>
                         <p class="text-slate-600 mt-0.5">ከ 20% የዋጋ ቅናሽ ጋር ቀጣይነት ያለው የደንበኞች ቀጥታ ግንኙነት።</p>
                     </div>
                 </div>
@@ -136,28 +172,100 @@
             </p>
         </div>
 
-        <!-- SIGNATURE BLOCK -->
+        <!-- SIGNATURE & SEAL BLOCK -->
         <div class="pt-6 border-t flex items-end justify-between text-xs">
             <div>
                 <p class="text-slate-500 text-[10px]">ከከበረ ሰላምታ ጋር፤</p>
-                <p class="font-bold text-slate-900 text-sm mt-3">መላ ሶሉሽን (Mela Solution)</p>
+                
+                <div class="my-2">
+                    <div id="sig-preview-box" class="hidden">
+                        <img id="sig-img" src="#" class="h-12 object-contain">
+                    </div>
+                    <button type="button" onclick="document.getElementById('sig-input').click()" class="no-print text-[10px] text-indigo-600 bg-indigo-50 border border-indigo-200 px-2 py-1 rounded hover:bg-indigo-100 font-bold">
+                        <i class="fas fa-signature mr-1"></i>ፊርማ ከጋለሪ ስቀል
+                    </button>
+                    <input type="file" id="sig-input" accept="image/*" class="hidden" onchange="uploadSignature(this)">
+                </div>
+
+                <p class="font-bold text-slate-900 text-sm">መላ ሶሉሽን (Mela Solution)</p>
                 <p class="text-slate-600 text-[11px]">የሶፍትዌር እና የትምህርት ቴክኖሎጂ አበልጻጊ</p>
                 <p class="text-slate-500 text-[10px] mt-1">ስልክ፡ 0913064239 / 0703064239</p>
             </div>
 
             <div class="text-center">
-                <div class="w-24 h-24 border-2 border-dashed border-slate-300 rounded-full flex items-center justify-center text-[10px] text-slate-400">
-                    የድርጅቱ ማህተም
+                <div class="w-28 h-28 relative flex items-center justify-center">
+                    <img id="stamp-img" src="#" class="hidden w-full h-full object-contain">
+                    <div id="stamp-placeholder" onclick="document.getElementById('stamp-input').click()" 
+                         class="w-24 h-24 border-2 border-dashed border-slate-300 rounded-full flex flex-col items-center justify-center text-center cursor-pointer hover:bg-slate-50 transition">
+                        <i class="fas fa-stamp text-slate-400 text-lg mb-1"></i>
+                        <span class="text-[9px] text-slate-400 font-bold leading-tight">ማህተም ከጋለሪ<br>ይምረጡ</span>
+                    </div>
+                    <input type="file" id="stamp-input" accept="image/*" class="hidden" onchange="uploadStamp(this)">
                 </div>
             </div>
         </div>
 
-        <!-- FOOTER -->
         <footer class="text-center text-[10px] text-slate-400 border-t pt-2">
             SmartDebter-Ethiopia • Powered by Mela Solution • Addis Ababa, Ethiopia
         </footer>
 
     </div>
+
+    <!-- Scripts -->
+    <script>
+        function updateCompanyName(val) {
+            const targets = document.querySelectorAll('.display-target-company');
+            targets.forEach(t => t.innerText = val ? val : '_____________________________');
+        }
+
+        // FULL SPONSORSHIP LETTER AS CLEAN TEXT
+        function generateFullSponsorshipText() {
+            const compName = document.getElementById('input-company-name').value.trim() || 'የአስተዋዋቂ ድርጅቱ ማኔጅመንት';
+            const ref = document.getElementById('prop-ref').value;
+            const date = document.getElementById('prop-date').value;
+
+            return `📢 ይፋዊ የማስታወቂያ ስፖንሰርሺፕ ፕሮፖዛል\n\nመላ ሶሉሽን (Mela Solution)\nየሶፍትዌር እና የትምህርት ቴክኖሎጂ አበልጻጊ\nስልክ፡ 0913064239 / 0703064239\nኢሜይል፡ melasolution@gmail.com\nአዲስ አበባ፣ ኢትዮጵያ\n───────────────────────────\nቁጥር፡ ${ref}\nቀን፡ ${date}\n\nለ፡ ${compName}\nለማርኬቲንግ፣ ኮሙኒኬሽን እና ቢዝነስ ልማት መምሪያ\nአዲስ አበባ፣ ኢትዮጵያ\n\nጉዳዩ፡ በስማርት ደብተር የትምህርት ቤት ኔትወርክ (SmartDebter Network) ላይ በቀጥታ ለወላጆች፣ ለመምህራን እና ለት/ቤት አመራሮች የሚደርስ ይፋዊ የማስታወቂያ ስፖንሰርሺፕ ፕሮፖዛል\n\nክቡራትና ክቡራን የአስተዋዋቂ ድርጅቱ የስራ አመራሮች፤\n\nድርጅታችን መላ ሶሉሽን (Mela Solution) በሀገራችን ባሉ በርካታ ትምህርት ቤቶች ውስጥ በሺዎች የሚቆጠሩ ወላጆች፣ መምህራን እና የትምህርት ቤት አመራሮች በየቀኑ የተማሪዎችን የቤት ስራ እና ውሎ የሚከታተሉበትን 'SmartDebter-Ethiopia' የተሰኘውን የዲጂታል ግንኙነት ደብተር ኔትወርክ በስራ ላይ አውሏል።\n\nይህ ፕላትፎርም በተለይ ለባንኮች (የልጆች የቁጠባ ሒሳብ)፣ ለኢንሹራንስ፣ ለትምህርት ቁሳቁሶች፣ ለቴክኖሎጂ እና ለህፃናት አልባሳት አቅራቢዎች እጅግ ከፍተኛ የመግዛት አቅም ያላቸውን ወላጆች በቀጥታ በስልካቸው ስክሪን ላይ (Direct-to-Parent Screen) ለማግኘት ወደር የሌለው ተመራጭ የገበያ ቦታ ነው።\n\n📊 የታዳሚዎች አጠቃላይ ገጽታ፡\n• 15,000+ ንቁ ወላጆችና ተማሪዎች\n• 300,000+ ወርሃዊ የማስታወቂያ ዕይታ (Views)\n• 100% ዒላማውን የጠበቀ ከፍተኛ ገቢ ያለው ታዳሚ\n\n✨ የማስታወቂያ አቀራረብ ቅርጾች፡\n1. ሙሉ ግራፊክስ ባነር/ፖስተር (Full Graphic Banner)\n2. ቀጥታ መስተጋብር (Click-to-Action ወደ ቴሌግራም/ስልክ)\n3. ወርሃዊ የዕይታና የክሊክ ሪፖርት (Analytics Report)\n\n💎 የስፖንሰርሺፕ ፓኬጆች፡\n• የ 1 ወር ብቸኛ ስፖንሰር (Monthly)\n• የ 3 ወራት (ሴሚስተር) ስፖንሰር ከ 20% ቅናሽ ጋር\n\nድርጅትዎ በዚህ ፕላትፎርም ላይ ያለውን የገበያ ተደራሽነት እንዲጠቀም አጭር የቀጥታ ማሳያ በአካል ቀርበን ለማሳየት ዝግጁ ነን።\n\nከከበረ ሰላምታ ጋር፤\nመላ ሶሉሽን (Mela Solution)\nስልክ፡ 0913064239 / 0703064239`;
+        }
+
+        function copyEntireSponsorshipText() {
+            const text = generateFullSponsorshipText();
+            navigator.clipboard.writeText(text);
+            alert('🎉 ሙሉው የስፖንሰርሺፕ ደብዳቤ ጽሁፍ ተገልብጧል (Copied)!');
+        }
+
+        function shareSponsorshipToTelegram() {
+            const text = encodeURIComponent(generateFullSponsorshipText());
+            window.open(`https://t.me/share/url?url=&text=${text}`, '_blank');
+        }
+
+        function shareSponsorshipToWhatsApp() {
+            const text = encodeURIComponent(generateFullSponsorshipText());
+            window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+        }
+
+        function uploadSignature(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('sig-img').src = e.target.result;
+                    document.getElementById('sig-preview-box').classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function uploadStamp(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('stamp-img').src = e.target.result;
+                    document.getElementById('stamp-img').classList.remove('hidden');
+                    document.getElementById('stamp-placeholder').classList.add('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
 
 </body>
 </html>
