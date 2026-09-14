@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mela Solution - ይፋዊ የዲጂታል ትብብር ፕሮፖዛል</title>
+    <title>Mela Solution - ይፋዊ የትብብር ፕሮፖዛል</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -17,38 +17,39 @@
 </head>
 <body class="bg-slate-200 py-6 px-4 font-sans text-slate-900 min-h-screen flex flex-col items-center">
 
-    <!-- ================= TOP DIGITAL CONTROLS BAR (ቴሌግራም/ዋትስአፕ መላኪያ) ================= -->
+    <!-- ================= TOP CONTROLS BAR (በ PDF ወይም በጽሁፍ መላኪያ) ================= -->
     <div class="no-print w-full max-w-4xl bg-slate-900 text-white p-4 rounded-2xl shadow-xl mb-6 flex flex-col sm:flex-row items-center justify-between gap-3 border border-slate-800">
         <div class="flex items-center space-x-2 text-xs">
-            <span class="p-2 bg-indigo-600 rounded-xl text-white"><i class="fas fa-paper-plane"></i></span>
+            <span class="p-2 bg-indigo-600 rounded-xl text-white"><i class="fas fa-file-signature"></i></span>
             <div>
-                <p class="font-bold">ዲጂታል ማጋሪያ ሰሌዳ (Digital Dispatch)</p>
-                <p class="text-[10px] text-slate-400">የት/ቤቱን ስም ይጻፉ፤ በቀጥታ በቴሌግራም ወይም ዋትስአፕ ይላኩላቸው</p>
+                <p class="font-bold">ደብዳቤ መላኪያ (Send as Text or PDF)</p>
+                <p class="text-[10px] text-slate-400">የት/ቤቱን ስም ይጻፉ፤ በ PDF አውርደው ወይም በጽሁፍ ይላኩ</p>
             </div>
         </div>
 
         <div class="flex items-center space-x-2 flex-wrap gap-y-2">
-            <!-- Share on Telegram -->
-            <button onclick="shareToTelegram()" class="bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold px-3 py-2 rounded-xl transition shadow flex items-center space-x-1.5">
-                <i class="fab fa-telegram-plane text-sm"></i>
-                <span>በቴሌግራም ላክ</span>
+            <!-- 1. Download PDF to attach in Telegram/WhatsApp -->
+            <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow transition flex items-center space-x-1.5">
+                <i class="fas fa-file-pdf text-sm"></i>
+                <span>በ PDF አውርድ (Download PDF)</span>
             </button>
 
-            <!-- Share on WhatsApp -->
-            <button onclick="shareToWhatsApp()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-xl transition shadow flex items-center space-x-1.5">
-                <i class="fab fa-whatsapp text-sm"></i>
-                <span>በ WhatsApp ላክ</span>
+            <!-- 2. Copy Entire Letter as Clean Text -->
+            <button onclick="copyEntireLetterText()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3 py-2 rounded-xl border border-slate-700 transition flex items-center space-x-1">
+                <i class="fas fa-copy"></i>
+                <span>ሙሉ ጽሁፉን ቅዳ</span>
             </button>
 
-            <!-- Copy Link -->
-            <button onclick="copyCurrentProposalLink()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3 py-2 rounded-xl border border-slate-700 transition flex items-center space-x-1">
-                <i class="fas fa-link"></i>
-                <span>ሊንክ ቅዳ</span>
+            <!-- 3. Send full letter as text to Telegram -->
+            <button onclick="shareFullLetterToTelegram()" class="bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold px-3 py-2 rounded-xl transition shadow flex items-center space-x-1.5">
+                <i class="fab fa-telegram-plane"></i>
+                <span>በቴሌግራም በጽሁፍ ላክ</span>
             </button>
 
-            <!-- Print to PDF -->
-            <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow transition">
-                <i class="fas fa-print mr-1"></i>PDF
+            <!-- 4. Send full letter as text to WhatsApp -->
+            <button onclick="shareFullLetterToWhatsApp()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-xl transition shadow flex items-center space-x-1.5">
+                <i class="fab fa-whatsapp"></i>
+                <span>በ WhatsApp በጽሁፍ ላክ</span>
             </button>
         </div>
     </div>
@@ -110,7 +111,7 @@
             </h2>
         </div>
 
-        <!-- BODY -->
+        <!-- BODY (ምንም የመግቢያ ሊንክ የሌለበት ንጹህ ይፋዊ ደብዳቤ) -->
         <div class="text-xs text-slate-700 leading-relaxed space-y-3.5 text-justify">
             <p>
                 ክቡራትና ክቡራን የትምህርት ቤቱ ማኔጅመንት ቦርድና የስራ አመራሮች፤
@@ -155,16 +156,12 @@
                 </p>
             </div>
 
-            <!-- LIVE INTERACTIVE LINK FOR THE DIRECTOR -->
-            <div class="p-3 bg-slate-100 rounded-xl text-center space-y-1">
-                <p class="text-[11px] font-bold text-slate-800">ሲስተሙን በቀጥታ በስልክዎ ለመመልከት ይጫኑት፡</p>
-                <a href="https://smart-debter-ethiopia.vercel.app" target="_blank" class="text-indigo-600 hover:underline font-bold text-xs">
-                    👉 https://smart-debter-ethiopia.vercel.app
-                </a>
-            </div>
+            <p>
+                ይህንን ዘመናዊ አሰራር በትምህርት ቤትዎ ለመጀመር አጭር የ 15 ደቂቃ የቀጥታ ማሳያ (Live Demo) በአካል ቀርበን ለማሳየት ዝግጁ መሆናችንን በአክብሮት እንገልጻለን።
+            </p>
         </div>
 
-        <!-- SIGNATURE BLOCK -->
+        <!-- SIGNATURE & SEAL BLOCK -->
         <div class="pt-6 border-t flex items-end justify-between text-xs">
             <div>
                 <p class="text-slate-500 text-[10px]">ከከበረ ሰላምታ ጋር፤</p>
@@ -203,37 +200,39 @@
 
     </div>
 
-    <!-- Scripts -->
+    <!-- Scripts for Text Formatting -->
     <script>
         function updateSchoolName(val) {
             const targets = document.querySelectorAll('.display-target-school');
             targets.forEach(t => t.innerText = val ? val : '_____________________________');
         }
 
-        function getShareableText() {
+        // FULL PROPOSAL LETTER AS CLEAN TEXT
+        function generateFullLetterText() {
             const schoolName = document.getElementById('input-school-name').value.trim() || 'የትምህርት ቤቱ አስተዳደር';
-            const proposalLink = `https://smart-debter-ethiopia.vercel.app/proposal/school?school_name=${encodeURIComponent(schoolName)}`;
-            
-            return `ሰላም ጤና ይስጥልኝ ለ ${schoolName} አመራሮች ✋\n\nየትምህርት ቤትዎን የግንኙነት ደብተር የወረቀት ህትመት ወጪዎችን በዘላቂነት ለማስቀረት እና ለግማሽ ሴሚስተር በነፃ ጎን ለጎን ለመጠቀም የቀረበ ይፋዊ የትብብር ፕሮፖዛላችንን በዚህ ዲጂታል ሊንክ ይመልከቱ፡\n\n📄 ይፋዊ ደብዳቤ፡ ${proposalLink}\n🚀 የቀጥታ ሲስተም ማሳያ፡ https://smart-debter-ethiopia.vercel.app\n\nስልክ፡ 0913064239 / 0703064239\nመላ ሶሉሽን (Mela Solution)`;
+            const ref = document.getElementById('prop-ref').value;
+            const date = document.getElementById('prop-date').value;
+
+            return `📄 ይፋዊ የትብብር ፕሮፖዛል ደብዳቤ\n\nመላ ሶሉሽን (Mela Solution)\nየሶፍትዌር እና የትምህርት ቴክኖሎጂ አበልጻጊ\nስልክ፡ 0913064239 / 0703064239\nኢሜይል፡ melasolution@gmail.com\nአዲስ አበባ፣ ኢትዮጵያ\n───────────────────────────\nቁጥር፡ ${ref}\nቀን፡ ${date}\n\nለ፡ ${schoolName}\nለባለቤትና ማኔጅመንት ቦርድ / ዋና ርዕሰ-መምህር\nአዲስ አበባ፣ ኢትዮጵያ\n\nጉዳዩ፡ የትምህርት ቤቱን የተማሪዎች ግንኙነት ደብተር (Communication Book) ዘመናዊና ዲጂታል በማድረግ የወረቀት ህትመት ወጪዎችን ለማስቀረት እና ለግማሽ ሴሚስተር በነፃ ጎን ለጎን ለመጠቀም የቀረበ ይፋዊ የትብብር ፕሮፖዛል\n\nክቡራትና ክቡራን የትምህርት ቤቱ ማኔጅመንት ቦርድና የስራ አመራሮች፤\n\nእንደሚታወቀው በትምህርት ቤቶች ውስጥ የተማሪዎች የዕለት ተዕለት የቤት ስራ፣ የባህሪ ክትትል እና የት/ቤት ማስታወቂያዎች በባህላዊው የወረቀት ግንኙነት ደብተር አማካኝነት ሲከናወን ቆይቷል። ሆኖም የወረቀት ደብተር ለትምህርት ቤቱ ከፍተኛ ዓመታዊ የህትመት ወጪ የሚያስከትል (ለአንድ ተማሪ በአማካይ ከ 150 - 250 ብር) ከመሆኑም ባሻገር፤ ደብተሮች ከተማሪዎች ቦርሳ መጥፋት፣ መቅደድ እና ወላጆች በወቅቱ አይተው አለመፈረም የክትትል ክፍተቶችን ሲፈጥር ቆይቷል።\n\nድርጅታችን መላ ሶሉሽን (Mela Solution) ይህንን ችግር በዘመናዊ ቴክኖሎጂ ለመቅረፍ እና ${schoolName} ያሳተመውን የወረቀት ደብተር ሳያስተጓጉል ጎን ለጎን በነፃ እንዲሞክረው የሚያስችለውን 'SmartDebter-Ethiopia' የተሰኘውን የዲጂታል ግንኙነት ደብተር በታላቅ ክብር ያቀርብልዎታል።\n\n📌 አሰራሩ እንዴት ነው የሚተገበረው?\nትምህርት ቤትዎ ለዚህ ሴሚስተር ያዘጋጀው የወረቀት ደብተር እንዳለ ሆኖ፣ ይህንን ዲጂታል ሲስተም ለግማሽ ሴሚስተር ያለምንም ክፍያ በነፃ (100% Free Pilot) አብሮ ያስኬዳል። በዚህም ወላጆች፣ መምህራን እና አመራሮች የሲስተሙን ፍጥነት፣ ምቾትና አስተማማኝነት በተግባር እንዲመሰክሩ እድል ይሰጣል።\n\n✨ ዋና ዋና ጠቀሜታዎች፡\n1. የካምፓሶች እና የዲቪዥኖች የተሟላ መዋቅር (ካምፓስ 1 እና 2፤ ኬጂ፣ 1-4፣ 5-8፣ 9-12 ዩኒት ሊደሮች)\n2. የሁለትዮሽ ግንኙነት (መምህሩ የቤት ስራ ይልካል፤ ወላጁ በስልኩ ይፈርማል፤ ወላጆችም የህመም ፈቃድ ማስታወሻ በቀጥታ ይልካሉ)\n3. ቀላልና ደህንነቱ የተጠበቀ አሰራር (ወላጆች በስልክ ቁጥራቸው እና በተማሪው መለያ ID ብቻ ይገባሉ)\n4. የወራት ማህደር እና የኢትዮጵያ ካሌንደር (ከመስከረም እስከ ጳጉሜ 2019 ዓ.ም)\n\n🎁 ለትምህርት ቤትዎ የቀረበ ልዩ ስጦታ፡\nየትምህርት ቤቱን የተማሪዎች መረጃ ከ Excel ላይ ወደ ሲስተሙ የመጫን ስራ እና ለመምህራን የሚሰጠውን ገለጻ Mela Solution ያለምንም ክፍያ በነፃ ያከናውናል።\n\nይህንን ዘመናዊ አሰራር በትምህርት ቤትዎ ለመጀመር አጭር የ 15 ደቂቃ የቀጥታ ማሳያ በአካል ቀርበን ለማሳየት ዝግጁ ነን።\n\nከከበረ ሰላምታ ጋር፤\nመላ ሶሉሽን (Mela Solution)\nስልክ፡ 0913064239 / 0703064239`;
         }
 
-        // SHARE TO TELEGRAM
-        function shareToTelegram() {
-            const text = encodeURIComponent(getShareableText());
+        // COPY FULL LETTER TEXT
+        function copyEntireLetterText() {
+            const text = generateFullLetterText();
+            navigator.clipboard.writeText(text);
+            alert('🎉 ሙሉው ይፋዊ የደብዳቤው ጽሁፍ ተገልብጧል (Copied)! የፈለጉበት ቦታ Paste አድርገው መላክ ይችላሉ።');
+        }
+
+        // SHARE FULL LETTER AS TEXT TO TELEGRAM
+        function shareFullLetterToTelegram() {
+            const text = encodeURIComponent(generateFullLetterText());
             window.open(`https://t.me/share/url?url=&text=${text}`, '_blank');
         }
 
-        // SHARE TO WHATSAPP
-        function shareToWhatsApp() {
-            const text = encodeURIComponent(getShareableText());
+        // SHARE FULL LETTER AS TEXT TO WHATSAPP
+        function shareFullLetterToWhatsApp() {
+            const text = encodeURIComponent(generateFullLetterText());
             window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
-        }
-
-        function copyCurrentProposalLink() {
-            const schoolName = document.getElementById('input-school-name').value.trim();
-            const link = `https://smart-debter-ethiopia.vercel.app/proposal/school?school_name=${encodeURIComponent(schoolName)}`;
-            navigator.clipboard.writeText(link);
-            alert('የዲጂታል ፕሮፖዛሉ ሊንክ ተገልብጧል (Copied)!');
         }
 
         function uploadSignature(input) {
