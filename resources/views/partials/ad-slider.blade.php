@@ -1,7 +1,6 @@
 @props(['sliderId' => 'ad-slider-default'])
 
 @php
-    // ከ Clever Cloud MySQL በቀጥታ ንቁ ማስታወቂያዎችን ብቻ ያወጣል
     try {
         $dbAds = \Illuminate\Support\Facades\DB::table('advertisements')
             ->where('is_active', true)
@@ -12,18 +11,34 @@
     }
 @endphp
 
-<!-- DYNAMIC MOVING AD CAROUSEL (ከ Clever Cloud ዳታቤዝ ብቻ የሚያነብ) -->
+<!-- DYNAMIC MOVING AD CAROUSEL (ከ 404 ስህተት የጸዳ አውቶማቲክ ሊንክ አስተካካይ) -->
 <div id="{{ $sliderId }}" class="relative w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm my-4">
 
     <div class="slides-wrapper relative w-full h-[150px] sm:h-[135px]">
 
         @if($dbAds->count() > 0)
-            <!-- ዳታቤዝ ውስጥ የተሰቀሉ እውነተኛ ማስታወቂያዎች ብቻ ይወጣሉ -->
             @foreach($dbAds as $index => $ad)
+                @php
+                    // ሊንኩ 404 ስህተት እንዳያመጣ በራሱ የሚያስተካክል ብልህ ኮድ
+                    $rawUrl = trim($ad->target_url ?? '#');
+                    $finalUrl = $rawUrl;
+
+                    if ($rawUrl !== '#' && !empty($rawUrl)) {
+                        // ስልክ ቁጥር ከሆነ ወደ tel: ይቀይረዋል
+                        if (preg_match('/^(09|07|\+251)[0-9]{8}$/', str_replace(' ', '', $rawUrl))) {
+                            $finalUrl = 'tel:' . str_replace(' ', '', $rawUrl);
+                        } 
+                        // https:// ወይም http:// ከሌለው በራሱ ይጨምርበታል
+                        elseif (!preg_match('/^(https?:\/\/|tel:|mailto:)/i', $rawUrl)) {
+                            $finalUrl = 'https://' . $rawUrl;
+                        }
+                    }
+                @endphp
+
                 <div class="ad-slide absolute inset-0 transition-opacity duration-700 ease-in-out {{ $index == 0 ? '' : 'opacity-0 pointer-events-none' }}">
-                    <a href="{{ $ad->target_url ?? '#' }}" target="_blank" class="block w-full h-full relative group">
+                    <a href="{{ $finalUrl }}" target="_blank" rel="noopener noreferrer" class="block w-full h-full relative group">
                         
-                        <!-- የተሰቀለው እውነተኛ ፎቶ -->
+                        <!-- የተሰቀለው ፖስተር -->
                         <img src="{{ $ad->image_url }}" 
                              alt="{{ $ad->company_name }}" 
                              class="w-full h-full object-cover rounded-2xl brightness-95 group-hover:brightness-100 transition">
@@ -40,7 +55,7 @@
                 </div>
             @endforeach
         @else
-            <!-- ምንም ማስታወቂያ ካልተሰቀለ የሚታይ ክፍት ሰሌዳ -->
+            <!-- ምንም ማስታወቂያ ካልተሰቀለ -->
             <div class="ad-slide absolute inset-0 flex flex-col sm:flex-row items-center justify-between p-4 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 border-2 border-dashed border-emerald-300 rounded-2xl">
                 <span class="absolute top-2 right-2 text-[9px] font-extrabold uppercase bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded">ክፍት የማስታወቂያ ቦታ</span>
                 <div class="flex items-center space-x-3 w-full sm:w-auto">
@@ -60,7 +75,6 @@
 
     </div>
 
-    <!-- Dots (ከ 1 በላይ ማስታወቂያ ሲኖር ብቻ ይታያሉ) -->
     @if($dbAds->count() > 1)
         <div class="absolute bottom-1.5 left-1/2 -translate-x-1/2 flex space-x-1.5 z-10">
             @foreach($dbAds as $i => $ad)
