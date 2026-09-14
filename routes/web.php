@@ -345,14 +345,28 @@ Route::post('/super-admin/schools/delete', function (Request $request) {
     return back()->with('success', 'ተሰርዟል!');
 });
 
+// ==================== [ማስታወቂያ 404 እንዳይል አስተካክሎ መመዝገቢያ] ====================
 Route::post('/super-admin/ads/store', function (Request $request) {
     try { DB::statement('ALTER TABLE advertisements MODIFY image_url LONGTEXT'); } catch (\Exception $e) {}
+
+    $targetUrl = trim($request->input('target_url', 'tel:0913064239'));
+    
+    // ስልክ ከሆነ ወይም https:// ከሌለው ራሱ ያስተካክለዋል
+    if (!empty($targetUrl)) {
+        $clean = str_replace(' ', '', $targetUrl);
+        if (preg_match('/^(09|07|\+251)[0-9]{8}$/', $clean)) {
+            $targetUrl = 'tel:' . $clean;
+        } elseif (!preg_match('/^(https?:\/\/|tel:|mailto:)/i', $targetUrl)) {
+            $targetUrl = 'https://' . $targetUrl;
+        }
+    }
+
     DB::table('advertisements')->insert([
         'company_name' => $request->input('company_name'),
         'title' => $request->input('title', 'ስፖንሰር ማስታወቂያ'),
         'target_audience' => $request->input('target_audience', 'ለሁሉም ተጠቃሚዎች'),
         'duration' => $request->input('duration', 'ያልተገደበ (ቋሚ)'),
-        'target_url' => $request->input('target_url', 'tel:0913064239'),
+        'target_url' => $targetUrl,
         'image_url' => $request->input('image_base64'),
         'is_active' => true,
         'impressions' => 0,
@@ -360,7 +374,8 @@ Route::post('/super-admin/ads/store', function (Request $request) {
         'created_at' => now(),
         'updated_at' => now(),
     ]);
-    return back()->with('success', 'ማስታወቂያው ተመዝግቧል!');
+
+    return back()->with('success', 'ማስታወቂያው በዳታቤዝ ተመዝግቧል!');
 });
 
 Route::post('/super-admin/ads/delete', function (Request $request) {
@@ -368,7 +383,7 @@ Route::post('/super-admin/ads/delete', function (Request $request) {
     return back();
 });
 
-// ==================== [የትብብር ፕሮፖዛል መንገዶች] ====================
+// Proposals
 Route::get('/proposal/neway-challenge', function () {
     return view('documents.proposal-neway');
 });
