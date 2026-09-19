@@ -153,12 +153,10 @@
                 </div>
                 <div class="flex items-center space-x-2 w-full sm:w-auto">
                     <button onclick="copyParentLink('{{ $schoolCode }}', '{{ $schoolName }}')" class="flex-1 sm:flex-none text-xs bg-white/10 hover:bg-white/20 text-white font-bold px-3.5 py-2 rounded-xl transition border border-white/20 flex items-center justify-center space-x-1.5">
-                        <i class="fas fa-link text-xs"></i>
-                        <span>ሊንኩን ብቻ ቅዳ</span>
+                        <i class="fas fa-link text-xs"></i><span>ሊንኩን ብቻ ቅዳ</span>
                     </button>
                     <button onclick="copyParentBroadcastMessage('{{ $schoolName }}', '{{ $schoolCode }}')" class="flex-1 sm:flex-none text-xs bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-xl transition shadow flex items-center justify-center space-x-1.5">
-                        <i class="fas fa-copy text-xs"></i>
-                        <span>የቴሌግራም መልእክት ቅዳ</span>
+                        <i class="fas fa-copy text-xs"></i><span>የቴሌግራም መልእክት ቅዳ</span>
                     </button>
                 </div>
             </div>
@@ -239,7 +237,7 @@
         </div>
 
         @else
-        <!-- UNIT LEADER PORTAL -->
+        <!-- ================= UNIT LEADER PORTAL ================= -->
         <div class="bg-gradient-to-r from-purple-800 to-indigo-900 rounded-2xl p-5 sm:p-6 text-white shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div class="space-y-1">
                 <div class="flex items-center space-x-2">
@@ -252,11 +250,11 @@
             </div>
             <button onclick="openModal('teacher-assign-modal')" class="whitespace-nowrap text-xs font-bold bg-amber-400 hover:bg-amber-300 text-slate-950 px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-1.5 shrink-0">
                 <i class="fas fa-chalkboard-teacher"></i>
-                <span>መምህር መድብ እና ሊንክ አመንጭ</span>
+                <span>አዲስ መምህር መድብ</span>
             </button>
         </div>
 
-        <!-- UNIT LEADER INBOX -->
+        <!-- ================= 1. UNIT LEADER INBOX (ከነ መልስ መስጫው ጋር) ================= -->
         <div class="bg-white rounded-2xl border shadow-sm p-5 sm:p-6 border-l-4 border-l-emerald-600">
             <div class="flex items-center justify-between mb-3 pb-2 border-b">
                 <div>
@@ -264,13 +262,14 @@
                         <i class="fas fa-inbox text-emerald-600 mr-2"></i>
                         የወላጆች ጥያቄዎች እና ፈቃዶች መቀበያ ሳጥን (Unit Leader Inbox)
                     </h3>
-                    <p class="text-xs text-slate-500 mt-0.5">ከወላጆች በቀጥታ ለዲቪዥን ተጠሪው የተላኩ ማስታወሻዎች እዚህ ይወጣሉ፡</p>
+                    <p class="text-xs text-slate-500 mt-0.5">ከወላጆች በቀጥታ ለዲቪዥን ተጠሪው የተላኩ ማስታወሻዎች እና ፈቃዶች እዚህ ይወጣሉ፡</p>
                 </div>
                 <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full">
                     {{ count($parentInquiries ?? []) }} መልእክቶች
                 </span>
             </div>
 
+            <!-- Parent Inquiries from MySQL with Reply Action -->
             <div class="space-y-2.5">
                 @forelse($parentInquiries ?? [] as $inq)
                     <div class="p-3.5 bg-emerald-50/40 rounded-xl border border-emerald-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -283,9 +282,12 @@
                             <p class="text-xs text-slate-700 leading-relaxed">{{ $inq->message }}</p>
                             <span class="text-[10px] text-slate-400">የተላከው፡ {{ $inq->created_at }}</span>
                         </div>
-                        <button onclick="this.innerText='ተረጋግጧል'; this.className='text-xs bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-lg'; alert('የወላጁ መልእክት መታየቱ ተረጋግጧል!');" 
-                                class="whitespace-nowrap text-xs bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-100 font-bold px-3 py-1.5 rounded-lg shadow-xs transition">
-                            <i class="fas fa-check mr-1"></i>አይቻለሁ
+                        
+                        <!-- REPLY BUTTON FOR UNIT LEADER -->
+                        <button onclick="openReplyModal('{{ $inq->sender_phone }}', '{{ addslashes($inq->title) }}')" 
+                                class="whitespace-nowrap text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg shadow-xs transition flex items-center space-x-1">
+                            <i class="fas fa-reply text-xs"></i>
+                            <span>መልስ ስጥ (Reply)</span>
                         </button>
                     </div>
                 @empty
@@ -297,26 +299,132 @@
             </div>
         </div>
 
-        <!-- TEACHER ASSIGNMENT CARD -->
+        <!-- ================= 2. EXAM TIMETABLE & CIRCULAR DISPATCHER (የፈተና ፕሮግራም በሰንጠረዥ መላኪያ) ================= -->
         <div class="bg-white rounded-2xl border shadow-sm p-6">
             <div class="flex items-center justify-between mb-4 pb-3 border-b">
                 <div>
                     <h3 class="text-base font-bold text-slate-900 flex items-center">
-                        <i class="fas fa-link text-emerald-600 mr-2"></i>
-                        የ{{ $currentDiv['title'] }} መምህራን ሊንክ ማመንጫ ({{ $currentCampusName }})
+                        <i class="fas fa-calendar-alt text-purple-600 mr-2"></i>
+                        የፈተና ፕሮግራም (Timetable) እና የዲቪዥን ማስታወቂያ መላኪያ
                     </h3>
-                    <p class="text-xs text-slate-500 mt-0.5">በዚህ ካምፓስ ስር ላሉ መምህራን የመግቢያ ሊንክ አመንጭተው ይላኩላቸው።</p>
+                    <p class="text-xs text-slate-500 mt-0.5">የፈተና መርሃግብር በሰንጠረዥ ወይም አጠቃላይ ሰርኩላር ለዲቪዥኑ ወላጆች በሙሉ ያሰራጩ</p>
                 </div>
             </div>
 
-            <div id="teachers-container" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div onclick="openModal('teacher-assign-modal')" class="p-6 border-2 border-dashed border-slate-300 hover:border-purple-500 bg-slate-50 hover:bg-purple-50/50 rounded-xl flex flex-col items-center justify-center text-center cursor-pointer transition">
-                    <div class="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-base mb-2">
-                        <i class="fas fa-plus"></i>
+            <form action="/communications/leader-send" method="POST" class="space-y-3.5">
+                @csrf
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">ተቀባይ</label>
+                        <select name="target_type" class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold">
+                            <option value="all">ለሁሉም የ{{ $currentDiv['title'] }} ተማሪዎች</option>
+                        </select>
                     </div>
-                    <span class="text-xs font-bold text-slate-800">አዲስ መምህር በክፍል መድብ</span>
-                    <p class="text-[10px] text-slate-500 mt-1">ስም እና ክፍል አስገብተው ሊንክ ይውሰዱ</p>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">የመልእክቱ አይነት</label>
+                        <select name="category" class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-purple-700">
+                            <option value="የፈተና ፕሮግራም">📅 የፈተና ፕሮግራም (Exam Timetable)</option>
+                            <option value="አጠቃላይ ማስታወቂያ">📢 አጠቃላይ ሰርኩላር</option>
+                            <option value="አስቸኳይ ማስታወቂያ">⚠️ አስቸኳይ ማስታወቂያ</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">ርዕስ</label>
+                        <input type="text" name="title" placeholder="ምሳሌ፡ የ 1ኛ መንፈቀ ዓመት የፈተና ፕሮግራም" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-semibold">
+                    </div>
                 </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="block text-xs font-bold text-slate-700">ዝርዝር መርሃግብር (የፈተና ሰንጠረዥ)</label>
+                        <button type="button" onclick="insertTimetableTemplate()" class="text-[10px] text-purple-600 hover:underline font-bold">
+                            + የፈተና ሰንጠረዥ ፎርማት አስገባ
+                        </button>
+                    </div>
+                    <textarea name="message" id="leader-msg-body" rows="4" placeholder="የፈተናውን ቀን፣ ሰዓት እና የትምህርት አይነት እዚህ ይጻፉ..." required
+                              class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-mono"></textarea>
+                </div>
+
+                <div class="flex justify-end">
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 shadow transition flex items-center space-x-1.5">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>ፕሮግራሙን ለወላጆች አሰራጭ (Publish)</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- ================= 3. PERSISTENT TEACHER ASSIGNMENTS ROSTER (መምህራን በቋሚነት የሚቀመጡበትና ሊንካቸው የማይጠፋበት) ================= -->
+        <div class="bg-white rounded-2xl border shadow-sm p-6">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4 pb-3 border-b">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900 flex items-center">
+                        <i class="fas fa-chalkboard-teacher text-emerald-600 mr-2"></i>
+                        የተመደቡ መምህራን ቋሚ ማህደር እና ሊንኮች (Teacher Roster)
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">የመምህሩ ሊንክ ቢጠፋ እንኳን በማንኛውም ሰዓት እዚህ ገብተው "ሊንክ ቅዳ" በማለት በድጋሚ መስጠት ይችላሉ</p>
+                </div>
+                <button onclick="openModal('teacher-assign-modal')" class="text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl transition shadow flex items-center space-x-1.5">
+                    <i class="fas fa-plus"></i>
+                    <span>አዲስ መምህር መድብ</span>
+                </button>
+            </div>
+
+            <!-- Persistent Teachers Table from MySQL -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="text-slate-500 border-b bg-slate-50">
+                            <th class="p-3">የመምህሩ ሙሉ ስም</th>
+                            <th class="p-3">የተመደበበት ክፍል</th>
+                            <th class="p-3">የመምህሩ ቋሚ መግቢያ ሊንክ</th>
+                            <th class="p-3 text-right">እርምጃዎች</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y text-slate-700">
+                        @forelse($assignedTeachers ?? [] as $t)
+                            @php
+                                $teacherLink = "https://smart-debter-ethiopia.vercel.app/teacher/entry?class=" . urlencode($t->classroom_id) . "&name=" . urlencode($t->teacher_name);
+                            @endphp
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="p-3 font-bold text-slate-900">
+                                    <i class="fas fa-chalkboard-teacher text-slate-400 mr-1.5"></i>
+                                    {{ $t->teacher_name }}
+                                </td>
+                                <td class="p-3">
+                                    <span class="bg-purple-100 text-purple-800 font-bold px-2 py-0.5 rounded">{{ $t->classroom_id }}</span>
+                                </td>
+                                <td class="p-3">
+                                    <div class="flex items-center space-x-1.5 max-w-sm">
+                                        <input type="text" readonly value="{{ $teacherLink }}" class="text-[10px] bg-white border p-1 rounded flex-1 text-slate-600 select-all font-mono">
+                                        <button onclick="navigator.clipboard.writeText('{{ $teacherLink }}'); alert('የ {{ $t->teacher_name }} ሊንክ ተገልብጧል!');" 
+                                                class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2 py-1 rounded transition" title="ሊንክ ቅዳ">
+                                            <i class="fas fa-copy mr-1"></i>ቅዳ
+                                        </button>
+                                    </div>
+                                </td>
+                                <td class="p-3 text-right">
+                                    <form action="/teachers/delete" method="POST" onsubmit="return confirm('መምህር {{ $t->teacher_name }} ከዚህ ክፍል ይሰረዝ?');" class="inline">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $t->id }}">
+                                        <button type="submit" class="text-rose-600 hover:text-rose-700 font-bold bg-rose-50 px-2 py-1 rounded-lg border border-rose-200">
+                                            <i class="fas fa-trash-alt mr-0.5"></i>አሰናብት
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="p-8 text-center text-slate-400">
+                                    <i class="fas fa-chalkboard-teacher text-3xl mb-2 text-slate-300 block"></i>
+                                    እስካሁን የተመደበ መምህር የለም። "አዲስ መምህር መድብ" የሚለውን ነክተው መምህራንን ያስገቡ።
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
         @endif
@@ -343,11 +451,11 @@
 
             <div class="bg-white p-5 rounded-2xl border shadow-xs">
                 <div class="flex items-center justify-between text-slate-400 mb-2">
-                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500">የተጠሪው ሳጥን</span>
-                    <i class="fas fa-inbox text-emerald-600"></i>
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500">መምህራን / Teachers</span>
+                    <i class="fas fa-chalkboard-teacher text-emerald-600"></i>
                 </div>
-                <h3 class="text-2xl font-black text-emerald-600">{{ count($parentInquiries ?? []) }}</h3>
-                <span class="text-[10px] text-slate-400">ከወላጅ የመጡ ማስታወሻዎች</span>
+                <h3 class="text-2xl font-black text-slate-900">{{ count($assignedTeachers ?? []) }}</h3>
+                <span class="text-[10px] text-slate-400">የተመደቡ ቋሚ መምህራን</span>
             </div>
 
             <div class="bg-white p-5 rounded-2xl border shadow-xs">
@@ -363,7 +471,7 @@
         <!-- Dynamic Moving Ad Carousel -->
         @include('partials.ad-slider', ['sliderId' => 'admin-slider'])
 
-        <!-- ================= STUDENTS ROSTER TABLE (7ቱ ወሳኝ ዓምዶች) ================= -->
+        <!-- STUDENTS ROSTER TABLE -->
         <div class="bg-white rounded-2xl border shadow-sm p-6">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 pb-3 border-b">
                 <div>
@@ -376,7 +484,7 @@
                 <div class="flex items-center space-x-2">
                     <button onclick="openModal('student-modal')" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow flex items-center space-x-1.5">
                         <i class="fas fa-user-plus"></i>
-                        <span>አዲስ ተማሪ መዝግብ (Add Student)</span>
+                        <span>አዲስ ተማሪ መዝግብ</span>
                     </button>
                     <button onclick="openModal('excel-modal')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow flex items-center space-x-1.5">
                         <i class="fas fa-file-excel"></i>
@@ -385,7 +493,6 @@
                 </div>
             </div>
 
-            <!-- Real Database Students Table (7 Columns) -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs">
                     <thead>
@@ -446,7 +553,65 @@
 
     <!-- ==================== MODALS ==================== -->
 
-    <!-- 1. STUDENT REGISTRATION MODAL (የተማሪ ሙሉ ስም በአንድ ሳጥን + 7ቱ ዓምዶች) -->
+    <!-- 1. REPLY TO PARENT MODAL (ለወላጅ መልስ መስጫ ፖፕ-አፕ) -->
+    <div id="reply-parent-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border">
+            <div class="flex items-center justify-between pb-3 border-b">
+                <h3 class="font-bold text-sm text-slate-900 flex items-center">
+                    <i class="fas fa-reply text-emerald-600 mr-2"></i>
+                    ለወላጁ ምላሽ ይላኩ
+                </h3>
+                <button onclick="closeModal('reply-parent-modal')" class="text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+            <form action="/communications/reply-parent" method="POST" class="my-4 space-y-3">
+                @csrf
+                <input type="hidden" name="parent_phone" id="reply-parent-phone">
+                <input type="hidden" name="original_title" id="reply-original-title">
+
+                <div>
+                    <p class="text-[11px] text-slate-500 mb-1">መልእክቱ የሚደርሰው ስልክ፡ <b id="reply-phone-display" class="font-mono text-emerald-800"></b></p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">የተጠሪው ምላሽ (መልእክት)</label>
+                    <textarea name="reply_message" rows="4" placeholder="ምሳሌ፡ የተከበሩ ወላጅ፡ የልጅዎ የ 3 ቀን ፈቃድ ተፈቅዷል፤ መልካም ቆይታ!" required
+                              class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                </div>
+
+                <div class="flex justify-end space-x-2 pt-2 border-t">
+                    <button type="button" onclick="closeModal('reply-parent-modal')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 bg-slate-100">ይቅር</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow">ምላሹን ላክ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. TEACHER ASSIGN MODAL (Direct to MySQL Database) -->
+    <div id="teacher-assign-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border">
+            <div class="flex items-center justify-between pb-3 border-b">
+                <h3 class="font-bold text-sm text-slate-900">አዲስ መምህር በክፍል መድብ (MySQL)</h3>
+                <button onclick="closeModal('teacher-assign-modal')" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+            </div>
+            <form action="/teachers/store" method="POST" class="my-4 space-y-3">
+                @csrf
+                <input type="hidden" name="division" value="{{ $division }}">
+                <input type="hidden" name="campus" value="{{ $campus }}">
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-600 mb-1">የመምህሩ ሙሉ ስም</label>
+                    <input type="text" name="teacher_name" placeholder="ምሳሌ፡ መምህር አለሙ ተሾመ" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-semibold">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-600 mb-1">የተመደበበት ክፍል</label>
+                    <input type="text" name="classroom_id" placeholder="ምሳሌ፡ 7ኛ ክፍል - B" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-purple-700">
+                </div>
+                <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 shadow">መምህሩን ዳታቤዝ ላይ መዝግብ እና ሊንክ አመንጭ</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. STUDENT MODAL -->
     <div id="student-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3 border-b">
@@ -456,78 +621,53 @@
                 </h3>
                 <button onclick="closeModal('student-modal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
-            
             <form action="/students/store" method="POST" class="my-4 space-y-3.5">
                 @csrf
-                
-                <!-- 1. የተማሪው ሙሉ ስም (በአንድ ሳጥን!) -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">1. የተማሪው ሙሉ ስም (ስም፣ የአባትና የአያት ስም በአንድ ላይ)</label>
-                    <input type="text" name="full_name" placeholder="ምሳሌ፡ ዮናስ ዳዊት በቀለ" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-slate-900">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">1. የተማሪው ሙሉ ስም</label>
+                    <input type="text" name="full_name" placeholder="ምሳሌ፡ ዮናስ ዳዊት በቀለ" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold">
                 </div>
-
                 <div class="grid grid-cols-2 gap-3">
-                    <!-- 2. ጾታ -->
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">2. ጾታ</label>
                         <select name="gender" class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold">
-                            <option value="ወንድ">ወንድ (Male)</option>
-                            <option value="ሴት">ሴት (Female)</option>
+                            <option value="ወንድ">ወንድ</option>
+                            <option value="ሴት">ሴት</option>
                         </select>
                     </div>
-
-                    <!-- 3. እድሜ -->
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">3. እድሜ</label>
                         <input type="number" name="age" placeholder="ምሳሌ፡ 12" class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold">
                     </div>
                 </div>
-
                 <div class="grid grid-cols-2 gap-3">
-                    <!-- 6. የክፍል ደረጃ -->
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">6. የክፍል ደረጃ</label>
-                        <select name="grade_level" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-purple-700">
-                            <optgroup label="ኬጂ (KG)"><option>KG 1</option><option>KG 2</option><option>KG 3</option></optgroup>
-                            <optgroup label="1ኛ - 4ኛ"><option>1ኛ ክፍል</option><option>2ኛ ክፍል</option><option>3ኛ ክፍል</option><option>4ኛ ክፍል</option></optgroup>
-                            <optgroup label="5ኛ - 8ኛ"><option>5ኛ ክፍል</option><option>6ኛ ክፍል</option><option selected>7ኛ ክፍል</option><option>8ኛ ክፍል</option></optgroup>
-                            <optgroup label="9ኛ - 12ኛ"><option>9ኛ ክፍል</option><option>10ኛ ክፍል</option><option>11ኛ ክፍል</option><option>12ኛ ክፍል</option></optgroup>
-                        </select>
+                        <input type="text" name="grade_level" placeholder="ምሳሌ፡ 7ኛ ክፍል ወይም KG 2" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-purple-700">
                     </div>
-
-                    <!-- 7. ሴክሽን -->
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">7. ሴክሽን (Section)</label>
-                        <input type="text" name="section" placeholder="A, B, C, Red..." value="B" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-purple-700 uppercase">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">7. ሴክሽን</label>
+                        <input type="text" name="section" placeholder="A, B, C..." value="B" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-purple-700 uppercase">
                     </div>
                 </div>
-
-                <!-- የወላጅ መግቢያዎች -->
                 <div class="p-3 bg-blue-50/60 rounded-xl border border-blue-200 space-y-2">
-                    <p class="text-[11px] font-bold text-blue-900">የወላጅ መግቢያ መለያዎች (Credentials):</p>
                     <div class="grid grid-cols-2 gap-2">
-                        <!-- 5. የወላጅ ስልክ -->
                         <div>
                             <label class="block text-[10px] font-bold text-slate-600 mb-0.5">5. የወላጅ ስልክ (Username)</label>
                             <input type="text" name="phone" placeholder="09xxxxxxxx" required class="w-full p-2 bg-white border rounded-lg text-xs font-mono font-bold">
                         </div>
-
-                        <!-- 4. የተማሪ መለያ ID -->
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-600 mb-0.5">4. የተማሪ መለያ ቁጥር (ID/Password)</label>
+                            <label class="block text-[10px] font-bold text-slate-600 mb-0.5">4. የተማሪ መለያ ID (Password)</label>
                             <input type="text" name="student_id_number" placeholder="ምሳሌ፡ 1001" required class="w-full p-2 bg-white border rounded-lg text-xs font-mono font-black text-emerald-800 uppercase">
                         </div>
                     </div>
                 </div>
-
-                <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 shadow mt-2">
-                    ተማሪውን ዳታቤዝ ላይ መዝግብ (Save Student)
-                </button>
+                <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 shadow mt-2">ተማሪውን መዝግብ</button>
             </form>
         </div>
     </div>
 
-    <!-- 2. EDIT STUDENT MODAL -->
+    <!-- EDIT STUDENT MODAL -->
     <div id="edit-student-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border">
             <div class="flex items-center justify-between pb-3 border-b">
@@ -537,100 +677,44 @@
             <form action="/students/update" method="POST" class="my-4 space-y-3">
                 @csrf
                 <input type="hidden" name="id" id="edit-student-id">
-                
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-600 mb-0.5">የተማሪው ሙሉ ስም</label>
-                    <input type="text" name="full_name" id="edit-student-fullname" required class="w-full p-2 bg-slate-50 border rounded-lg text-xs font-bold">
-                </div>
-
+                <input type="text" name="full_name" id="edit-student-fullname" required class="w-full p-2 bg-slate-50 border rounded-lg text-xs font-bold">
                 <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-600 mb-0.5">ጾታ</label>
-                        <select name="gender" id="edit-student-gender" class="w-full p-2 bg-slate-50 border rounded-lg text-xs font-bold">
-                            <option value="ወንድ">ወንድ</option>
-                            <option value="ሴት">ሴት</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-600 mb-0.5">እድሜ</label>
-                        <input type="number" name="age" id="edit-student-age" class="w-full p-2 bg-slate-50 border rounded-lg text-xs font-bold">
-                    </div>
+                    <select name="gender" id="edit-student-gender" class="w-full p-2 bg-slate-50 border rounded-lg text-xs font-bold">
+                        <option value="ወንድ">ወንድ</option><option value="ሴት">ሴት</option>
+                    </select>
+                    <input type="number" name="age" id="edit-student-age" placeholder="እድሜ" class="w-full p-2 bg-slate-50 border rounded-lg text-xs font-bold">
                 </div>
-
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-600 mb-0.5">ክፍልና ሴክሽን</label>
-                    <input type="text" name="class_name" id="edit-student-class" required class="w-full p-2 bg-slate-50 border rounded-lg text-xs font-bold">
-                </div>
-
+                <input type="text" name="class_name" id="edit-student-class" placeholder="ክፍል" required class="w-full p-2 bg-slate-50 border rounded-lg text-xs font-bold">
                 <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-600 mb-0.5">የወላጅ ስልክ (Username)</label>
-                        <input type="text" name="phone" id="edit-student-phone" required class="w-full p-2 bg-slate-50 border rounded-lg text-xs font-mono font-bold">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Student ID (Password)</label>
-                        <input type="text" name="student_id_number" id="edit-student-code" required class="w-full p-2 bg-slate-50 border rounded-lg text-xs font-mono font-bold text-emerald-800">
-                    </div>
+                    <input type="text" name="phone" id="edit-student-phone" required class="w-full p-2 bg-slate-50 border rounded-lg text-xs font-mono font-bold">
+                    <input type="text" name="student_id_number" id="edit-student-code" required class="w-full p-2 bg-slate-50 border rounded-lg text-xs font-mono font-bold text-emerald-800">
                 </div>
-
-                <button type="submit" class="w-full py-2 rounded-xl text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 shadow mt-2">
-                    ለውጦችን መዝግብ (Update)
-                </button>
+                <button type="submit" class="w-full py-2 rounded-xl text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 shadow mt-2">ለውጦችን መዝግብ</button>
             </form>
         </div>
     </div>
 
-    <!-- 3. EXCEL MODAL (ከነ 7ቱ ዓምዶች የተዘጋጀ Sample.csv) -->
+    <!-- EXCEL MODAL -->
     <div id="excel-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border">
             <div class="flex items-center justify-between pb-3 border-b">
-                <h3 class="font-bold text-sm text-slate-900 flex items-center">
-                    <i class="fas fa-file-excel text-emerald-600 text-base mr-2"></i>
-                    የተማሪዎች መረጃ ከ Excel መጫኛ (7ቱ ዓምዶች)
-                </h3>
-                <button onclick="closeModal('excel-modal')" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+                <h3 class="font-bold text-sm text-slate-900">የተማሪዎች መረጃ ከ Excel መጫኛ</h3>
+                <button onclick="closeModal('excel-modal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
             <div class="my-4 space-y-4">
-                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 leading-relaxed">
-                    <p class="font-bold mb-1">የትምህርት ቤቶች የ Excel አዘገጃጀት ቅጽ (7ቱ ዓምዶች)፡</p>
-                    <p><b>[የተማሪው ሙሉ ስም] , [ጾታ] , [እድሜ] , [የተማሪ ID] , [የወላጅ ስልክ] , [ክፍል] , [ሴክሽን]</b></p>
-                </div>
-
-                <!-- 7-COLUMN SAMPLE CSV DOWNLOAD -->
                 <div class="flex items-center justify-between text-xs p-3 bg-slate-50 rounded-xl border">
-                    <span class="text-slate-600 font-medium">የ 7ቱ ዓምዶች የናሙና Excel ቅጽ ያውርዱ፡</span>
-                    <a href="data:text/csv;charset=utf-8,የተማሪው ሙሉ ስም,ጾታ,እድሜ,የተማሪ ID,የወላጅ ስልክ,ክፍል,ሴክሽን%0Aዮናስ ዳዊት በቀለ,ወንድ,13,NCA-1001,0911223344,7ኛ ክፍል,B%0Aሳራ ዳዊት በቀለ,ሴት,8,NCA-1002,0911223344,3ኛ ክፍል,A" 
+                    <span>የ 7ቱ ዓምዶች የናሙና Excel ቅጽ ያውርዱ፡</span>
+                    <a href="data:text/csv;charset=utf-8,የተማሪው ሙሉ ስም,ጾታ,እድሜ,የተማሪ ID,የወላጅ ስልክ,ክፍል,ሴክሽን%0Aዮናስ ዳዊት በቀለ,ወንድ,13,NCA-1001,0911223344,7ኛ ክፍል,B" 
                        download="smartdebter_7columns_students.csv" class="text-emerald-700 font-bold hover:underline flex items-center space-x-1">
-                        <i class="fas fa-download"></i><span>Sample_7Columns.csv</span>
+                        <i class="fas fa-download"></i><span>Sample.csv</span>
                     </a>
                 </div>
-
-                <div class="border-2 border-dashed border-emerald-300 bg-emerald-50/40 rounded-2xl p-6 text-center hover:bg-emerald-50/70 transition cursor-pointer" onclick="document.getElementById('excel-file-input').click()">
+                <div class="border-2 border-dashed border-emerald-300 bg-emerald-50/40 rounded-2xl p-6 text-center cursor-pointer" onclick="document.getElementById('excel-file-input').click()">
                     <i class="fas fa-cloud-upload-alt text-3xl text-emerald-600 mb-2"></i>
-                    <p class="text-xs font-bold text-slate-800">የ Excel ወይም CSV ፋይል ይምረጡ</p>
+                    <p class="text-xs font-bold text-slate-800">የ Excel ፋይል ይምረጡ</p>
                     <input type="file" id="excel-file-input" class="hidden" accept=".xlsx, .xls, .csv" onchange="fileSelected(this)">
                 </div>
-                <p id="file-name-display" class="text-xs text-emerald-700 font-bold text-center hidden"></p>
             </div>
-            <div class="flex items-center justify-end space-x-2 pt-2 border-t">
-                <button onclick="closeModal('excel-modal')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 bg-slate-100">ይቅር</button>
-                <button onclick="simulateUpload()" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow">ጫን</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 4. TEACHER ASSIGN MODAL -->
-    <div id="teacher-assign-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border">
-            <div class="flex items-center justify-between pb-3 border-b">
-                <h3 class="font-bold text-sm text-slate-900">አዲስ መምህር በክፍል መድብ</h3>
-                <button onclick="closeModal('teacher-assign-modal')" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
-            </div>
-            <form action="#" onsubmit="event.preventDefault(); addTeacher();" class="my-4 space-y-3">
-                <input type="text" id="assign-teacher-name" placeholder="የመምህሩ ሙሉ ስም" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs">
-                <input type="text" id="assign-teacher-class" placeholder="የተመደበበት ክፍል (ምሳሌ፡ 7ኛ ክፍል - B)" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-purple-700">
-                <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 shadow">ሊንክ አመንጭ</button>
-            </form>
         </div>
     </div>
 
@@ -641,6 +725,20 @@
     <script>
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        // OPEN REPLY MODAL FOR PARENT INQUIRIES
+        function openReplyModal(phone, title) {
+            document.getElementById('reply-parent-phone').value = phone;
+            document.getElementById('reply-original-title').value = title;
+            document.getElementById('reply-phone-display').innerText = phone;
+            openModal('reply-parent-modal');
+        }
+
+        // INSERT TIMETABLE TEMPLATE HELPER
+        function insertTimetableTemplate() {
+            const template = `📅 የፈተና ሳምንት መርሃግብር፡\n----------------------------\nቀን | ሰዓት | የፈተና አይነት\n----------------------------\nሰኞ | 2:30 - 4:30 | እንግሊዝኛ\nማክሰኞ | 2:30 - 4:30 | ሂሳብ\nረቡዕ | 2:30 - 4:30 | ሳይንስ\nሐሙስ | 2:30 - 4:30 | አማርኛ\nአርብ | 2:30 - 4:30 | ማህበራዊ ሳይንስ\n\n💡 ማሳሰቢያ፡ ተማሪዎች በሰዓቱ እንዲገኙ ይደረግ።`;
+            document.getElementById('leader-msg-body').value = template;
+        }
 
         function openEditStudentModal(id, fullname, gender, age, cls, code, phone) {
             document.getElementById('edit-student-id').value = id;
@@ -687,38 +785,16 @@
             alert(`🎉 የ ${leaderName} የዲቪዥን ሊንክ ተገልብጧል!`);
         }
 
-        function fileSelected(input) {
-            if (input.files && input.files[0]) {
-                const display = document.getElementById('file-name-display');
-                display.classList.remove('hidden');
-                display.innerText = 'የተመረጠው ፋይል: ' + input.files[0].name;
+        function resetLeader(divCode) {
+            const input = document.getElementById('leader-name-' + divCode);
+            if (confirm('እርግጠኛ ነዎት ይህ ተጠሪ ከስራ ስለለቀቀ መለያው እንዲሰረዝ ይፈልጋሉ?')) {
+                input.value = '';
+                alert('የተጠሪው መለያ ተሰርዟል!');
             }
         }
 
-        function simulateUpload() {
-            alert('🎉 ተማሪዎች በ Excel ተጭነዋል!');
-            closeModal('excel-modal');
-        }
-
-        function addTeacher() {
-            const name = document.getElementById('assign-teacher-name').value;
-            const cls = document.getElementById('assign-teacher-class').value;
-            const card = document.createElement('div');
-            card.className = 'p-4 bg-slate-50 rounded-xl border flex flex-col justify-between space-y-3';
-            const link = `https://smart-debter-ethiopia.vercel.app/teacher/entry?class=${encodeURIComponent(cls)}&name=${encodeURIComponent(name)}`;
-            card.innerHTML = `
-                <div>
-                    <span class="text-xs font-bold text-slate-900">${name}</span>
-                    <span class="text-[10px] font-bold bg-purple-100 text-purple-700 px-2 py-0.5 rounded ml-1">${cls}</span>
-                </div>
-                <div class="flex items-center space-x-1.5">
-                    <input type="text" readonly value="${link}" class="text-[10px] bg-white border p-1 rounded flex-1 text-slate-600 select-all font-mono">
-                    <button onclick="navigator.clipboard.writeText('${link}'); alert('ሊንክ ተገልብጧል!');" class="text-xs bg-emerald-600 text-white font-bold p-1 rounded"><i class="fas fa-copy"></i></button>
-                </div>
-            `;
-            document.getElementById('teachers-container').prepend(card);
-            closeModal('teacher-assign-modal');
-            alert('መምህሩ ተመድቧል!');
+        function fileSelected(input) {
+            alert('ፋይሉ ተመርጧል!');
         }
 
         if ('serviceWorker' in navigator) {
