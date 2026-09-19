@@ -23,6 +23,18 @@ if (!function_exists('ensureCommunicationColumnsExist')) {
             if (!Schema::hasColumn('communications', 'student_id')) {
                 DB::statement("ALTER TABLE communications ADD COLUMN student_id BIGINT NULL");
             }
+
+            // የመምህራን ቋሚ ምደባ ሰንጠረዥ
+            if (!Schema::hasTable('teacher_assignments')) {
+                Schema::create('teacher_assignments', function (Blueprint $table) {
+                    $table->id();
+                    $table->string('teacher_name');
+                    $table->string('classroom_id');
+                    $table->string('division')->default('all');
+                    $table->string('campus')->default('all');
+                    $table->timestamps();
+                });
+            }
         } catch (\Exception $e) {}
     }
 }
@@ -38,7 +50,7 @@ Route::get('/login', function () {
     return view('login');
 });
 
-// 3. Parent Login & Verification (ለሙሉ ክፍል እና ለዚህ ልጅ ብቻ የተላኩትን ብቻ ያሳያል)
+// 3. Parent Login & Verification
 Route::match(['get', 'post'], '/parent/verify', function (Request $request) {
     ensureCommunicationColumnsExist();
 
@@ -81,10 +93,12 @@ Route::match(['get', 'post'], '/parent/verify', function (Request $request) {
     ];
 
     try {
-        // ለመላው ክፍል የተላከውን ወይም ለዚህ ልጅ ብቻ በተናጠል የተላከውን መልእክት ያወጣል
+        // ከመምህር ወይም ከዲቪዥን ተጠሪ (የፈተና ፕሮግራም ጨምሮ) የተላኩ መልእክቶች
         $teacherNotes = DB::table('communications')
-            ->where('classroom_id', $childClass)
-            ->where('sender_type', 'teacher')
+            ->where(function($q) use ($childClass, $studentId) {
+                $q->where('classroom_id', $childClass)
+                  ->orWhere('classroom_id', 'all');
+            })
             ->where(function($q) use ($studentId) {
                 $q->whereNull('student_id')
                   ->orWhere('student_id', 0)
@@ -119,7 +133,6 @@ Route::get('/teacher/entry', function (Request $request) {
     $teacherName = $request->query('name', 'የክፍል ኃላፊ መምህር');
     $activeAds = DB::table('advertisements')->where('is_active', true)->get();
 
-    // የተመዘገቡ ተማሪዎች ዝርዝር
     $students = DB::table('students')
         ->leftJoin('parent_student', 'students.id', '=', 'parent_student.student_id')
         ->leftJoin('users', 'users.id', '=', 'parent_student.parent_id')
@@ -154,12 +167,13 @@ Route::get('/dashboard/teacher', function () {
     return redirect('/teacher/entry');
 });
 
-// 5. School Admin Dashboard
+// 5. School Admin / Unit Leader Dashboard (ቋሚ መምህራን እና የወላጅ ጥያቄዎች ያሉት)
 Route::get('/dashboard/admin', function (Request $request) {
     ensureCommunicationColumnsExist();
 
     $schoolCode = $request->query('school', 'NCA-001');
     $division = $request->query('division', 'all');
+    $campus = $request->query('campus', 'all');
     $school = DB::table('schools')->where('code', $schoolCode)->first();
 
     if ($school && ($school->status === 'suspended' || $school->status === 'inactive')) {
@@ -173,6 +187,8 @@ Route::get('/dashboard/admin', function (Request $request) {
     }
 
     $activeAds = DB::table('advertisements')->where('is_active', true)->get();
+    
+    // ተማሪዎች
     $students = DB::table('students')
         ->leftJoin('parent_student', 'students.id', '=', 'parent_student.student_id')
         ->leftJoin('users', 'users.id', '=', 'parent_student.parent_id')
@@ -180,6 +196,14 @@ Route::get('/dashboard/admin', function (Request $request) {
         ->orderBy('students.id', 'desc')
         ->get();
 
+    // ቋሚ የተመዘገቡ መምህራን ከ MySQL
+    try {
+        $assignedTeachers = DB::table('teacher_assignments')->orderBy('id', 'desc')->get();
+    } catch (\Exception $e) {
+        $assignedTeachers = collect();
+    }
+
+    // ከወላጆች ለተጠሪው የተላኩ ጥያቄዎች
     try {
         $parentInquiries = DB::table('communications')
             ->where('sender_type', 'parent')
@@ -190,10 +214,84 @@ Route::get('/dashboard/admin', function (Request $request) {
         $parentInquiries = collect();
     }
 
-    return view('dashboards.admin', compact('school', 'activeAds', 'students', 'parentInquiries'));
+    return view('dashboards.admin', compact('school', 'activeAds', 'students', 'parentInquiries', 'assignedTeachers'));
 });
 
-// ==================== [መምህር የቤት ስራ ሲልክ ለተመረጠ ተማሪ መመዝገቢያ] ====================
+// ==================== [አዲስ፡ ቋሚ የመምህራን ምደባ በዳታቤዝ] ====================
+
+Route::post('/teachers/store', function (Request $request) {
+    ensureCommunicationColumnsExist();
+
+    DB::table('teacher_assignments')->insert([
+        'teacher_name' => $request->input('teacher_name'),
+        'classroom_id' => $request->input('classroom_id'),
+        'division' => $request->input('division', 'all'),
+        'campus' => $request->input('campus', 'all'),
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    return back()->with('success', 'መምህሩ በቋሚነት ተመዝግቧል! ሊንኩ ሁልጊዜ እዚህ ዝርዝር ውስጥ ይገኛል።');
+});
+
+Route::post('/teachers/delete', function (Request $request) {
+    DB::table('teacher_assignments')->where('id', $request->input('id'))->delete();
+    return back()->with('success', 'መምህሩ ከዝርዝር ተሰርዟል!');
+});
+
+// ==================== [አዲስ፡ ተጠሪው ለወላጆች ፈተና/ማስታወቂያ መላኪያ እና ለጥያቄያቸው መልስ መስጫ] ====================
+
+// ተጠሪው የፈተና ፕሮግራም ወይም ማስታወቂያ ለወላጆች የሚልክበት
+Route::post('/communications/leader-send', function (Request $request) {
+    ensureCommunicationColumnsExist();
+
+    $targetType = $request->input('target_type', 'all'); // 'all' ወይም የተወሰነ ክፍል
+    $classCode = ($targetType === 'all') ? 'all' : $request->input('classroom_id');
+
+    DB::table('communications')->insert([
+        'school_id' => 1,
+        'sender_id' => 999, // ዲቪዥን ተጠሪ
+        'classroom_id' => $classCode,
+        'category' => $request->input('category', 'የፈተና ፕሮግራም'),
+        'title' => $request->input('title'),
+        'message' => $request->input('message'),
+        'due_date' => now(),
+        'sender_type' => 'leader',
+        'recipient' => 'parent',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    return back()->with('success', 'የፈተና ፕሮግራሙ/ማስታወቂያው ለወላጆች በሙሉ ተሰራጭቷል!');
+});
+
+// ተጠሪው ለወላጁ ጥያቄ ቀጥታ መልስ የሚሰጥበት (Reply to Parent)
+Route::post('/communications/reply-parent', function (Request $request) {
+    ensureCommunicationColumnsExist();
+
+    $parentPhone = $request->input('parent_phone');
+    $replyMsg = $request->input('reply_message');
+    $origTitle = $request->input('original_title');
+
+    DB::table('communications')->insert([
+        'school_id' => 1,
+        'sender_id' => 999,
+        'classroom_id' => 'all',
+        'category' => 'ከተጠሪው የተሰጠ መልስ',
+        'title' => 'የተጠሪው ምላሽ፡ ' . $origTitle,
+        'message' => $replyMsg,
+        'due_date' => now(),
+        'sender_type' => 'leader',
+        'sender_phone' => $parentPhone,
+        'recipient' => 'parent',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    return back()->with('success', 'ምላሽዎ ለወላጁ ደብተር ላይ በቀጥታ ተልኳል!');
+});
+
+// ==================== [የተለመዱት መላኪያ መንገዶች] ====================
 
 Route::post('/communications/teacher-send', function (Request $request) {
     ensureCommunicationColumnsExist();
@@ -205,7 +303,7 @@ Route::post('/communications/teacher-send', function (Request $request) {
         'school_id' => 1,
         'sender_id' => 1,
         'classroom_id' => $request->input('class_code'),
-        'student_id' => $studentId, // ለተወሰነ ተማሪ ብቻ ከሆነ IDው ይቀመጣል
+        'student_id' => $studentId,
         'category' => $request->input('category'),
         'title' => $request->input('title'),
         'message' => $request->input('message'),
@@ -216,8 +314,7 @@ Route::post('/communications/teacher-send', function (Request $request) {
         'updated_at' => now(),
     ]);
 
-    $msg = ($studentId) ? "መልእክቱ ለተመረጠው ተማሪ ወላጅ ብቻ ተልኳል!" : "የቤት ስራው ለክፍሉ ወላጆች በሙሉ ደርሷል!";
-    return back()->with('success', $msg);
+    return back()->with('success', 'መልእክቱ ለወላጆች ተልኳል!');
 });
 
 Route::post('/communications/parent-send', function (Request $request) {
@@ -246,8 +343,7 @@ Route::post('/communications/parent-send', function (Request $request) {
     return back()->with('success', "ማስታወሻዎ ተልኳል!");
 });
 
-// ==================== [የተማሪዎች ምዝገባ] ====================
-
+// Students CRUD
 Route::post('/students/store', function (Request $request) {
     ensureCommunicationColumnsExist();
 
