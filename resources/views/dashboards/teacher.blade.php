@@ -138,6 +138,94 @@
             </div>
         </div>
 
+        <!-- ================= POST TO DEBTER FORM ================= -->
+        <div class="bg-white rounded-2xl border shadow-sm p-5 sm:p-6">
+            <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center">
+                <i class="fas fa-edit text-emerald-600 mr-2"></i>
+                <span>ወደ ደብተር አዲስ መልእክት ይጻፉ</span> ({{ $cCode }})
+            </h3>
+
+            <form action="/communications/teacher-send" method="POST" class="space-y-4">
+                @csrf
+                <input type="hidden" name="class_code" value="{{ $cCode }}">
+                <input type="hidden" name="recipient_type" id="recipient-type-hidden" value="all">
+
+                <!-- 1. ግልጽ የተጠቃሚ መምረጫ አዝራሮች (TWO CLEAR BUTTONS) -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-2">ተቀባይ ይምረጡ (Select Target)</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="setRecipientMode('all')" id="btn-mode-all" 
+                                class="p-3 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-emerald-950 font-bold text-xs transition flex items-center justify-center space-x-2 shadow-xs">
+                            <i class="fas fa-users text-sm text-emerald-600"></i>
+                            <span>ለሙሉ ክፍል (ለሁሉም)</span>
+                        </button>
+
+                        <button type="button" onclick="setRecipientMode('individual')" id="btn-mode-individual" 
+                                class="p-3 rounded-xl border border-slate-300 bg-white text-slate-600 font-bold text-xs transition flex items-center justify-center space-x-2">
+                            <i class="fas fa-user text-sm"></i>
+                            <span>ለአንድ ተማሪ ብቻ</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. የተማሪዎች ስም ዝርዝር ሳጥን (ለአንድ ተማሪ ሲመረጥ ብቻ ይወጣል) -->
+                <div id="student-picker-container" class="hidden p-4 bg-emerald-50/80 border-2 border-emerald-300 rounded-2xl space-y-2">
+                    <label class="block text-xs font-bold text-emerald-950 flex items-center">
+                        <i class="fas fa-user-check text-emerald-600 mr-1.5 text-sm"></i>
+                        መልእክቱ የሚላክለትን ተማሪ ይምረጡ (Select Student):
+                    </label>
+
+                    @if(count($students ?? []) > 0)
+                        <select name="student_id" id="student-select" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-900 shadow-xs">
+                            <option value="">-- ተማሪ ይምረጡ --</option>
+                            @foreach($students ?? [] as $st)
+                                <option value="{{ $st->id }}">
+                                    👤 {{ $st->first_name }} {{ $st->last_name }} (ID: {{ $st->student_id_number }})
+                                </option>
+                            @endforeach
+                        </select>
+                        <p class="text-[10px] text-emerald-800 font-medium">
+                            💡 ማሳሰቢያ፡ ይህ መልእክት የሚደርሰው <b>ለተመረጠው ተማሪ ወላጅ ብቻ</b> ነው። ሌሎች ወላጆች አያዩትም።
+                        </p>
+                    @else
+                        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900">
+                            ⚠️ በዚህ ክፍል ({{ $cCode }}) ውስጥ እስካሁን የተመዘገበ ተማሪ የለም። እባክዎ አድሚኑ ተማሪዎችን እንዲመዘግብ ያሳውቁ።
+                        </div>
+                    @endif
+                </div>
+
+                <!-- የመልእክቱ አይነት -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">የመልእክቱ አይነት</label>
+                    <select name="category" class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-slate-800">
+                        <option value="የቤት ስራ">📝 የቤት ስራ (Homework)</option>
+                        <option value="ባህሪና ምስጋና">🌟 የስነ-ምግባር ማስታወሻ / ምስጋና</option>
+                        <option value="አስቸኳይ ማስታወቂያ">⚠️ አስቸኳይ ማስታወቂያ</option>
+                        <option value="የቀን መገኘት">📅 የቀን መገኘት (መቅረት/ማርፈድ)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">የመልእክቱ ርዕስ</label>
+                    <input type="text" name="title" placeholder="ምሳሌ፡ የሂሳብ ምዕራፍ 3 መልመጃ ወይም የምስጋና ማስታወሻ" required
+                           class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-semibold">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">የደብተሩ ዝርዝር መልእክት</label>
+                    <textarea name="message" rows="3" placeholder="ለወላጅ የሚተላለፈውን መልእክት እዚህ ይጻፉ..." required
+                              class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs"></textarea>
+                </div>
+
+                <div class="pt-2 flex justify-end">
+                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md transition flex items-center space-x-2">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>ወደ ደብተር ላክ</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
         <!-- CLASS STUDENT ROSTER -->
         <div class="bg-white rounded-2xl border shadow-sm p-5 sm:p-6">
             <div class="flex items-center justify-between mb-3 pb-2 border-b">
@@ -186,79 +274,6 @@
             </div>
         </div>
 
-        <!-- ================= POST TO DEBTER FORM (ከነ ተማሪ መምረጫው) ================= -->
-        <div class="bg-white rounded-2xl border shadow-sm p-5 sm:p-6">
-            <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center">
-                <i class="fas fa-edit text-emerald-600 mr-2"></i>
-                <span>ወደ ደብተር አዲስ መልእክት ይጻፉ</span> ({{ $cCode }})
-            </h3>
-
-            <form action="/communications/teacher-send" method="POST" class="space-y-4">
-                @csrf
-                <input type="hidden" name="class_code" value="{{ $cCode }}">
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <!-- ተቀባይ መምረጫ -->
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">ተቀባይ</label>
-                        <select name="recipient_type" id="recipient-type" onchange="toggleStudentPicker(this.value)" class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-slate-800">
-                            <option value="all">ለሙሉ ክፍል ({{ $cCode }} ተማሪዎች በሙሉ)</option>
-                            <option value="individual">ለተወሰነ ተማሪ ብቻ (Individual Student)</option>
-                        </select>
-                    </div>
-
-                    <!-- የመልእክቱ አይነት -->
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">የመልእክቱ አይነት</label>
-                        <select name="category" class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold">
-                            <option value="የቤት ስራ">📝 የቤት ስራ (Homework)</option>
-                            <option value="ባህሪና ምስጋና">🌟 የስነ-ምግባር ማስታወሻ / ምስጋና</option>
-                            <option value="አስቸኳይ ማስታወቂያ">⚠️ አስቸኳይ ማስታወቂያ</option>
-                            <option value="የቀን መገኘት">📅 የቀን መገኘት (መቅረት/ማርፈድ)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- ================= [አዲሱ ክፍል] የተማሪዎች ስም ዝርዝር መምረጫ (ለተወሰነ ተማሪ ሲባል ብቻ ይወጣል) ================= -->
-                <div id="student-picker-container" class="hidden p-3.5 bg-emerald-50/70 border border-emerald-200 rounded-xl space-y-1">
-                    <label class="block text-xs font-bold text-emerald-950">
-                        <i class="fas fa-user-check text-emerald-600 mr-1"></i>
-                        መልእክቱ የሚላክለትን ተማሪ ይምረጡ (Select Student):
-                    </label>
-                    <select name="student_id" id="student-select" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-900">
-                        <option value="">-- ተማሪ ይምረጡ --</option>
-                        @foreach($students ?? [] as $st)
-                            <option value="{{ $st->id }}">
-                                👤 {{ $st->first_name }} {{ $st->last_name }} (የተማሪ ID: {{ $st->student_id_number }})
-                            </option>
-                        @endforeach
-                    </select>
-                    <p class="text-[10px] text-emerald-800 mt-1">
-                        💡 ማሳሰቢያ፡ መልእክቱ የሚደርሰው <b>ለዚህ ተማሪ ወላጅ ብቻ</b> ነው፤ ሌሎች ወላጆች አያዩትም።
-                    </p>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">የመልእክቱ ርዕስ</label>
-                    <input type="text" name="title" placeholder="ምሳሌ፡ የሂሳብ ምዕራፍ 3 መልመጃ ወይም የምስጋና ማስታወሻ" required
-                           class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-semibold">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">የደብተሩ ዝርዝር መልእክት</label>
-                    <textarea name="message" rows="3" placeholder="ለወላጅ የሚተላለፈውን መልእክት እዚህ ይጻፉ..." required
-                              class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs"></textarea>
-                </div>
-
-                <div class="pt-2 flex justify-end">
-                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md transition flex items-center space-x-2">
-                        <i class="fas fa-paper-plane"></i>
-                        <span>ወደ ደብተር ላክ</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-
         <!-- SENT NOTES HISTORY -->
         <div class="bg-white rounded-2xl border shadow-sm overflow-hidden">
             <div class="p-4 border-b bg-slate-50 flex items-center justify-between">
@@ -274,7 +289,9 @@
                                 <span class="bg-purple-100 text-purple-700 text-[10px] font-bold px-2 py-0.5 rounded">{{ $note->category }}</span>
                                 <h4 class="font-bold text-slate-900">{{ $note->title }}</h4>
                                 @if($note->student_id)
-                                    <span class="text-[9px] bg-blue-100 text-blue-800 font-bold px-1.5 py-0.5 rounded">የግል መልእክት</span>
+                                    <span class="text-[9px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded">👤 የግል መልእክት</span>
+                                @else
+                                    <span class="text-[9px] bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded">👥 ለሙሉ ክፍል</span>
                                 @endif
                             </div>
                             <p class="text-xs text-slate-600 mt-1 leading-relaxed">{{ $note->message }}</p>
@@ -300,18 +317,29 @@
 
     <!-- Interactive Scripts -->
     <script>
-        // Toggle Student Picker Dropdown
-        function toggleStudentPicker(val) {
+        // TOGGLE RECIPIENT MODE WITH BIG BUTTONS
+        function setRecipientMode(mode) {
+            const hiddenInput = document.getElementById('recipient-type-hidden');
+            const btnAll = document.getElementById('btn-mode-all');
+            const btnInd = document.getElementById('btn-mode-individual');
             const container = document.getElementById('student-picker-container');
             const select = document.getElementById('student-select');
 
-            if (val === 'individual') {
+            hiddenInput.value = mode;
+
+            if (mode === 'individual') {
+                btnInd.className = 'p-3 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-emerald-950 font-bold text-xs transition flex items-center justify-center space-x-2 shadow-xs';
+                btnAll.className = 'p-3 rounded-xl border border-slate-300 bg-white text-slate-600 font-bold text-xs transition flex items-center justify-center space-x-2';
                 container.classList.remove('hidden');
-                select.required = true;
+                if (select) select.required = true;
             } else {
+                btnAll.className = 'p-3 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-emerald-950 font-bold text-xs transition flex items-center justify-center space-x-2 shadow-xs';
+                btnInd.className = 'p-3 rounded-xl border border-slate-300 bg-white text-slate-600 font-bold text-xs transition flex items-center justify-center space-x-2';
                 container.classList.add('hidden');
-                select.required = false;
-                select.value = '';
+                if (select) {
+                    select.required = false;
+                    select.value = '';
+                }
             }
         }
 
