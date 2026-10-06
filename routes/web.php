@@ -33,6 +33,13 @@ if (!function_exists('ensureCommunicationColumnsExist')) {
                     $table->timestamps();
                 });
             }
+
+            // 1. የሙከራ መልእክቶችን በሙሉ ከዳታቤዝ ማጽዳት (Clean Test Messages)
+            DB::table('communications')->where('message', 'Test')->orWhere('message', 'ሞከር')->delete();
+
+            // 2. ከ 3 ወራት (90 ቀናት) በላይ የቆዩ አሮጌ መልእክቶችን በራስ-ሰር ማጽዳት (Auto-Purge after 3 Months)
+            DB::table('communications')->where('created_at', '<', now()->subDays(90))->delete();
+
         } catch (\Exception $e) {}
     }
 }
@@ -122,7 +129,7 @@ Route::get('/dashboard/parent', function () {
     return redirect('/login');
 });
 
-// 4. Teacher Dashboard (የክፍሉን ተማሪዎች በሙሉ የሚያሳይ)
+// 4. Teacher Dashboard
 Route::get('/teacher/entry', function (Request $request) {
     ensureCommunicationColumnsExist();
 
@@ -130,7 +137,6 @@ Route::get('/teacher/entry', function (Request $request) {
     $teacherName = $request->query('name', 'የክፍል ኃላፊ መምህር');
     $activeAds = DB::table('advertisements')->where('is_active', true)->get();
 
-    // የተማሪዎችን ስም በክፍላቸው መሰረት በትክክል ማጣራት
     $students = DB::table('students')
         ->leftJoin('parent_student', 'students.id', '=', 'parent_student.student_id')
         ->leftJoin('users', 'users.id', '=', 'parent_student.parent_id')
@@ -170,7 +176,7 @@ Route::get('/dashboard/teacher', function () {
     return redirect('/teacher/entry');
 });
 
-// 5. School Admin Dashboard
+// 5. School Admin / Unit Leader Dashboard (የዛሬ መልእክቶች ብቻ በመነሻ ሳጥን ይወጣሉ)
 Route::get('/dashboard/admin', function (Request $request) {
     ensureCommunicationColumnsExist();
 
@@ -204,6 +210,7 @@ Route::get('/dashboard/admin', function (Request $request) {
         $assignedTeachers = collect();
     }
 
+    // ከወላጅ የተላኩ መልእክቶች
     try {
         $parentInquiries = DB::table('communications')
             ->where('sender_type', 'parent')
@@ -217,12 +224,18 @@ Route::get('/dashboard/admin', function (Request $request) {
     return view('dashboards.admin', compact('school', 'activeAds', 'students', 'parentInquiries', 'assignedTeachers'));
 });
 
-// ==================== [እውነተኛው የ EXCEL / CSV በጅምላ መጫኛ መንገድ] ====================
+// Dismiss / Delete specific message
+Route::post('/communications/dismiss', function (Request $request) {
+    DB::table('communications')->where('id', $request->input('id'))->delete();
+    return back()->with('success', 'መልእክቱ ተሰርዟል!');
+});
+
+// Bulk Upload
 Route::post('/students/bulk-upload', function (Request $request) {
     ensureCommunicationColumnsExist();
 
     if (!$request->hasFile('csv_file')) {
-        return back()->with('error', 'እባክዎ መጀመሪያ የ CSV ፋይል ይምረጡ!');
+        return back()->with('error', 'እባክዎ የ CSV ፋይል ይምረጡ!');
     }
 
     $file = $request->file('csv_file');
@@ -237,10 +250,8 @@ Route::post('/students/bulk-upload', function (Request $request) {
 
         while (($row = fgetcsv($handle, 1000, ",")) !== FALSE) {
             $rowNum++;
-            // የመጀመሪያውን የርዕስ መስመር (Header) መዝለል
             if ($rowNum == 1) continue;
 
-            // 7ቱ ዓምዶች: [0] ሙሉ ስም, [1] ጾታ, [2] እድሜ, [3] Student ID, [4] የወላጅ ስልክ, [5] ክፍል, [6] ሴክሽን
             $fullName = trim($row[0] ?? '');
             if (empty($fullName)) continue;
 
@@ -255,13 +266,11 @@ Route::post('/students/bulk-upload', function (Request $request) {
             $grade = trim($row[5] ?? '');
             $section = trim($row[6] ?? '');
 
-            // የክፍል ስያሜ (ምሳሌ፡ 7ኛ ክፍል - B ወይም Nurary)
             $className = $section ? ($grade . ' - ' . $section) : $grade;
             if (empty($className)) $className = 'ክፍል 7-B';
 
             if (empty($parentPhone) || empty($studentIdNumber)) continue;
 
-            // 1. ወላጅ
             $parent = DB::table('users')->where('phone', $parentPhone)->first();
             if (!$parent) {
                 $parentId = DB::table('users')->insertGetId([
@@ -276,7 +285,6 @@ Route::post('/students/bulk-upload', function (Request $request) {
                 $parentId = $parent->id;
             }
 
-            // 2. ተማሪ
             $studentId = DB::table('students')->insertGetId([
                 'school_id' => 1,
                 'classroom_id' => $className,
@@ -289,7 +297,6 @@ Route::post('/students/bulk-upload', function (Request $request) {
                 'updated_at' => now(),
             ]);
 
-            // 3. ማገናኛ
             DB::table('parent_student')->insert([
                 'parent_id' => $parentId,
                 'student_id' => $studentId,
@@ -302,10 +309,9 @@ Route::post('/students/bulk-upload', function (Request $request) {
         }
 
         fclose($handle);
-
-        return back()->with('success', "🎉 ስኬት! {$successCount} ተማሪዎች ከ Excel ፋይሉ ተነበው ወደ Clever Cloud MySQL ዳታቤዝ ገብተዋል! አሁን ለመምህሩም ወጥተዋል፤ ወላጆችም መግባት ይችላሉ።");
+        return back()->with('success', "🎉 ስኬት! {$successCount} ተማሪዎች ከ Excel ፋይሉ ተነበው ወደ Clever Cloud MySQL ዳታቤዝ ገብተዋል!");
     } catch (\Exception $e) {
-        return back()->with('error', 'ፋይሉን በማንበብ ወቅት ስህተት ተፈጥሯል፡ ' . $e->getMessage());
+        return back()->with('error', 'ስህተት፡ ' . $e->getMessage());
     }
 });
 
@@ -505,7 +511,7 @@ Route::post('/communications/teacher-send', function (Request $request) {
         'updated_at' => now(),
     ]);
 
-    return back()->with('success', 'የቤት ስራው ለወላጆች ተልኳል!');
+    return back()->with('success', 'መልእክቱ ተልኳል!');
 });
 
 Route::post('/communications/parent-send', function (Request $request) {
