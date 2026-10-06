@@ -141,24 +141,7 @@
             </div>
         </div>
 
-        <!-- ONBOARDING FOR GENERAL PRINCIPAL -->
-        <div class="bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 rounded-2xl p-5 sm:p-6 text-white shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div class="space-y-1">
-                <div class="flex items-center space-x-2">
-                    <span class="text-xl">👑</span>
-                    <h3 class="text-base font-bold">የዋና ርዕሰ-መምህር ማዕከል • {{ $currentCampusName }}</h3>
-                </div>
-                <p class="text-xs text-purple-200 leading-relaxed max-w-2xl">
-                    የትምህርት ቤቱ የበላይ ኃላፊ ማዕከል፤ ለ 4,000ቱም ወላጆች አጠቃላይ ማስታወቂያ ያሰራጩ፤ የዲቪዥን ተጠሪዎችንም በስማቸው ይመድቡ።
-                </p>
-            </div>
-            <button onclick="openModal('excel-modal')" class="whitespace-nowrap text-xs font-bold bg-amber-400 hover:bg-amber-300 text-slate-950 px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-1.5 shrink-0">
-                <i class="fas fa-file-excel"></i>
-                <span>የተማሪዎች Excel ጫን (Bulk)</span>
-            </button>
-        </div>
-
-        <!-- SCHOOL-WIDE BROADCAST DISPATCHER -->
+        <!-- PRINCIPAL BROADCAST DISPATCHER -->
         <div class="bg-white rounded-2xl border shadow-sm p-6 border-t-4 border-t-purple-600">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4 pb-3 border-b">
                 <div>
@@ -183,7 +166,7 @@
                         <label class="block text-xs font-bold text-slate-700 mb-1">የማስታወቂያው አይነት (Category)</label>
                         <select name="category" class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-purple-700">
                             <option value="የት/ቤት ክፍያ ማሳሰቢያ">💳 የት/ቤት ክፍያ ማሳሰቢያ (Fee Reminder)</option>
-                            <option value="የት/ቤት የበዓል/ዕረፍት ማስታወቂያ">🌴 የት/ቤት የበዓል / የዕረፍት ማስታወቂያ</option>
+                            <option value="የት/ቤት የበዓል/ዕረፍት ማስታወቂያ">🌴 የት/ቤት የበዓል / የዕረፍት ማስታወቂያ (Holiday Notice)</option>
                             <option value="የወላጆች ጠቅላላ ጉባዔ ስብሰባ">👥 የወላጆች ጠቅላላ ጉባዔ ስብሰባ (General Meeting)</option>
                             <option value="አስቸኳይ ይፋዊ መግለጫ">⚠️ አስቸኳይ ይፋዊ መግለጫ (Urgent Announcement)</option>
                         </select>
@@ -322,7 +305,7 @@
             </button>
         </div>
 
-        <!-- UNIT LEADER INBOX WITH REPLY -->
+        <!-- UNIT LEADER INBOX -->
         <div class="bg-white rounded-2xl border shadow-sm p-5 sm:p-6 border-l-4 border-l-emerald-600">
             <div class="flex items-center justify-between mb-3 pb-2 border-b">
                 <div>
@@ -330,7 +313,7 @@
                         <i class="fas fa-inbox text-emerald-600 mr-2"></i>
                         የወላጆች ጥያቄዎች እና ፈቃዶች መቀበያ ሳጥን (Unit Leader Inbox)
                     </h3>
-                    <p class="text-xs text-slate-500 mt-0.5">ከወላጆች በቀጥታ ለዲቪዥን ተጠሪው የተላኩ ማስታወሻዎች እና ፈቃዶች እዚህ ይወጣሉ፡</p>
+                    <p class="text-xs text-slate-500 mt-0.5">ከወላጆች በቀጥታ ለዲቪዥን ተጠሪው የተላኩ ማስታወሻዎች እዚህ ይወጣሉ፡</p>
                 </div>
                 <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full">
                     {{ count($parentInquiries ?? []) }} መልእክቶች
@@ -618,50 +601,47 @@
 
     <!-- ==================== MODALS ==================== -->
 
-    <!-- 1. REAL BULK EXCEL/CSV IMPORT MODAL (ቀጥታ ወደ MySQL ዳታቤዝ የሚጭን እውነተኛ ቅጽ) -->
+    <!-- 1. REAL BULK CSV UPLOAD MODAL (እውነተኛውን የ Excel ፋይል የሚሰቅል) -->
     <div id="excel-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3 border-b">
                 <h3 class="font-bold text-sm text-slate-900 flex items-center">
                     <i class="fas fa-file-excel text-emerald-600 text-base mr-2"></i>
-                    የተማሪዎች መረጃ ከ Excel/CSV በጅምላ መጫኛ (MySQL Bulk Import)
+                    የተማሪዎች መረጃ ከ Excel/CSV በጅምላ መጫኛ
                 </h3>
-                <button onclick="closeModal('excel-modal')" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+                <button onclick="closeModal('excel-modal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
-            <!-- REAL POST FORM ENCTYPE MULTIPART -->
-            <form action="/students/bulk-import" method="POST" enctype="multipart/form-data" class="my-4 space-y-4">
+            <!-- REAL FORM UPLOADING FILE TO DATABASE -->
+            <form action="/students/bulk-upload" method="POST" enctype="multipart/form-data" class="my-4 space-y-4">
                 @csrf
                 <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 leading-relaxed">
                     <p class="font-bold mb-1">የትምህርት ቤቶች የ Excel አዘገጃጀት ቅጽ (7ቱ ዓምዶች)፡</p>
                     <p><b>[የተማሪው ሙሉ ስም] , [ጾታ] , [እድሜ] , [የተማሪ ID] , [የወላጅ ስልክ] , [ክፍል] , [ሴክሽን]</b></p>
                 </div>
 
-                <!-- 7-COLUMN SAMPLE CSV DOWNLOAD -->
                 <div class="flex items-center justify-between text-xs p-3 bg-slate-50 rounded-xl border">
                     <span class="text-slate-600 font-medium">የ 7ቱ ዓምዶች የናሙና Excel ቅጽ ያውርዱ፡</span>
-                    <a href="data:text/csv;charset=utf-8,የተማሪው ሙሉ ስም,ጾታ,እድሜ,የተማሪ ID,የወላጅ ስልክ,ክፍል,ሴክሽን%0Aዮናስ ዳዊት በቀለ,ወንድ,13,NCA-1001,0911223344,7ኛ ክፍል,B%0Aሳራ ዳዊት በቀለ,ሴት,8,NCA-1002,0911223344,3ኛ ክፍል,A" 
+                    <a href="data:text/csv;charset=utf-8,የተማሪው ሙሉ ስም,ጾታ,እድሜ,የተማሪ ID,የወላጅ ስልክ,ክፍል,ሴክሽን%0Aዮናስ ዳዊት በቀለ,ወንድ,13,NCA-1001,0911223344,ክፍል 7,B%0ABarok Melaku Mebrate,ወንድ,4,NCA-2001,0913064239,Nurary,A" 
                        download="smartdebter_7columns_students.csv" class="text-emerald-700 font-bold hover:underline flex items-center space-x-1">
                         <i class="fas fa-download"></i><span>Sample_7Columns.csv</span>
                     </a>
                 </div>
 
-                <!-- CHOOSE CSV FILE -->
-                <div class="border-2 border-dashed border-emerald-300 bg-emerald-50/40 hover:bg-emerald-50/70 rounded-2xl p-6 text-center cursor-pointer transition" 
-                     onclick="document.getElementById('csv-file-input').click()">
+                <div class="border-2 border-dashed border-emerald-300 bg-emerald-50/40 rounded-2xl p-6 text-center cursor-pointer hover:bg-emerald-50 transition" onclick="document.getElementById('real-csv-file-input').click()">
                     <i class="fas fa-cloud-upload-alt text-3xl text-emerald-600 mb-2"></i>
-                    <p class="text-xs font-bold text-slate-800">የተማሪዎች CSV ወይም Excel ፋይል እዚህ ይምረጡ</p>
-                    <p class="text-[10px] text-slate-500 mt-1">ፋይሉ በ .csv ፎርማት የተቀመጠ መሆን አለበት</p>
-                    <input type="file" name="csv_file" id="csv-file-input" class="hidden" accept=".csv, .txt" required onchange="displaySelectedFileName(this)">
+                    <p class="text-xs font-bold text-slate-800">የ Excel ወይም CSV ፋይል ይምረጡ</p>
+                    <p class="text-[10px] text-slate-500 mt-1">.csv ወይም .txt ፋይል</p>
+                    <input type="file" name="csv_file" id="real-csv-file-input" class="hidden" accept=".csv, .txt" required onchange="displaySelectedFileName(this)">
                 </div>
-                
-                <p id="selected-file-display" class="text-xs text-emerald-700 font-bold text-center hidden"></p>
+
+                <p id="file-name-display-box" class="text-xs text-emerald-700 font-bold text-center hidden"></p>
 
                 <div class="flex items-center justify-end space-x-2 pt-2 border-t">
                     <button type="button" onclick="closeModal('excel-modal')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 bg-slate-100">ይቅር</button>
-                    <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow flex items-center space-x-1.5">
+                    <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow flex items-center space-x-1">
                         <i class="fas fa-upload"></i>
-                        <span>ፋይሉን ወደ ዳታቤዝ ጫን (Import Now)</span>
+                        <span>ፋይሉን ዳታቤዝ ላይ ጫን (Upload Now)</span>
                     </button>
                 </div>
             </form>
@@ -678,11 +658,10 @@
                 </h3>
                 <button onclick="closeModal('student-modal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
-            
             <form action="/students/store" method="POST" class="my-4 space-y-3.5">
                 @csrf
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">1. የተማሪው ሙሉ ስም</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">1. የተማሪው ሙሉ ስም (በአንድ ሳጥን)</label>
                     <input type="text" name="full_name" placeholder="ምሳሌ፡ ዮናስ ዳዊት በቀለ" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
@@ -701,7 +680,7 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">6. የክፍል ደረጃ</label>
-                        <input type="text" name="grade_level" placeholder="ምሳሌ፡ 7ኛ ክፍል ወይም KG 2" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-purple-700">
+                        <input type="text" name="grade_level" placeholder="ምሳሌ፡ 7ኛ ክፍል ወይም Nurary" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-purple-700">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">7. ሴክሽን</label>
@@ -766,14 +745,17 @@
                 @csrf
                 <input type="hidden" name="parent_phone" id="reply-parent-phone">
                 <input type="hidden" name="original_title" id="reply-original-title">
+
                 <div>
                     <p class="text-[11px] text-slate-500 mb-1">መልእክቱ የሚደርሰው ስልክ፡ <b id="reply-phone-display" class="font-mono text-emerald-800"></b></p>
                 </div>
+
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">የተጠሪው ምላሽ (መልእክት)</label>
                     <textarea name="reply_message" rows="4" placeholder="ምሳሌ፡ የተከበሩ ወላጅ፡ የልጅዎ የ 3 ቀን ፈቃድ ተፈቅዷል፤ መልካም ቆይታ!" required
                               class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
                 </div>
+
                 <div class="flex justify-end space-x-2 pt-2 border-t">
                     <button type="button" onclick="closeModal('reply-parent-modal')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 bg-slate-100">ይቅር</button>
                     <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow">ምላሹን ላክ</button>
@@ -793,13 +775,14 @@
                 @csrf
                 <input type="hidden" name="division" value="{{ $division }}">
                 <input type="hidden" name="campus" value="{{ $campus }}">
+
                 <div>
                     <label class="block text-[11px] font-bold text-slate-600 mb-1">የመምህሩ ሙሉ ስም</label>
                     <input type="text" name="teacher_name" placeholder="ምሳሌ፡ መምህር አለሙ ተሾመ" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-semibold">
                 </div>
                 <div>
                     <label class="block text-[11px] font-bold text-slate-600 mb-1">የተመደበበት ክፍል</label>
-                    <input type="text" name="classroom_id" placeholder="ምሳሌ፡ 7ኛ ክፍል - B" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-purple-700">
+                    <input type="text" name="classroom_id" placeholder="ምሳሌ፡ 7ኛ ክፍል - B ወይም Nurary" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-purple-700">
                 </div>
                 <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 shadow">መምህሩን መዝግብ እና ሊንክ አመንጭ</button>
             </form>
@@ -816,9 +799,9 @@
 
         function displaySelectedFileName(input) {
             if (input.files && input.files[0]) {
-                const display = document.getElementById('selected-file-display');
-                display.classList.remove('hidden');
-                display.innerText = '✅ የተመረጠው ፋይል: ' + input.files[0].name;
+                const box = document.getElementById('file-name-display-box');
+                box.classList.remove('hidden');
+                box.innerText = '✅ የተመረጠው ፋይል፡ ' + input.files[0].name;
             }
         }
 
