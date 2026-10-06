@@ -305,7 +305,7 @@
             </button>
         </div>
 
-        <!-- UNIT LEADER INBOX -->
+        <!-- ================= UNIT LEADER INBOX (ከ 0 የጸዳ እና ማጥፊያ ያለው) ================= -->
         <div class="bg-white rounded-2xl border shadow-sm p-5 sm:p-6 border-l-4 border-l-emerald-600">
             <div class="flex items-center justify-between mb-3 pb-2 border-b">
                 <div>
@@ -313,7 +313,7 @@
                         <i class="fas fa-inbox text-emerald-600 mr-2"></i>
                         የወላጆች ጥያቄዎች እና ፈቃዶች መቀበያ ሳጥን (Unit Leader Inbox)
                     </h3>
-                    <p class="text-xs text-slate-500 mt-0.5">ከወላጆች በቀጥታ ለዲቪዥን ተጠሪው የተላኩ ማስታወሻዎች እዚህ ይወጣሉ፡</p>
+                    <p class="text-xs text-slate-500 mt-0.5">ከወላጆች በቀጥታ ለዲቪዥን ተጠሪው የተላኩ አዳዲስ ማስታወሻዎች፡</p>
                 </div>
                 <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full">
                     {{ count($parentInquiries ?? []) }} መልእክቶች
@@ -327,22 +327,35 @@
                             <div class="flex items-center space-x-2">
                                 <span class="text-xs font-black text-slate-900">{{ $inq->title }}</span>
                                 <span class="text-[10px] bg-emerald-100 text-emerald-800 font-mono font-bold px-2 py-0.5 rounded">{{ $inq->sender_phone }}</span>
-                                <span class="text-[10px] bg-white border border-emerald-300 text-emerald-700 px-1.5 py-0.5 rounded font-bold">{{ $inq->classroom_id }}</span>
+                                @if($inq->classroom_id && $inq->classroom_id != '0')
+                                    <span class="text-[10px] bg-white border border-emerald-300 text-emerald-700 px-1.5 py-0.5 rounded font-bold">{{ $inq->classroom_id }}</span>
+                                @endif
                             </div>
                             <p class="text-xs text-slate-700 leading-relaxed">{{ $inq->message }}</p>
                             <span class="text-[10px] text-slate-400">የተላከው፡ {{ $inq->created_at }}</span>
                         </div>
                         
-                        <button onclick="openReplyModal('{{ $inq->sender_phone }}', '{{ addslashes($inq->title) }}')" 
-                                class="whitespace-nowrap text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg shadow-xs transition flex items-center space-x-1">
-                            <i class="fas fa-reply text-xs"></i>
-                            <span>መልስ ስጥ (Reply)</span>
-                        </button>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="openReplyModal('{{ $inq->sender_phone }}', '{{ addslashes($inq->title) }}')" 
+                                    class="whitespace-nowrap text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg shadow-xs transition flex items-center space-x-1">
+                                <i class="fas fa-reply text-xs"></i>
+                                <span>መልስ ስጥ</span>
+                            </button>
+
+                            <!-- DISMISS / DELETE MESSAGE BUTTON -->
+                            <form action="/communications/dismiss" method="POST" onsubmit="return confirm('መልእክቱ ይጥፋ?');" class="inline">
+                                @csrf
+                                <input type="hidden" name="id" value="{{ $inq->id }}">
+                                <button type="submit" class="text-rose-600 hover:text-rose-700 bg-rose-50 p-1.5 rounded-lg border border-rose-200" title="አጥፋ">
+                                    <i class="fas fa-trash-alt text-xs"></i>
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 @empty
                     <div class="text-center py-6 text-slate-400">
                         <i class="fas fa-envelope-open text-2xl mb-1 text-slate-300"></i>
-                        <p class="text-xs font-medium">እስካሁን ከወላጆች ለዲቪዥን ተጠሪው የተላከ አዲስ ጥያቄ ወይም የፈቃድ ማስታወሻ የለም።</p>
+                        <p class="text-xs font-medium">እስካሁን ከወላጆች ለዲቪዥን ተጠሪው የተላከ አዲስ ጥያቄ የለም።</p>
                     </div>
                 @endforelse
             </div>
@@ -601,7 +614,7 @@
 
     <!-- ==================== MODALS ==================== -->
 
-    <!-- 1. REAL BULK CSV UPLOAD MODAL (እውነተኛውን የ Excel ፋይል የሚሰቅል) -->
+    <!-- 1. REAL BULK CSV UPLOAD MODAL -->
     <div id="excel-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3 border-b">
@@ -612,7 +625,6 @@
                 <button onclick="closeModal('excel-modal')" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
 
-            <!-- REAL FORM UPLOADING FILE TO DATABASE -->
             <form action="/students/bulk-upload" method="POST" enctype="multipart/form-data" class="my-4 space-y-4">
                 @csrf
                 <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 leading-relaxed">
@@ -782,7 +794,7 @@
                 </div>
                 <div>
                     <label class="block text-[11px] font-bold text-slate-600 mb-1">የተመደበበት ክፍል</label>
-                    <input type="text" name="classroom_id" placeholder="ምሳሌ፡ 7ኛ ክፍል - B ወይም Nurary" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-purple-700">
+                    <input type="text" name="classroom_id" placeholder="ምሳሌ፡ 7ኛ ክፍል - B ወይም KG2A" required class="w-full p-2.5 bg-slate-50 border rounded-xl text-xs font-bold text-purple-700">
                 </div>
                 <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 shadow">መምህሩን መዝግብ እና ሊንክ አመንጭ</button>
             </form>
