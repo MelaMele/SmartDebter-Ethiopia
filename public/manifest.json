@@ -1,9 +1,9 @@
 {
   "name": "SmartDebter Ethiopia",
   "short_name": "SmartDebter",
-  "start_url": "/dashboard/parent",
+  "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#020617",
   "theme_color": "#4f46e5",
   "orientation": "portrait",
   "icons": [
