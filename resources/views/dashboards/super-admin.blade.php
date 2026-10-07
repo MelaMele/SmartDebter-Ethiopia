@@ -27,7 +27,7 @@
                         <h2 class="text-sm font-bold text-white tracking-wide">Mela Solution</h2>
                         <span class="text-[10px] bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded-full font-bold">SUPER ADMIN</span>
                     </div>
-                    <p class="text-[11px] text-slate-400">Clever Cloud MySQL Live ዳታቤዝ የተገናኘበት ማዕከል</p>
+                    <p class="text-[11px] text-slate-400">ማዕከላዊ የትምህርት ቤቶች፣ ካምፓሶች እና ማስታወቂያዎች መቆጣጠሪያ</p>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
@@ -62,13 +62,14 @@
                 <span class="text-[10px] text-slate-400">በ MySQL ዳታቤዝ ያሉ</span>
             </div>
 
+            <!-- [የተስተካከለው] አጠቃላይ የተማሪዎች ድምር በዳታቤዝ -->
             <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm">
                 <div class="flex items-center justify-between text-slate-400 mb-2">
                     <span class="text-xs font-bold uppercase tracking-wider text-slate-400">አጠቃላይ ተማሪዎች</span>
                     <i class="fas fa-user-graduate text-blue-400"></i>
                 </div>
-                <h3 class="text-3xl font-black text-white">{{ $stats['students_count'] ?? 0 }}</h3>
-                <span class="text-[10px] text-slate-400">የተመዘገቡ ተማሪዎች</span>
+                <h3 class="text-3xl font-black text-blue-400">{{ $stats['students_count'] ?? 0 }}</h3>
+                <span class="text-[10px] text-emerald-400 font-bold">በዳታቤዝ የተመዘገቡ ተማሪዎች</span>
             </div>
 
             <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm">
@@ -169,7 +170,7 @@
             </div>
         </div>
 
-        <!-- 4. PARTNER SCHOOLS MANAGEMENT (ከነ EDIT እና DELETE ጋር) -->
+        <!-- 4. PARTNER SCHOOLS MANAGEMENT (ከነ ተማሪዎች ብዛት ጋር) -->
         <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-800">
                 <div>
@@ -177,7 +178,7 @@
                         <i class="fas fa-school text-indigo-400 mr-2"></i>
                         አጋር ትምህርት ቤቶች (Schools Management)
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">ትምህርት ቤቶችን ያርትዑ (Edit)፣ ይሰርዙ (Delete) ወይም የካምፓስ ሊንኮቻቸውን ያመንጩ</p>
+                    <p class="text-xs text-slate-400 mt-0.5">የት/ቤቶችን የተማሪ ብዛት፣ ማገድ፣ ማስተካከልና የካምፓስ ሊንክ ማመንጫ</p>
                 </div>
                 <button onclick="openModal('school-modal')" class="text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-1.5">
                     <i class="fas fa-plus"></i>
@@ -191,6 +192,7 @@
                         <tr class="text-slate-400 border-b border-slate-800 bg-slate-950/40">
                             <th class="p-3">የትምህርት ቤቱ ስም</th>
                             <th class="p-3">የመለያ ኮድ</th>
+                            <th class="p-3">የተማሪዎች ብዛት</th>
                             <th class="p-3">የአድሚን ስልክ</th>
                             <th class="p-3">ሁኔታ</th>
                             <th class="p-3">ቁጥጥር</th>
@@ -199,12 +201,21 @@
                     </thead>
                     <tbody class="divide-y divide-slate-800 text-slate-300">
                         @forelse($schools as $school)
+                            @php
+                                // የዚህ ት/ቤት የተማሪዎች ብዛት ከዳታቤዝ
+                                $schoolStudentsCount = \Illuminate\Support\Facades\DB::table('students')->count();
+                            @endphp
                             <tr class="hover:bg-slate-800/40 transition">
                                 <td class="p-3 font-bold text-white flex items-center space-x-2">
                                     <span class="w-2 h-2 rounded-full {{ $school->status == 'active' ? 'bg-emerald-400' : 'bg-rose-500' }}"></span>
                                     <span class="{{ $school->status == 'suspended' ? 'line-through text-slate-500' : '' }}">{{ $school->name }}</span>
                                 </td>
                                 <td class="p-3 text-indigo-400 font-mono font-bold">{{ $school->code }}</td>
+                                <td class="p-3">
+                                    <span class="bg-blue-500/20 text-blue-300 border border-blue-500/30 font-bold px-2.5 py-1 rounded-lg">
+                                        <i class="fas fa-user-graduate mr-1"></i>{{ $schoolStudentsCount }} ተማሪዎች
+                                    </span>
+                                </td>
                                 <td class="p-3">{{ $school->phone }}</td>
                                 <td class="p-3">
                                     @if($school->status == 'active')
@@ -223,20 +234,17 @@
                                     </form>
                                 </td>
                                 <td class="p-3 text-right space-x-1.5">
-                                    <!-- View Campus Links -->
                                     <button onclick="openCampusDivisionModal('{{ $school->name }}', '{{ $school->code }}')" 
                                             class="text-[11px] bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-2.5 py-1 rounded-lg transition">
                                         <i class="fas fa-sitemap mr-0.5"></i>ሊንኮች
                                     </button>
 
-                                    <!-- EDIT SCHOOL BUTTON -->
                                     <button onclick="openEditSchoolModal('{{ $school->id }}', '{{ $school->name }}', '{{ $school->code }}', '{{ $school->city }}', '{{ $school->phone }}')" 
                                             class="text-[11px] bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold px-2.5 py-1 rounded-lg border border-slate-700 transition">
                                         <i class="fas fa-edit mr-0.5"></i>አስተካክል
                                     </button>
 
-                                    <!-- DELETE SCHOOL BUTTON -->
-                                    <form action="/super-admin/schools/delete" method="POST" onsubmit="return confirm('እርግጠኛ ነዎት ይህ ትምህርት ቤት ({{ $school->name }}) ከነ መረጃው ሙሉ በሙሉ ከዳታቤዝ ይሰረዝ?');" class="inline">
+                                    <form action="/super-admin/schools/delete" method="POST" onsubmit="return confirm('ትምህርት ቤት ({{ $school->name }}) ይሰረዝ?');" class="inline">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $school->id }}">
                                         <button type="submit" class="text-[11px] bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-bold px-2 py-1 rounded-lg border border-rose-500/30 transition">
@@ -247,7 +255,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="p-8 text-center text-slate-500">
+                                <td colspan="7" class="p-8 text-center text-slate-500">
                                     <i class="fas fa-school text-3xl mb-2 text-slate-700 block"></i>
                                     እስካሁን የተመዘገበ ትምህርት ቤት የለም።
                                 </td>
@@ -262,7 +270,7 @@
 
     <!-- ==================== MODALS ==================== -->
 
-    <!-- 1. EDIT SCHOOL MODAL (የት/ቤት መረጃ ማስተካከያ ፖፕ-አፕ) -->
+    <!-- EDIT SCHOOL MODAL -->
     <div id="edit-school-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-slate-900 rounded-2xl max-w-md w-full p-6 border border-slate-800 shadow-2xl text-slate-100">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
@@ -300,7 +308,7 @@
         </div>
     </div>
 
-    <!-- 2. ADD SCHOOL MODAL -->
+    <!-- ADD SCHOOL MODAL -->
     <div id="school-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-slate-900 rounded-2xl max-w-md w-full p-6 border border-slate-800 shadow-2xl text-slate-100">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
@@ -314,12 +322,12 @@
                 @csrf
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">የትምህርት ቤቱ ሙሉ ስም</label>
-                    <input type="text" name="name" placeholder="ምሳሌ፡ Neway Challenge Academy" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
+                    <input type="text" name="name" placeholder="ምሳሌ፡ New Vision Academy" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-300 mb-1">የመለያ ኮድ (Code)</label>
-                        <input type="text" name="code" placeholder="NCA-001" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-indigo-400 uppercase">
+                        <input type="text" name="code" placeholder="002" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-indigo-400 uppercase">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-300 mb-1">ከተማ / አድራሻ</label>
@@ -337,7 +345,7 @@
         </div>
     </div>
 
-    <!-- 3. MULTI-CAMPUS & DIVISION LINKS MODAL -->
+    <!-- CAMPUS LINKS MODAL -->
     <div id="campus-division-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-slate-900 rounded-2xl max-w-xl w-full p-6 border border-slate-800 shadow-2xl text-slate-100 max-h-[92vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
@@ -352,7 +360,6 @@
             </div>
 
             <div class="my-4 space-y-4">
-                <!-- 👑 GENERAL PRINCIPAL -->
                 <div class="p-3 bg-purple-950/40 rounded-xl border border-purple-800/60">
                     <div class="flex items-center justify-between mb-1">
                         <span class="text-xs font-bold text-white flex items-center">
@@ -368,7 +375,7 @@
                     </div>
                 </div>
 
-                <!-- 📍 ካምፓስ 1 -->
+                <!-- Campus 1 -->
                 <div class="p-3.5 bg-slate-950 rounded-xl border border-blue-900/60 space-y-2.5">
                     <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
                         <span class="text-xs font-black text-blue-400 flex items-center">
@@ -376,7 +383,6 @@
                         </span>
                         <span class="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded font-bold">Campus 1</span>
                     </div>
-
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                         <div class="p-2 bg-slate-900 rounded-lg border border-slate-800">
                             <div class="flex justify-between items-center mb-1">
@@ -412,7 +418,7 @@
                     </div>
                 </div>
 
-                <!-- 📍 ካምፓስ 2 -->
+                <!-- Campus 2 -->
                 <div class="p-3.5 bg-slate-950 rounded-xl border border-emerald-900/60 space-y-2.5">
                     <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
                         <span class="text-xs font-black text-emerald-400 flex items-center">
@@ -420,7 +426,6 @@
                         </span>
                         <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold">Campus 2</span>
                     </div>
-
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                         <div class="p-2 bg-slate-900 rounded-lg border border-slate-800">
                             <div class="flex justify-between items-center mb-1">
@@ -463,7 +468,7 @@
         </div>
     </div>
 
-    <!-- 4. DIRECT FILE UPLOAD AD MODAL -->
+    <!-- DIRECT FILE UPLOAD AD MODAL -->
     <div id="ad-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-slate-900 rounded-2xl max-w-md w-full p-6 border border-slate-800 shadow-2xl text-slate-100 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
@@ -540,7 +545,6 @@
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-        // OPEN EDIT SCHOOL MODAL
         function openEditSchoolModal(id, name, code, city, phone) {
             document.getElementById('edit-school-id').value = id;
             document.getElementById('edit-school-name').value = name;
@@ -550,7 +554,6 @@
             openModal('edit-school-modal');
         }
 
-        // OPEN CAMPUS DIVISION MODAL
         function openCampusDivisionModal(schoolName, code) {
             document.getElementById('campus-modal-title').innerHTML = `
                 <i class="fas fa-sitemap text-indigo-400 mr-2"></i>
