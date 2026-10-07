@@ -33,13 +33,8 @@ if (!function_exists('ensureCommunicationColumnsExist')) {
                     $table->timestamps();
                 });
             }
-
-            // 1. የሙከራ መልእክቶችን በሙሉ ከዳታቤዝ ማጽዳት (Clean Test Messages)
             DB::table('communications')->where('message', 'Test')->orWhere('message', 'ሞከር')->delete();
-
-            // 2. ከ 3 ወራት (90 ቀናት) በላይ የቆዩ አሮጌ መልእክቶችን በራስ-ሰር ማጽዳት (Auto-Purge after 3 Months)
             DB::table('communications')->where('created_at', '<', now()->subDays(90))->delete();
-
         } catch (\Exception $e) {}
     }
 }
@@ -176,7 +171,7 @@ Route::get('/dashboard/teacher', function () {
     return redirect('/teacher/entry');
 });
 
-// 5. School Admin / Unit Leader Dashboard (የዛሬ መልእክቶች ብቻ በመነሻ ሳጥን ይወጣሉ)
+// 5. School Admin Dashboard
 Route::get('/dashboard/admin', function (Request $request) {
     ensureCommunicationColumnsExist();
 
@@ -210,7 +205,6 @@ Route::get('/dashboard/admin', function (Request $request) {
         $assignedTeachers = collect();
     }
 
-    // ከወላጅ የተላኩ መልእክቶች
     try {
         $parentInquiries = DB::table('communications')
             ->where('sender_type', 'parent')
@@ -224,13 +218,32 @@ Route::get('/dashboard/admin', function (Request $request) {
     return view('dashboards.admin', compact('school', 'activeAds', 'students', 'parentInquiries', 'assignedTeachers'));
 });
 
-// Dismiss / Delete specific message
+// ==================== [SUPER ADMIN DASHBOARD (የተማሪዎች ብዛት በትክክል ተቆጥሮ የሚወጣበት)] ====================
+Route::get('/dashboard/super-admin', function () {
+    ensureCommunicationColumnsExist();
+
+    $schools = DB::table('schools')->orderBy('id', 'desc')->get();
+    $ads = DB::table('advertisements')->orderBy('id', 'desc')->get();
+    
+    // በ Clever Cloud MySQL ውስጥ ያሉ እውነተኛ ተማሪዎች በሙሉ
+    $totalStudents = DB::table('students')->count();
+
+    $stats = [
+        'schools_count' => $schools->count(),
+        'students_count' => $totalStudents,
+        'ads_count' => $ads->where('is_active', true)->count(),
+        'views_count' => $ads->sum('impressions')
+    ];
+
+    return view('dashboards.super-admin', compact('schools', 'ads', 'stats'));
+});
+
+// Communications
 Route::post('/communications/dismiss', function (Request $request) {
     DB::table('communications')->where('id', $request->input('id'))->delete();
     return back()->with('success', 'መልእክቱ ተሰርዟል!');
 });
 
-// Bulk Upload
 Route::post('/students/bulk-upload', function (Request $request) {
     ensureCommunicationColumnsExist();
 
@@ -309,13 +322,12 @@ Route::post('/students/bulk-upload', function (Request $request) {
         }
 
         fclose($handle);
-        return back()->with('success', "🎉 ስኬት! {$successCount} ተማሪዎች ከ Excel ፋይሉ ተነበው ወደ Clever Cloud MySQL ዳታቤዝ ገብተዋል!");
+        return back()->with('success', "🎉 ስኬት! {$successCount} ተማሪዎች ከ Excel ፋይሉ ተነበው ወደ MySQL ዳታቤዝ ገብተዋል!");
     } catch (\Exception $e) {
         return back()->with('error', 'ስህተት፡ ' . $e->getMessage());
     }
 });
 
-// Single Student Actions
 Route::post('/students/store', function (Request $request) {
     ensureCommunicationColumnsExist();
 
@@ -541,18 +553,6 @@ Route::post('/communications/parent-send', function (Request $request) {
 });
 
 // Super Admin
-Route::get('/dashboard/super-admin', function () {
-    $schools = DB::table('schools')->orderBy('id', 'desc')->get();
-    $ads = DB::table('advertisements')->orderBy('id', 'desc')->get();
-    $stats = [
-        'schools_count' => $schools->count(),
-        'students_count' => DB::table('students')->count(),
-        'ads_count' => $ads->where('is_active', true)->count(),
-        'views_count' => $ads->sum('impressions')
-    ];
-    return view('dashboards.super-admin', compact('schools', 'ads', 'stats'));
-});
-
 Route::post('/super-admin/schools/store', function (Request $request) {
     try { DB::statement("ALTER TABLE schools MODIFY status VARCHAR(50) DEFAULT 'active'"); } catch (\Exception $e) {}
     DB::table('schools')->insert([
